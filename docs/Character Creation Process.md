@@ -79,7 +79,7 @@ During this first phase, the bot rolls the dices and notifies the player with th
 ```
 > /create
 $ Rolling characteristics for your character...
-$ Rolls are in!
+$ Results are in!
   STR: 7
   DEX: 9
   END: 4
@@ -105,7 +105,7 @@ $ Choose the Minimum Desired Tech Level
 $ Choose the Maximum Desired Tech Level
 > ReplyKeyboard[1, ..., 15, Ignore]
 $ These are the available Worlds on {Sector} that match your criteria!
-> InlineKeyboard[Gladstone, Rossyg, Kasaan, Diomedes <-, ->]
+> InlineKeyboard[Gladstone, Rossyg, Kasaan, Diomedes, <-, ->]
 ```
 
 Afterwards, the user will choose their Background Skills from a list provided by the bot.
@@ -168,6 +168,7 @@ $ You have been honorably discharged from service after a long legal battle, you
 ```
 
 The player will interact only if the roll on the Mishaps gives either a 1 or a 6 as a result (in the latter case, the bot also rolls on the Injury Table). The player will then be able to decide which characteristics to reduce.
+
 ```
 $ You were injured in service and thus have been medically discharged from it.
 $ Due to the injury, one of your phisical characteristics must be reduced by 1, choose which one:
