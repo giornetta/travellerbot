@@ -237,7 +237,7 @@ $ You acquired 50000Cr!
 
 There's no significant interaction during this phase.
 
-### **12. Pay for debts*+
+### **12. Pay for debts**
 
 ```
 $ Luckily for you, a Patron offered to cover 75% of your Medical Care, you only have to pay 12000Cr!
