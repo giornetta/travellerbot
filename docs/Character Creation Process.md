@@ -25,6 +25,7 @@ The whole process can be broken down into these phases:
 5. **Survival**
     - Roll for survival, if you do not succeed, you have died. Start over.
         - With the Referee's approval, you can instead be forced out of your career and roll on the Mishaps Table. You do not receive a benefit roll for this term.
+        - If you roll a 6 on the Mishaps table, roll on the Injury Table to determine what injury you will suffer from.
         - If you get injured and end up suffering for an Injury Crisis, you must either pay for medical care at step *12* or die and start over.
     - If you took Anagathic Drugs last term, you have to roll for survival again. If you fail you are ejected from the career and must roll on the Mishaps table.
 6. **Commission and Advancement**
@@ -56,12 +57,14 @@ The whole process can be broken down into these phases:
     - If you reached Rank 6, you get three extra rolls.
 11. **Next Career**
     - If you're leaving your career and you served less than 7 terms in total, you may *(GO TO 3)*.
-    - Otherwise *(GO TO 13)*
+    - Otherwise *(GO TO 12)*
 12. **Pay for debts**
     - If you were injured during a career that allows this, roll `2D6 + Rank` to determine if a Patron will pay for your Medical Care.
     - If you suffered for an Injury Crisis, you must pay 1D6x10000Cr in Medical Care.
-    - You can choose to restore any lost characteristic for 5000Cr a point.
     - If you used Anagathic Drugs, you have to pay 1D6x2500Cr for each term you used them. If you can't pay, you go into debt.
+    - You can choose to restore any lost characteristic for 5000Cr a point (this can be partially or totally paid by a Patron).
+    - You must pay for Legal battles. If you can't, you go into debt.
+    - If the character is into debt, *(END)*, otherwise *(GO TO 13)*
 13. **Buy starting equipment**
     - Purchase your starting equipment, and possibly a Starship.
 
@@ -148,14 +151,23 @@ $ Choose a skill to acquire:
 
 ### **5. Survival**
 
+If the player successfully passes the Survival roll, no interaction will take place during this phase. We'll now explore three different scenarios that might take place when this roll is failed.
+
 In the default case, the bot notifies the player of the failure and the process starts over.
 
 ```
 $ You died during this term. Start over.
 ```
 
-In this other scenario, the bot automatically rolls Mishaps and Injuries and notifies the player, who will be able to interact only if asked to do so.
+Let's see some examples of what could happen if the Referee chooses to let the players keep their characters.
 
+In this second scenario, the bot rolls a 3 on the Mishaps Table and the player gets notified, but no interaction happens.
+
+```
+$ You have been honorably discharged from service after a long legal battle, you now have a debt of 10000Cr.
+```
+
+The player will interact only if the roll on the Mishaps gives either a 1 or a 6 as a result (in the latter case, the bot also rolls on the Injury Table). The player will then be able to decide which characteristics to reduce.
 ```
 $ You were injured in service and thus have been medically discharged from it.
 $ Due to the injury, one of your phisical characteristics must be reduced by 1, choose which one:
@@ -224,12 +236,36 @@ $ You acquired 50000Cr!
 
 There's no significant interaction during this phase.
 
-### **12. Pay for debts**
+### **12. Pay for debts*+
 
 ```
 $ Luckily for you, a Patron offered to cover 75% of your Medical Care, you only have to pay 12000Cr!
+```
+
+After the Patron roll occurs (if applicable), the bot calculates the discounted bills. The player must then immediately pay for any eventual medical debt caused by an Injury Crisis. If they can't, they die.
+
+```
+$ You couldn't afford to cure your Injury Crisis and died. Start over.
+```
+
+If they can, the cost of Anagathic Drugs (eventually discounted) is now deducted.
+
+```
 $ You used Anagathic Drugs for 2 terms, you have to pay 5000Cr.
 $ Your new balance is 3000Cr.
+```
+
+If the character's balance is negative, they're into debt and Character Creation ends here. Otherwise, the player can now choose to restore any lost characteristics. This can also be covered by a Patron.
+
+```
+$ Do you want to restore any lost characteristic?
+> InlineKeyboard[STR, DEX, END, INT, EDU, SOC, Skip]
+```
+
+Finally, legal costs are deducted. The character can go into debt.
+
+```
+$ You couldn't afford to pay for legal costs, you're now in debt of 1500Cr.
 ```
 
 ### **13. Buy starting equipment**
