@@ -31,13 +31,13 @@ The combat is formed by these elements.
         - *Changing Stance*: change your stance to any one of thes stances: *prone, crouched or standing*.
         - *Drawing & Reload*: depending on the specific weapon the number of Minor Action required to draw or reload varies. Typically, those action last one Minor Action.
         - *Movement*: you can usually move up to 6 meters, but stance, carrying weight, gravity and terrains can alter this value.
-        - *Miscellaneous*: you can do a skill check or a **Other Actions**.
+        - *Miscellaneous*: you can do a *Skill Check* or a **Other Actions**.
 4. **Significant Action**
     - The possible Significant Action are:
         - Two Minor Action
         - Attack: based on your drawn and loaded weapon you can choose and attack a target in range.
         - Coup de Grace: you can attack a helpless adjacent opponent. The attack cannot fail and the target automatically dies.
-        - Miscellaneous: you can do a skill check or a **Other Actions**.
+        - Miscellaneous: you can do a *Skill Check* or a **Other Actions**.
 5. **Reactions**
     - When attacked you can react, you receive `-2` to your initiative. You can react by:
         - Dodging: when attacked you can dodge, your attacker receive a `-1 DM` (`-2 DM` if he is in cover) to his attack roll. You receives a `-1 DM` to all your skill check until the end of your next turn.
@@ -112,7 +112,7 @@ If the player chooses to do a Minor Action:
 
 ```
 $ Choose Minor Action:
-ReplyKeyboard[Aiming, Aiming for the kill, Changing Stance, Drawing or Reload, Movement, Miscellaneous, <-]
+ReplyKeyboard[Aiming, Aiming for the kill, Changing Stance, Drawing or Reload, Movement, Skill Check, Other, <-]
 ```
 
 #### **Minor Action: Aiming or Aiming for the kill**
@@ -143,20 +143,12 @@ $ Choose your next stance:
 ReplyKeyboard[forward, back, <-]
 ```
 
-#### **Minor Action: Miscellaneous**
+#### **Minor Action: Skill Check**
 
 *Bob's chat*
 
 ```
-ReplyKeyboard[Skill Check, Other, <-]
 ReplyKeyboard[Skill 1, Skill 2, Skill 3, <-]
-```
-
-*Referee's chat*
-
-```
-$ Bob wants to make a Survival Skill check
-ReplyKeyboard[Allow, Deny]
 ```
 
 ### **4. Significant Action**
@@ -167,7 +159,7 @@ If the player chooses to do a Significant Action:
 
 ```
 $ Choose Minor Action:
-ReplyKeyboard[Two Minor Action, Attack, Coup de Grace, Miscellaneous, <-]
+ReplyKeyboard[Two Minor Action, Attack, Coup de Grace, Skill Check, Other, <-]
 ```
 
 #### **Significant Action: Attack**
@@ -184,20 +176,12 @@ $ Choose Target:
 ReplyKeyboard[PlayerName1, PlayerName2, ..., Enemy1, Enemy2, ..., <-]
 ```
 
-#### **Significant Action: Miscellaneous**
+#### **Significant Action: Skill Check**
 
 *Bob's chat*
 
 ```
-ReplyKeyboard[Skill Check, Other, <-]
 ReplyKeyboard[Skill 1, Skill 2, Skill 3, <-]
-```
-
-*Referee's chat*
-
-```
-$ Bob wants to make a Survival Skill check
-ReplyKeyboard[Allow, Deny]
 ```
 
 ### **5. Reactions**
