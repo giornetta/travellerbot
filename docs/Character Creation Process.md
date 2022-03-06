@@ -7,26 +7,26 @@ Our implementation of Character Creation in Traveller follows the *Cepheus Engin
 The whole process can be broken down into these phases:
 
 1. **Characteristics**
-    - Following the characteristics order (STR DEX END INT EDU SOC) roll 2D6 for each one and assign the result to it.
-    - Determine DM 
+    - Following the characteristics' order (STR DEX END INT EDU SOC) roll 2D6 for each one and assign the result to it.
+    - Determine DM.
 2. **Homeworld**
     - Choose your homeworld from a list.
         - We are assuming that all members of an Adventure must come from the same Sector, which is chosen by the Referee beforehand.
     - Gain `3 + DM(EDU)` Background Skills at Level 0.
-        - The first two have to be taken from your Homeworld, the rest from the Education List.
+        - The first two have to be taken from your homeworld, the rest from the Education List.
 3. **Career Qualification**
     - Choose a career (that you haven't already left before, except Drifter).
     - Roll to qualify. If this isn't your first career, suffer a `-2 DM` for each previous career.
-        - If you qualify, you start that carreer at Rank 0.
+        - If you qualify, you start that career at Rank 0.
         - If you do not qualify, you can enter the Drifter career or submit to the Draft (only once).
 4. **Basic Training**
     - If this is your first term in your first career, acquire every skill in the Service Skills Table at Level 0.
-    - If this is your first term in a subsequent career, pick on skill from the Service Skills Table at Level 0.
+    - If this is your first term in a subsequent career, pick on a skill from the Service Skills Table at Level 0.
 5. **Survival**
     - Roll for survival, if you do not succeed, you have died. Start over.
         - With the Referee's approval, you can instead be forced out of your career and roll on the Mishaps Table. You do not receive a benefit roll for this term.
         - If you roll a 6 on the Mishaps table, roll on the Injury Table to determine what injury you will suffer from.
-        - If you get injured and end up suffering for an Injury Crisis, you must either pay for medical care at step *12* or die and start over.
+        - If you get injured and end up suffering from an Injury Crisis, you must either pay for medical care at step *12* or die and start over.
     - If you took Anagathic Drugs last term, you have to roll for survival again. If you fail you are ejected from the career and must roll on the Mishaps table.
 6. **Commission and Advancement**
     - If you have been drafted, you are not eligible for a Commission roll in your first term.
@@ -39,7 +39,7 @@ The whole process can be broken down into these phases:
         - If you gain a Skill and you already have it, increase your Level in that skill by 1. Otherwise take it at Level 1.
     - If your career does not have a Commission or Advancement check, you may roll another time.
 8. **Aging**
-    - You can choose if you took Anagathics Drugs during the last term.
+    - You can choose if you took Anagathic Drugs during the last term.
         - If you did, add `+T DM` to roll on the Aging Table, where `T` is the number of terms since you started taking drugs.
         - If you didn't but had taken them until the previous term, you immediately roll on the Aging Table.
     - Increase your age by 4.
@@ -51,7 +51,7 @@ The whole process can be broken down into these phases:
         - If you have served a total of 7+ terms working, you must retire. *(GO TO 10)*
         - If you succeeded and wish to continue in this career *(GO TO 5)*, otherwise *(GO TO 10)*
 10. **Benefits**
-    - If you're leaving the career, roll for Benefits. You get one Benefit Roll for every full term served in that career.
+    - If you're leaving the career, roll for Benefits. You get one Benefit Roll for every full-term served in that career.
     - If you reached Rank 4, you get an extra roll.
     - If you reached Rank 5, you get two extra rolls.
     - If you reached Rank 6, you get three extra rolls.
@@ -60,7 +60,7 @@ The whole process can be broken down into these phases:
     - Otherwise *(GO TO 12)*
 12. **Pay for debts**
     - If you were injured during a career that allows this, roll `2D6 + Rank` to determine if a Patron will pay for your Medical Care.
-    - If you suffered for an Injury Crisis, you must pay 1D6x10000Cr in Medical Care.
+    - If you suffered from an Injury Crisis, you must pay 1D6x10000Cr in Medical Care.
     - If you used Anagathic Drugs, you have to pay 1D6x2500Cr for each term you used them. If you can't pay, you go into debt.
     - You can choose to restore any lost characteristic for 5000Cr a point (this can be partially or totally paid by a Patron).
     - You must pay for Legal battles. If you can't, you go into debt.
@@ -70,7 +70,7 @@ The whole process can be broken down into these phases:
 
 ## Telegram Bot Interaction
 
-This is an example conversation an user might have with the bot during Character Creation, broken down into the phases described in the Checklist:
+This is an example conversation a user might have with the bot during Character Creation, broken down into the phases described in the Checklist:
 
 ### **1. Characteristics**
 
@@ -90,7 +90,7 @@ $ Results are in!
 
 ### **2. Homeworld**
 
-We use a guided approach to pick an Homeworld. The user will choose Minimum and Maximum values for each world statistic, and then they'll be presented with a list of corresponding Worlds in the Sector chosen by the Referee.
+We use a guided approach to pick a Homeworld. The user will choose Minimum and Maximum values for each world statistic, and then they'll be presented with a list of corresponding Worlds in the Sector chosen by the Referee.
 
 ```
 $ Pick your Homeworld from {Sector}!
@@ -116,7 +116,7 @@ $ Choose the first skill from your Homeworld
 $ Choose the second skill from your Homeworld
 > ReplyKeyboard[Gun Combat-0, Carousing-0]
 $ Choose a skill from the Education List:
-> ReplyKeyboard[Admin-0, Advocate-0, Animals-1, Cariousing-1, Comms-0, ..., Space-Sciences-0]
+> ReplyKeyboard[Admin-0, Advocate-0, Animals-1, Carousing-1, Comms-0, ..., Space-Sciences-0]
 ```
 
 ### **3. Career Qualification**
@@ -171,7 +171,7 @@ The player will interact only if the roll on the Mishaps gives either a 1 or a 6
 
 ```
 $ You were injured in service and thus have been medically discharged from it.
-$ Due to the injury, one of your phisical characteristics must be reduced by 1, choose which one:
+$ Due to the injury, one of your physical characteristics must be reduced by 1, choose which one:
 > InlineKeyboard[Strength, Dexterity, Endurance]
 $ You are suffering an Injury Crisis! You'll die if you won't be able to pay {1D6x10000}Cr in Medical Care!
 ```
