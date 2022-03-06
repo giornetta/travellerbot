@@ -2,6 +2,15 @@
 
 Our implementation of Personal Combat in Traveller follows a simplified version of *Cepheus Engine SRD* ruleset.
 
+## Simplification Assumption
+
+1. You cannot interrupt another round during combat when delaying your turn.
+2. Drugs cannot be taken during combat.
+3. Combat drug lasts one combat.
+4. Combat field is considered to be on a one-dimensional line.
+5. At the start of combat all player are considered in the same position as well of all the enemies.
+6. To take an "Other Action" the player has to tell what he wants to do to the Referee and wait the Referee’s actions. When the Referee finish he can press the *Skip* button.
+
 ## Checklist
 
 The combat is formed by these elements.
@@ -202,10 +211,20 @@ $ You are being attacked:
 ReplyKeyboard[Dodge, Parry, Do noting]
 ```
 
-## Simplification Assumption
+### **6. After being hit**
 
-1. You cannot interrupt another round during combat when delaying your turn.
-2. Drugs cannot be taken during combat.
-3. Combat drug lasts one combat.
-4. Combat field is considered to be on a one-dimensional line.
-5. At the start of combat all player are considered in the same position as well of all the enemies.
+When the player takes damage, the damage value is subtracted from Endurance.
+
+```
+$ You took 5 damage:
+    STR: 7
+    DEX: 9
+    END: 2
+```
+
+When the player takes damage and his *Endurance* is already reduced to 0, he can choose were to take the next damage:
+
+```
+$ You took 5 damage, were do you want to take damage?
+ReplyKeyboard[Strength, Dexterity]
+```
