@@ -42,6 +42,9 @@ The combat is formed by these elements.
     - When attacked you can react, but you receive `-2` to your initiative if you choose to do so. You can react by:
         - *Dodging*: when attacked you can dodge, your attacker receive a `-1 DM` (`-2 DM` if he is in cover) to his attack roll. You receive a `-1 DM` to all your skill checks until the end of your next turn.
         - *Parrying*: when attacked melee you can parry, your attacker receives a negative `DM` equal to your *Melee* skill. You receive a `-1 DM` to all your skill checks until the end of your next turn.
+6. **After being hit**
+    - When you are hit the damage is subtracted from your *Endurance*. If your *Endurance* is reduced to 0 the damage is subtracted from your *Strength* or *Dexterity* (your choice).
+    - ...
 
 ## Telegram Bot Interaction
 
@@ -59,7 +62,7 @@ $ What's the starting range (meters)?
 > 5
 ```
 
-*Player with Tactics' chat:*
+*Player with Tactics skill chat:*
 
 ```
 $ Do you want to make a Tactics Check?
@@ -109,7 +112,7 @@ If the player chooses to do a Minor Action:
 
 ```
 $ Choose Minor Action:
-> ReplyKeyboard[Aim, Aim for the kill, Change Stance, Draw or Reload, Movement, Skill Check, Other, <-]
+> ReplyKeyboard[Aim, Aim for the kill, Change Stance, Draw, Reload, Movement, Skill Check, Other, <-]
 ```
 
 #### **Minor Action: Aiming or Aiming for the kill**
