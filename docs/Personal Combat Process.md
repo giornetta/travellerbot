@@ -52,7 +52,7 @@ This is an example conversation a user might have with the bot during Personal C
 
 ### **1. Initiative**
 
-*Referee chat:*
+*Referee's chat:*
 
 ```
 > /startCombat
@@ -62,13 +62,15 @@ $ What's the starting range (meters)?
 > 5
 ```
 
-*Player with Tactics skill chat:*
+Any player who has the Tactics skill will receive a message asking them if they want to try a Skill Check:
 
 ```
 $ Do you want to make a Tactics Check?
 > ReplyKeyboard[Yes, No]
 $ You succeeded!
 ```
+
+After everyone has decided, the Referee will receive the order of action in their chat:
 
 *Referee's chat:*
 
@@ -81,6 +83,15 @@ $ The current order of action is:
 ```
 
 ### **2. Combat Round**
+
+First of all, the bot asks any player who has chosen to delay their turn if they want to intervene following a *FIFO* order. 
+
+```
+$ Do you want to take your turn before Alice?
+> ReplyKeyboard[Yes, No]
+```
+
+If any of them accepts, they will act as if it was their turn, otherwise, the bot will ask the next character who will act following the Initiative order.
 
 *Everyone's chat:*
 
@@ -95,22 +106,10 @@ $ It's your turn. What do you want to do?
 > ReplyKeyboard[Minor Action, Significant Action, Skip, Delay]
 ```
 
-#### **If you delayed your action**
-
-Before every other character's turn you receive a notification.
-
-```
-$ Do you want to take your turn before Alice?
-> ReplyKeyboard[Yes, No]
-```
-
 ### **3. Minor Action**
 
-If the player chooses to do a Minor Action:
-
-*Bob's chat:*
-
 ```
+> ReplyKeyboard[Minor Action, Significant Action]
 $ Choose Minor Action:
 > ReplyKeyboard[Aim, Aim for the kill, Change Stance, Draw, Reload, Movement, Skill Check, Other, <-]
 ```
@@ -145,21 +144,18 @@ $ In which direction do you want to move:
 
 #### **Minor Action: Skill Check**
 
-*Bob's chat*
-
 ```
 $ Choose a skill:
 > ReplyKeyboard[Skill 1, Skill 2, Skill 3, <-]
 ```
 
+The interactions that occur after choosing a skill are described in [the Skills documentation](Skills.md).
+
 ### **4. Significant Action**
 
-If the player chooses to do a Significant Action:
-
-*Bob's chat:*
-
 ```
-$ Choose Minor Action:
+> ReplyKeyboard[Minor Action, Significant Action]
+$ Choose Significant Action:
 > ReplyKeyboard[Two Minor Actions, Attack, Coup de Grace, Skill Check, Other, <-]
 ```
 
@@ -179,8 +175,6 @@ $ Choose Target:
 
 #### **Significant Action: Skill Check**
 
-*Bob's chat*
-
 ```
 $ Choose a skill:
 > ReplyKeyboard[Skill 1, Skill 2, Skill 3, <-]
@@ -189,8 +183,6 @@ $ Choose a skill:
 ### **5. Reactions**
 
 If the player is the target of an attack:
-
-*Bob's chat:*
 
 ```
 $ You are being attacked:
