@@ -10,6 +10,9 @@ Our implementation of Personal Combat in Traveller follows a simplified version 
 4. Combat field is considered to be on a one-dimensional line.
 5. At the start of combat all players are considered to be in the same position, and the same applies for enemies.
 6. A player can perform an action that isn't specified in the action lists by communicating his intentions to the Referee. They then have to wait for the Referee to take any necessary action, and only afterwards they may press the *Other* button.
+7. Every weapon requires a Minor Action to be drawn or reloaded.
+8. The Referee is the one responsible of setting the cover status.
+9. Helpless means Unconscious.
 
 ## Checklist
 
@@ -22,6 +25,9 @@ The combat is formed by these elements.
     - To compute the initiative, use initiative roll + DEX (if present add the result of the Tactics Skill Check).
     - The order of action is determined by sorting in descending order. In case of a tie the character with higher DEX goes first. If there are still ties, their order is chosen randomly.
 2. **Combat Round**
+    - First of all, the bot asks any conscious player who has chosen to delay their turn if they want to intervene following a *FIFO* order.
+    - If the player whose turn it is is unconscious, the Referee will be asked if they want to try an Endurance check to wake up the character.
+    - If the player whose turn it is is seriously wounded, they lose their minor action and their movement is limited to 1.5 meters.
     - Each character can make one minor action and one significant action (they can optionally make two minor actions instead of the significant one).
         - Alternatively, you can skip or delay your turn.
 3. **Minor Action**
@@ -29,7 +35,7 @@ The combat is formed by these elements.
         - *Aiming*: select a target and gain `+1 DM` to the next attack on that target as long you do nothing other than the Minor Action *Aiming*. This action can be repeated to gain more bonus up to `+6 DM`.
         - *Aiming for the kill*: select a target and gain `+2` damage on the next attack to that target as long you do nothing other than the Minor Action *Aiming for the kill*. This action can be repeated to gain more bonus up to `+6` damage.
         - *Changing Stance*: change your stance to any one of these stances: *Prone, Crouched or Standing*.
-        - *Drawing & Reloading*: depending on the specific weapon the number of Minor Actions required to draw or reload varies. Typically, these actions only take one Minor Action.
+        - *Drawing & Reloading*: draw or reload a weapon to attack with.
         - *Movement*: you can usually move up to 6 meters, but stance, carrying weight, gravity and terrains can alter this value.
         - *Miscellaneous*: you can do a *Skill Check* or *Other*.
 4. **Significant Action**
@@ -44,7 +50,15 @@ The combat is formed by these elements.
         - *Parrying*: when attacked melee you can parry, your attacker receives a negative `DM` equal to your *Melee* skill. You receive a `-1 DM` to all your skill checks until the end of your next turn.
 6. **After being hit**
     - When you are hit the damage is subtracted from your *Endurance*. If your *Endurance* is reduced to 0 the damage is subtracted from your *Strength* or *Dexterity* (your choice).
-    - ...
+    - When two out of three phisical charateristics are reduced to 0, you become unconscious.
+    - If all physical characteristics are reduced to 0, you are killed.
+7. **End of Combat**
+    - Every player will be asked if they want to perform first aid on an ally or on themselves.
+        - Applying first aid restores a number of characteristic points equal to twice the Effect of the Medic check. Points restored by first aid are divided as desired among all damaged physical characteristics.
+        - If you perform first aid on yourself to receive a `-2 DM`.
+    - If first aid succeded on a seriously wounded character the bot will ask if they want to do a surgery too on the same character.
+        -  Surgery restores characteristic points just like first aid but if the check is failed the patient loses characteristic points equal to the Effect.
+        - If you perform surgery on yourself to receive a `-4 DM`.
 
 ## Telegram Bot Interaction
 
@@ -70,9 +84,7 @@ $ Do you want to make a Tactics Check?
 $ You succeeded!
 ```
 
-After everyone has decided, the Referee will receive the order of action in their chat:
-
-*Referee's chat:*
+After everyone has decided, the Referee will receive the order of action in their chat.
 
 ```
 $ The current order of action is:
@@ -84,7 +96,7 @@ $ The current order of action is:
 
 ### **2. Combat Round**
 
-First of all, the bot asks any player who has chosen to delay their turn if they want to intervene following a *FIFO* order. 
+First of all, the bot asks any player who has chosen to delay their turn if they want to intervene following a *FIFO* order.
 
 ```
 $ Do you want to take your turn before Alice?
@@ -92,6 +104,22 @@ $ Do you want to take your turn before Alice?
 ```
 
 If any of them accepts, they will act as if it was their turn, otherwise, the bot will ask the next character who will act following the Initiative order.
+
+If the turn should be taken by an unconscious character, the Referee will decide if they're ready to attempt an Endurance check to wake up:
+
+*Referee's chat*
+```
+$ Bod is unconscious, can they try to wake up?
+> ReplyKeyboard[PlayerName1, PlayerName2, ..., Enemy1, Enemy2, ..., <-]☺
+$ Bob rolled 9.
+```
+
+*Bob's chat*
+```
+$ You woke up!
+```
+
+Afterwards, the character is ready to begin their turn.
 
 *Everyone's chat:*
 
@@ -119,6 +147,7 @@ $ Choose Minor Action:
 ```
 $ Choose Target:
 > ReplyKeyboard[PlayerName1, PlayerName2, ..., Enemy1, Enemy2, ..., <-]
+$ You are aiming at {Target}.
 ```
 
 #### **Minor Action: Changing Stance**
@@ -126,6 +155,7 @@ $ Choose Target:
 ```
 $ Choose your next stance:
 > ReplyKeyboard[Prone, Crouched, <-]
+$ You switched to Prone.
 ```
 
 #### **Minor Action: Drawing**
@@ -133,6 +163,7 @@ $ Choose your next stance:
 ```
 $ Choose the weapon to draw:
 > ReplyKeyboard[Sword, Rifle, <-]
+$ You drew your Sword.
 ```
 
 #### **Minor Action: Movement**
@@ -140,6 +171,9 @@ $ Choose the weapon to draw:
 ```
 $ In which direction do you want to move:
 > ReplyKeyboard[Forward, Back, <-]
+$ How much (0m-8m)?
+> 5
+$ You moved back 5 meters.
 ```
 
 #### **Minor Action: Skill Check**
@@ -166,11 +200,22 @@ $ Choose Target:
 > ReplyKeyboard[PlayerName1, PlayerName2, ..., Enemy1, Enemy2, ..., <-]
 ```
 
+If the target reacts:
+```
+$ Target dodged, you missed.
+```
+
+Finally, the character inflicts damage to the target (if the attack hit):
+```
+$ You dealt 4 damage.
+```
+
 #### **Significant Action: Coup de Grace**
 
 ```
 $ Choose Target:
 > ReplyKeyboard[PlayerName1, PlayerName2, ..., Enemy1, Enemy2, ..., <-]
+$ You executed {Enemy}.
 ```
 
 #### **Significant Action: Skill Check**
@@ -179,6 +224,8 @@ $ Choose Target:
 $ Choose a skill:
 > ReplyKeyboard[Skill 1, Skill 2, Skill 3, <-]
 ```
+
+The interactions that occur after choosing a skill are described in [the Skills documentation](Skills.md).
 
 ### **5. Reactions**
 
@@ -206,3 +253,26 @@ When the player takes damage and their Endurance is already 0, they can choose w
 $ You took 5 damage, which characteristics should be hit?
 > ReplyKeyboard[Strength, Dexterity]
 ```
+
+### **7. End of Combat**
+
+Each conscious player will be asked if they want to perform First Aid on an ally.
+```
+$ Do you want to perform first aid?
+> ReplyKeyboard[Yes, No]
+> ReplyKeyboard[PlayerName1, PlayerName2, ..., <-]
+```
+
+If the target is Seriously Wounded:
+```
+$ Do you want to perform surgery?
+> ReplyKeyboard[Yes, No]
+```
+
+*Target's chat:*
+
+```
+$ You can restore 5 points of damage, which characteristics should be healed?
+> InlineKeyboard[Endurance, Strength, Dexterity]
+```
+
