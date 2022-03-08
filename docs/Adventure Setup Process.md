@@ -1,14 +1,12 @@
 # Adventure Setup Process
 
-## Checklist
+Here is described the process that any new user will go through when creating or joining an Adventure.
 
 ```
 > /start
 $ Welcome to Traveller Bot, do you want to create or join an Adventure?
 > ReplyKeyboard[Create, Join]
 ```
-
-## Bot Interaction
 
 ### Create a new Adventure
  
