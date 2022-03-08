@@ -67,4 +67,4 @@ $ What's the Code of the Adventure you'd like to join?
 > {Code}
 ```
 
-If the player doesn't already have an alive character in the Adventure they joined, [Character Creation](Character Creation Process.md) will start.
+If the player doesn't already have an alive character in the Adventure they joined, [Character Creation](CharacterCreationProcess.md) will start.
