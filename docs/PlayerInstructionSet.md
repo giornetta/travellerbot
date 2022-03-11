@@ -10,6 +10,7 @@ This document describes all the possible actions that players can take when they
 - *Map*: shows information about the world the character is currently in and shares a map of the nearby worlds that the party can travel to.
 - *Skills*: shows a list of all the available skills, ordered by their Level. The player can select any of them to perform a skill check. These are better described in [the Skills documentation](Skills.md).
 - *Shop*: only if a shop is open, the player will be able to buy new equipments with their Credits. Which items are available in the Shop are determined by the Referee.
+- `/exit`
 
 ## Bot Interaction
 
@@ -89,3 +90,10 @@ $ Pick any item to buy:
 > ReplyKeyboard[Ablat - 75Cr, Mesh - 150Cr, ..., <-]
 $ You don't have enough Credits to buy Mesh.
 ```
+
+### Exit
+```
+/exit
+```
+
+The players and the Referee will be able to exit the current campaign.
