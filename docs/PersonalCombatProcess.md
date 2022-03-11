@@ -69,7 +69,7 @@ This is an example conversation a user might have with the bot during Personal C
 *Referee's chat:*
 
 ```
-> /startCombat
+> /combat {scene}
 $ Which characters are aware of their opponents?
 > InlineKeyboard[PlayerName1, PlayerName2, ..., Enemy1, Enemy2, ..., All, X]
 $ What's the starting range (meters)?
