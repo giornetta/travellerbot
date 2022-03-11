@@ -10,6 +10,7 @@ This document describes all the possible actions that the Referee can take.
 - `/travel <destination>`
 - `/age [... <drugsUser>] [roll] [... <character>]`
 - `/scene new <name>`
+- `/exit`
 
 ## Info
 ```
@@ -81,3 +82,10 @@ The Referee will trigger the aging process for the party. They can list which ch
 ```
 
 The Referee will be able to create a scene. Details of the creation process are described in [the Scene Creation Process documentation](SceneCreationProcess.md).
+
+## Exit
+```
+> /exit
+```
+
+The Referee and each player will be able to exit the current campaign.
