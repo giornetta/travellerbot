@@ -1,5 +1,4 @@
-# Personal ignores
-*.py
+data/
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,visualstudiocode,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,visualstudiocode,windows
