@@ -6,6 +6,7 @@ from traveller.damage import DamageType, Damage
 
 from typing import Dict, List
 
+
 class Equipment:
     name: str
     cost: int
