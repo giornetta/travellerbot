@@ -17,6 +17,7 @@ class State(Enum):
     TERMS = 4
     SURVIVAL = 5
     END = 6
+    END_REF = 7
 
 
 class SetupConversation:
@@ -52,7 +53,7 @@ class SetupConversation:
                 },
                 fallbacks=[],
                 map_to_parent={
-                    State.END: ConversationState.ADVENTURE_SETUP  # TODO Change
+                    State.END: ConversationState.REFEREE_IDLE
                 },
                 name='create_adventure',
                 persistent=True
@@ -64,7 +65,8 @@ class SetupConversation:
                 },
                 fallbacks=[],
                 map_to_parent={
-                    State.END: ConversationState.CHARACTER_CREATION
+                    State.END: ConversationState.CHARACTER_CREATION,
+                    State.END_REF: ConversationState.REFEREE_IDLE
                 },
                 name='join_adventure',
                 persistent=True
@@ -79,14 +81,17 @@ class SetupConversation:
         return State.CODE
 
     def _handle_adventure_code(self, update: Update, context: CallbackContext) -> State:
-        adventure = self.controller.join_adventure(update.message.from_user.id, update.message.text)
-        if adventure:
+        res = self.controller.join_adventure(update.message.from_user.id, update.message.text)
+        if res:
+            adventure, is_ref = res
             update.message.reply_text(f'Joined Adventure "{adventure}"')
-            update.message.reply_text(f'Let\'s create a Character for this Adventure, choose a name:')
-
-            return State.END
+            if is_ref:
+                return State.END_REF
+            else:
+                update.message.reply_text('Let\'s create a Character for this Adventure, choose a name:')
+                return State.END
         else:
-            update.message.reply_text(f'The provided code isn\'t valid, try again.')
+            update.message.reply_text('The provided code isn\'t valid, try again.')
             return State.CODE
 
     def _ask_adventure_name(self, update: Update, context: CallbackContext) -> State:

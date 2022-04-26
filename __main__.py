@@ -21,6 +21,7 @@ if __name__ == '__main__':
         host='127.0.0.1',
         port=5432
     )
+
     updater = Updater(
         token=config['TELEGRAM_TOKEN'],
         use_context=True,
@@ -33,5 +34,3 @@ if __name__ == '__main__':
 
     updater.start_polling()
     updater.idle()
-
-    api.write_data()

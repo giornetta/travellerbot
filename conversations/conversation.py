@@ -12,6 +12,7 @@ def handler(setup_controller: SetupController, traveller_map: TravellerMap):
         entry_points=[CommandHandler('start', _handle_start)],
         states={
             ConversationState.ADVENTURE_SETUP: SetupConversation(setup_controller, traveller_map).handlers(),
+            ConversationState.REFEREE_IDLE: [MessageHandler(Filters.text, _handle_ref)],
             ConversationState.CHARACTER_CREATION: [MessageHandler(Filters.text, _handle_name)]
         },
         fallbacks=[],
@@ -31,9 +32,11 @@ def _handle_start(update: Update, context: CallbackContext) -> ConversationState
     return ConversationState.ADVENTURE_SETUP
 
 
-def _handle_name(update: Update, context: CallbackContext) -> ConversationState:
-    update.message.reply_text(
-        text='Great name!',
-    )
+def _handle_ref(update: Update, context: CallbackContext) -> ConversationState:
+    update.message.reply_text(text='Executing command...')
+    return ConversationState.REFEREE_IDLE
 
+
+def _handle_name(update: Update, context: CallbackContext) -> ConversationState:
+    update.message.reply_text(text='Great name!')
     return ConversationState.CHARACTER_CREATION
