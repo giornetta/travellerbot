@@ -48,7 +48,7 @@ class SetupConversation:
                         MessageHandler(Filters.text, self._handle_world)
                     ],
                     State.TERMS: [MessageHandler(Filters.text, self._handle_terms)],
-                    State.SURVIVAL: [MessageHandler(Filters.text, self._handle_survival)]
+                    State.SURVIVAL: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_survival)]
                 },
                 fallbacks=[],
                 map_to_parent={
@@ -86,7 +86,7 @@ class SetupConversation:
 
             return State.END
         else:
-            update.message.reply_text(f'The provided code isn\'t valid, try again."')
+            update.message.reply_text(f'The provided code isn\'t valid, try again.')
             return State.CODE
 
     def _ask_adventure_name(self, update: Update, context: CallbackContext) -> State:
