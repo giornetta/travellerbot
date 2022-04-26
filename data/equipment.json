@@ -1,1454 +1,1668 @@
 {
-    "Armor" : [
-        {
-            "name" : "Ablat",
-            "TL" : 9,
-            "AR" : 3,
-            "cost" : 75,
-            "weight" : 2,
-            "AR_laser" : 8,
-            "is_AR_damageable" : true
-        },
-        {
-            "name" : "Battle Dress",
-            "TL" : 13,
-            "AR" : 18,
-            "cost" : 200000,
-            "weight" : 60,
-            "skill_required" : "Battle Dress"
-        },
-        {
-            "name" : "Cloth",
-            "TL" : 6,
-            "AR" : 9,
-            "cost" : 250,
-            "weight" : 2
-        },
-        {
-            "name" : "Combat Armor",
-            "TL" : 11,
-            "AR" : 11,
-            "cost" : 20000,
-            "weight" : 18,
-            "skill_required" : "Zero-G"
-        },
-        {
-            "name" : "Hostile Env Vacc Suit",
-            "TL" : 12,
-            "AR" : 8,
-            "cost" : 18000,
-            "weight" : 40,
-            "skill_required" : "Zero-G"
-        },
-        {
-            "name" : "Jack",
-            "TL" : 1,
-            "AR" : 3,
-            "cost" : 50,
-            "weight" : 1
-        },
-        {
-            "name" : "Mesh",
-            "TL" : 7,
-            "AR" : 5,
-            "cost" : 150,
-            "weight" : 2
-        },
-        {
-            "name" : "Reflec",
-            "TL" : 10,
-            "AR" : 0,
-            "cost" : 1500,
-            "weight" : 1,
-            "AR_laser" : 14,
-            "is_multi_wearable" : true
-        },
-        {
-            "name" : " ",
-            "TL" : 9,
-            "AR" : 6,
-            "cost" : 9000,
-            "weight" : 8,
-            "skill_required" : "Zero-G"
-        }
-    ],
-    "Communications" : [
-        {
-            "name" : "Long Range Communicator",
-            "TL" : 6,
-            "cost" : 500,
-            "weight" : 15,
-            "range" : 500
-        },
-        {
-            "name" : "Medium Range Communicator",
-            "TL" : 5,
-            "cost" : 200,
-            "weight" : 10,
-            "range" : 30
-        },
-        {
-            "name" : "Short Range Communicator",
-            "TL" : 5,
-            "cost" : 10,
-            "weight" : 5,
-            "range" : 10
-        },
-        {
-            "name" : "Personal Communicator",
-            "TL" : 8,
-            "cost" : 250,
-            "weight" : 0.3,
-            "range" : 0,
-            "is_personal_communicator" : true
-        }
-    ],
-    "Computers" : [
-        {
-            "name" : "Computer",
-            "TL" : 7,
-            "computer_power" : 0,
-            "weight" : 10,
-            "cost" : 50
-        },
-        {
-            "name" : "Computer",
-            "TL" : 8,
-            "computer_power" : 1,
-            "weight" : 5,
-            "cost" : 100
-        },
-        {
-            "name" : "Computer",
-            "TL" : 9,
-            "computer_power" : 1,
-            "weight" : 5,
-            "cost" : 250
-        },
-        {
-            "name" : "Computer",
-            "TL" : 10,
-            "computer_power" : 2,
-            "weight" : 1,
-            "cost" : 350
-        },
-        {
-            "name" : "Computer",
-            "TL" : 11,
-            "computer_power" : 2,
-            "weight" : 1,
-            "cost" : 500
-        },
-        {
-            "name" : "Computer",
-            "TL" : 12,
-            "computer_power" : 3,
-            "weight" : 0.5,
-            "cost" : 1000
-        },
-        {
-            "name" : "Computer",
-            "TL" : 13,
-            "computer_power" : 4,
-            "weight" : 0.5,
-            "cost" : 1500
-        },
-        {
-            "name" : "Computer",
-            "TL" : 14,
-            "computer_power" : 5,
-            "weight" : 0.5,
-            "cost" : 5000
-        },
-        {
-            "name" : "Computer Terminal",
-            "TL" : 7,
-            "computer_power" : 0,
-            "weight" : 10,
-            "cost" : 200,
-            "is_terminal" : true
-        }
-    ],
-    "Computer Software" : [
-        {
-            "name" : "Database",
-            "rating" : -1,
-            "TL" : 7,
-            "cost" : 10,
-            "is_database" : true,
-            "cost_min" : 10,
-            "cost_max" : 10000
-        },
-        {
-            "name" : "Interface",
-            "rating" : 0,
-            "TL" : 7,
-            "cost" : 0,
-            "is_interface" : true
-        },
-        {
-            "name" : "Security",
-            "rating" : 0,
-            "TL" : 7,
-            "cost" : 0,
-            "is_security" : true
-        },
-        {
-            "name" : "Security",
-            "rating" : 1,
-            "TL" : 9,
-            "cost" : 200,
-            "is_security" : true
-        },
-        {
-            "name" : "Security",
-            "rating" : 2,
-            "TL" : 11,
-            "cost" : 1000,
-            "is_security" : true
-        },
-        {
-            "name" : "Security",
-            "rating" : 3,
-            "TL" : 12,
-            "cost" : 20000,
-            "is_security" : true
-        },
-        {
-            "name" : "Translator",
-            "rating" : 0,
-            "TL" : 9,
-            "cost" : 50,
-            "is_translator" : true
-        },
-        {
-            "name" : "Translator",
-            "rating" : 1,
-            "TL" : 10,
-            "cost" : 500,
-            "is_translator" : true
-        },
-        {
-            "name" : "Intrusion",
-            "rating" : 1,
-            "TL" : 10,
-            "cost" : 1000,
-            "is_intrusion" : true
-        },
-        {
-            "name" : "Intrusion",
-            "rating" : 2,
-            "TL" : 11,
-            "cost" : 10000,
-            "is_intrusion" : true
-        },
-        {
-            "name" : "Intrusion",
-            "rating" : 3,
-            "TL" : 13,
-            "cost" : 100000,
-            "is_intrusion" : true
-        },
-        {
-            "name" : "Intrusion",
-            "rating" : 4,
-            "TL" : 15,
-            "cost" : -2,
-            "is_intrusion" : true
-        },
-        {
-            "name" : "Intelligent Interface",
-            "rating" : 1,
-            "TL" : 11,
-            "cost" : 100,
-            "is_interface" : true,
-            "is_intelligent_interface" : true
-        },
-        {
-            "name" : "Intelligent Interface",
-            "rating" : 2,
-            "TL" : 13,
-            "cost" : 1000,
-            "is_interface" : true,
-            "is_intelligent_interface" : true
-        },
-        {
-            "name" : "Intelligent Interface",
-            "rating" : 3,
-            "TL" : 17,
-            "cost" : 10000,
-            "is_interface" : true,
-            "is_intelligent_interface" : true
-        },
-        {
-            "name" : "Expert",
-            "rating" : 1,
-            "TL" : 11,
-            "cost" : 1000,
-            "is_expert" : true
-        },
-        {
-            "name" : "Expert",
-            "rating" : 2,
-            "TL" : 12,
-            "cost" : 10000,
-            "is_expert" : true
-        },
-        {
-            "name" : "Expert",
-            "rating" : 3,
-            "TL" : 13,
-            "cost" : 100000,
-            "is_expert" : true
-        },
-        {
-            "name" : "Agent",
-            "rating" : 0,
-            "TL" : 11,
-            "cost" : 500,
-            "is_agent" : true
-        },
-        {
-            "name" : "Agent",
-            "rating" : 1,
-            "TL" : 12,
-            "cost" : 2000,
-            "is_agent" : true
-        },
-        {
-            "name" : "Agent",
-            "rating" : 2,
-            "TL" : 13,
-            "cost" : 100000,
-            "is_agent" : true
-        },
-        {
-            "name" : "Agent",
-            "rating" : 3,
-            "TL" : 14,
-            "cost" : 250000,
-            "is_agent" : true
-        },
-        {
-            "name" : "Intellect",
-            "rating" : 1,
-            "TL" : 12,
-            "cost" : 2000,
-            "is_intellect" : true
-        },
-        {
-            "name" : "Intellect",
-            "rating" : 2,
-            "TL" : 13,
-            "cost" : 50000,
-            "is_intellect" : true
-        },
-        {
-            "name" : "Intellect",
-            "rating" : 3,
-            "TL" : 14,
-            "cost" : -1,
-            "is_intellect" : true
-        }
-    ],
-    "Drugs" : [
-        {
-            "name" : "Medicinal Drugs",
-            "TL" : 5,
-            "cost" : 5
-        },
-        {
-            "name" : "Anti-Radiation Drugs",
-            "TL" : 8,
-            "cost" : 1000
-        },
-        {
-            "name" : "Panaceas",
-            "TL" : 8,
-            "cost" : 200
-        },
-        {
-            "name" : "Stim Drugs",
-            "TL" : 8,
-            "cost" : 50
-        },
-                {
-            "name" : "Combat Drug",
-            "TL" : 10,
-            "cost" : 1000
-        },
-        {
-            "name" : "Fast Drug",
-            "TL" : 10,
-            "cost" : 200
-        },
-        {
-            "name" : "Metabolic Accelerator",
-            "TL" : 10,
-            "cost" : 500
-        },
-        {
-            "name" : "Medicinal Slow Drug",
-            "TL" : 11,
-            "cost" : 500
-        },
-        {
-            "name" : "Anagathics",
-            "TL" : 15,
-            "cost" : 2000
-        }
-    ],
-    "Explosives" : [
-        {
-            "name" : "Plastic",
-            "TL" : 6,
-            "damage" : 3,
-            "radius" : 2,
-            "cost" : 200
-        },
-        {
-            "name" : "Pocket Nuke",
-            "TL" : 12,
-            "damage" : 2,
-            "damage_multiplier" : 20,
-            "radius" : 15,
-            "cost" : 20000
-        },
-        {
-            "name" : "TDX",
-            "TL" : 12,
-            "damage" : 4,
-            "radius" : 4,
-            "cost" : 1000
-        }
-    ],
-    "Personal Devices" : [
-        {
-            "name" : "Magnetic Compass",
-            "TL" : 3,
-            "cost" : 10
-        },
-        {
-            "name" : "Wrist Watch",
-            "TL" : 4,
-            "cost" : 100
-        },
-        {
-            "name" : "Radiation Counter",
-            "TL" : 5,
-            "cost" : 250,
-            "weight" : 1
-        },
-        {
-            "name" : "Metal Detector",
-            "TL" : 6,
-            "cost" : 300,
-            "weight" : 1
-        },
-        {
-            "name" : "Hand Calculator",
-            "TL" : 7,
-            "cost" : 10,
-            "weight" : 0.1
-        },
-        {
-            "name" : "Inertial Locator",
-            "TL" : 9,
-            "cost" : 1200,
-            "weight" : 1.5
-        },
-        {
-            "name" : "Electromagnetic Probe",
-            "TL" : 10,
-            "cost" : 1000
-        },
-        {
-            "name" : "Hand Computer",
-            "TL" : 11,
-            "cost" : 1000,
-            "weight" : 0.5
-        },
-        {
-            "name" : "Holographic Projector",
-            "TL" : 11,
-            "cost" : 1000,
-            "weight" : 1
-        },
-        {
-            "name" : "Densistometer",
-            "TL" : 14,
-            "cost" : 20000,
-            "weight" : 5
-        },
-        {
-            "name" : "Bioscanner",
-            "TL" : 15,
-            "cost" : 350000,
-            "weight" : 3.5
-        },
-        {
-            "name" : "Neural Activity Sensor",
-            "TL" : 15,
-            "cost" : 35000,
-            "weight" : 10
-        }
-    ],
-    "Sensory Aids" : [
-        {
-            "name" : "Torch",
-            "TL" : 1,
-            "cost" : 1,
-            "weight" : 0.25
-        },
-        {
-            "name" : "Lamp Oil",
-            "TL" : 2,
-            "cost" : 2
-        },
-        {
-            "name" : "Oil Lamp",
-            "TL" : 2,
-            "cost" : 10,
-            "weight" : 0.5
-        },
-        {
-            "name" : "Binoculars",
-            "TL" : 3,
-            "cost" : 75,
-            "weight" : 1
-        },
-        {
-            "name" : "Electric Torch",
-            "TL" : 5,
-            "cost" : 10,
-            "weight" : 0.5
-        },
-        {
-            "name" : "Cold Light Lantern",
-            "TL" : 6,
-            "cost" : 20,
-            "weight" : 0.25
-        },
-        {
-            "name" : "Infrared Goggles",
-            "TL" : 6,
-            "cost" : 500
-        },
-        {
-            "name" : "Light Intensifier Goggles",
-            "TL" : 7,
-            "cost" : 500
-        }
-    ],
-    "Shelters" : [
-        {
-            "name" : "Tarpaulin",
-            "TL" : 1,
-            "cost" : 10,
-            "weight" : 2
-        },
-        {
-            "name" : "Tent",
-            "TL" : 2,
-            "cost" : 200,
-            "weight" : 3
-        },
-        {
-            "name" : "Pre-Fabricated Cabin",
-            "TL" : 6,
-            "cost" : 10000,
-            "weight" : 4000
-        },
-        {
-            "name" : "Basic Life Support Supplies",
-            "TL" : 7,
-            "cost" : 100,
-            "weight" : 2
-        },
-        {
-            "name" : "Pressure Tent",
-            "TL" : 7,
-            "cost" : 2000,
-            "weight" : 25
-        },
-        {
-            "name" : "Advanced Base",
-            "TL" : 8,
-            "cost" : 50000,
-            "weight" : 6000
-        }
-    ],
-    "Survival Equipment" : [
-        {
-            "name" : "Cold Weather Clothing",
-            "TL" : 1,
-            "cost" : 200,
-            "weight" : 2
-        },
-        {
-            "name" : "Filter Mask",
-            "TL" : 3,
-            "cost" : 10
-        },
-        {
-            "name" : "Swimming Equipment",
-            "TL" : 3,
-            "cost" : 200,
-            "weight" : 1
-        },
-        {
-            "name" : "Combination Mask",
-            "TL" : 5,
-            "cost" : 150
-        },
-        {
-            "name" : "Oxygen Tanks",
-            "TL" : 5,
-            "cost" : 500,
-            "weight" : 5
-        },
-        {
-            "name" : "Respirator",
-            "TL" : 5,
-            "cost" : 100
-        },
-        {
-            "name" : "Underwater Air Tanks",
-            "TL" : 5,
-            "cost" : 800,
-            "weight" : 5
-        },
-        {
-            "name" : "Artificial Gill",
-            "TL" : 8,
-            "cost" : 4000,
-            "weight" : 4
-        },
-        {
-            "name" : "Environment Suit",
-            "TL" : 8,
-            "cost" : 500
-        },
-        {
-            "name" : "Rescue Bubble",
-            "TL" : 9,
-            "cost" : 600,
-            "weight" : 3
-        },
-        {
-            "name" : "Thruster Pack",
-            "TL" : 9,
-            "cost" : 2000,
-            "weight" : 5
-        },
-        {
-            "name" : "Portable Generator",
-            "TL" : 10,
-            "cost" : 500000,
-            "weight" : 15
-        }
-    ],
-    "Tools" : [
-        {
-            "name" : "Mechanical Toolkit",
-            "TL" : 4,
-            "cost" : 1000,
-            "weight" : 12
-        },
-        {
-            "name" : "Electronics Toolkit",
-            "TL" : 5,
-            "cost" : 1000,
-            "weight" : 12
-        },
-        {
-            "name" : "Lock Pick Set",
-            "TL" : 5,
-            "cost" : 10
-        },
-        {
-            "name" : "Medical Kit",
-            "TL" : 7,
-            "cost" : 1000,
-            "weight" : 10
-        },
-        {
-            "name" : "Forensics Toolkit",
-            "TL" : 8,
-            "cost" : 1000,
-            "weight" : 12
-        },
-        {
-            "name" : "Engineering Toolkit",
-            "TL" : 9,
-            "cost" : 1000,
-            "weight" : 12
-        },
-        {
-            "name" : "Scientific Toolkit",
-            "TL" : 9,
-            "cost" : 1000,
-            "weight" : 12
-        },
-        {
-            "name" : "Surveying Toolkit",
-            "TL" : 9,
-            "cost" : 1000,
-            "weight" : 12
-        }
-    ],
-    "Melee Weapons" : [
-        {
-            "name" : "Unarmed Strike",
-            "range" : [
-                0
-            ],
-            "damege" : 1,
-            "type" : [
-                "B"
-            ]
-        },
-        {
-            "name" : "Cudgel",
-            "TL" : 0,
-            "cost" : 10,
-            "weight" : 1,
-            "range" : [
-                0
-            ],
-            "damege" : 3,
-            "type" : [
-                "B"
-            ],
-            "LL" : 9
-        },
-        {
-            "name" : "Dagger",
-            "TL" : 0,
-            "cost" : 10,
-            "weight" : 0.25,
-            "range" : [
-                0,
-                2
-            ],
-            "damege" : 1,
-            "type" : [
-                "P"
-            ],
-            "LL" : 5
-        },
-        {
-            "name" : "Spear",
-            "TL" : 0,
-            "cost" : 10,
-            "weight" : 1.5,
-            "range" : [
-                1,
-                2
-            ],
-            "damege" : 3,
-            "type" : [
-                "P"
-            ],
-            "LL" : 8
-        },
-        {
-            "name" : "Pike",
-            "TL" : 1,
-            "cost" : 40,
-            "weight" : 8,
-            "range" : [
-                1
-            ],
-            "damege" : 4,
-            "type" : [
-                "P"
-            ],
-            "LL" : 8
-        },
-        {
-            "name" : "Sword",
-            "TL" : 1,
-            "cost" : 150,
-            "weight" : 1,
-            "range" : [
-                1
-            ],
-            "damege" : 3,
-            "type" : [
-                "P",
-                "S"
-            ],
-            "LL" : 8
-        },
-        {
-            "name" : "Broadsword",
-            "TL" : 2,
-            "cost" : 300,
-            "weight" : 3,
-            "range" : [
-                1
-            ],
-            "damege" : 4,
-            "type" : [
-                "S"
-            ],
-            "LL" : 8
-        },
-        {
-            "name" : "Halberd",
-            "TL" : 2,
-            "cost" : 75,
-            "weight" : 3,
-            "range" : [
-                1
-            ],
-            "damege" : 4,
-            "type" : [
-                "S"
-            ],
-            "LL" : 8
-        },
-        {
-            "name" : "Bayonet",
-            "TL" : 3,
-            "cost" : 10,
-            "weight" : 0.25,
-            "range" : [
-                0
-            ],
-            "damage" : 1,
-            "type" : [
-                "P"
-            ],
-            "LL" : 5
-        },
-        {
-            "name" : "Blade",
-            "TL" : 3,
-            "cost" : 50,
-            "weight" : 0.35,
-            "range" : [
-                1
-            ],
-            "damege" : 2,
-            "type" : [
-                "P"
-            ],
-            "LL" : 8
-        },
-        {
-            "name" : "Cutlass",
-            "TL" : 3,
-            "cost" : 100,
-            "weight" : 1.25,
-            "range" : [
-                1
-            ],
-            "damege" : 3,
-            "type" : [
-                "S"
-            ],
-            "LL" : 8
-        },
-        {
-            "name" : "Foil",
-            "TL" : 3,
-            "cost" : 100,
-            "weight" : 0.5,
-            "range" : [
-                1
-            ],
-            "damege" : 3,
-            "type" : [
-                "P"
-            ],
-            "LL" : 8
-        }
-    ],
-    "Ranged Weapons" : [
-        {
-            "name" : "Bow",
-            "TL" : 1,
-            "cost" : 60,
-            "weight" : 1,
-            "RoF" : [
-                1
-            ],
-            "range" : 0,
-            "damege" : 2,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 6
-        },
-        {
-            "name" : "Crossbow",
-            "TL" : 2,
-            "cost" : 75,
-            "weight" : 3,
-            "RoF" : [
-                1
-            ],
-            "range" : 1,
-            "damege" : 2,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 6
-        },
-        {
-            "name" : "Revolver",
-            "TL" : 4,
-            "cost" : 150,
-            "weight" : 0.9,
-            "RoF" : [
-                1
-            ],
-            "range" : 2,
-            "damege" : 2,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 6
-        },
-        {
-            "name" : "Auto Pistol",
-            "TL" : 5,
-            "cost" : 200,
-            "weight" : 0.75,
-            "RoF" : [
-                1
-            ],
-            "range" : 2,
-            "damege" : 2,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 6
-        },
-        {
-            "name" : "Carbine",
-            "TL" : 5,
-            "cost" : 200,
-            "weight" : 3,
-            "RoF" : [
-                1
-            ],
-            "range" : 3,
-            "damege" : 2,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 6
-        },
-        {
-            "name" : "Rifle",
-            "TL" : 5,
-            "cost" : 200,
-            "weight" : 4,
-            "RoF" : [
-                1
-            ],
-            "range" : 1,
-            "damege" : 3,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 6
-        },
-        {
-            "name" : "Shotgun",
-            "TL" : 5,
-            "cost" : 150,
-            "weight" : 3.75,
-            "RoF" : [
-                1
-            ],
-            "range" : 3,
-            "damege" : 4,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 7
-        },
-        {
-            "name" : "Submachinegun",
-            "TL" : 5,
-            "cost" : 500,
-            "weight" : 2.5,
-            "RoF" : [
-                0,
-                4
-            ],
-            "range" : 0,
-            "damege" : 2,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 4
-        },
-        {
-            "name" : "Auto Rifle",
-            "TL" : 6,
-            "cost" : 1000,
-            "weight" : 5,
-            "RoF" : [
-                1,
-                4
-            ],
-            "range" : 1,
-            "damege" : 3,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 6
-        },
-        {
-            "name" : "Assault Rifle",
-            "TL" : 7,
-            "cost" : 300,
-            "weight" : 3,
-            "RoF" : [
-                1,
-                4
-            ],
-            "range" : 0,
-            "damege" : 3,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 4
-        },
-        {
-            "name" : "Body Pistol",
-            "TL" : 7,
-            "cost" : 500,
-            "weight" : 0.25,
-            "RoF" : [
-                1
-            ],
-            "range" : 2,
-            "damege" : 2,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 1
-        },
-        {
-            "name" : "Laser Carbine",
-            "TL" : 8,
-            "cost" : 2.5,
-            "weight" : 5,
-            "RoF" : [
-                1
-            ],
-            "range" : 2,
-            "damege" : 4,
-            "type" : "E",
-            "recoil" : false,
-            "LL" : 2
-        },
-        {
-            "name" : "Snub Pistol",
-            "TL" : 8,
-            "cost" : 150,
-            "weight" : 0.25,
-            "RoF" : [
-                1
-            ],
-            "range" : 2,
-            "damege" : 2,
-            "type" : "P",
-            "recoil" : false,
-            "LL" : 6
-        },
-        {
-            "name" : "Accelerator Rifle",
-            "TL" : 9,
-            "cost" : 900,
-            "weight" : 2.5,
-            "RoF" : [
-                1,
-                3
-            ],
-            "range" : 1,
-            "damege" : 3,
-            "type" : "P",
-            "recoil" : false,
-            "LL" : 6
-        },
-        {
-            "name" : "Laser Rifle",
-            "TL" : 9,
-            "cost" : 3500,
-            "weight" : 6,
-            "RoF" : [
-                1
-            ],
-            "range" : 1,
-            "damege" : 5,
-            "type" : "E",
-            "recoil" : false,
-            "LL" : 2
-        },
-        {
-            "name" : "Advanced Combat Rifle",
-            "TL" : 10,
-            "cost" : 1000,
-            "weight" : 3500,
-            "RoF" : [
-                1,
-                4
-            ],
-            "range" : 1,
-            "damege" : 3,
-            "type" : "P",
-            "recoil" : true,
-            "LL" : 6
-        },
-        {
-            "name" : "Gauss Rifle",
-            "TL" : 12,
-            "cost" : 1500,
-            "weight" : 3.5,
-            "RoF" : [
-                1,
-                4,
-                10
-            ],
-            "range" : 1,
-            "damege" : 4,
-            "type" : "P",
-            "recoil" : false,
-            "LL" : 6
-        },
-        {
-            "name" : "Laser Pistol",
-            "TL" : 12,
-            "cost" : 1000,
-            "weight" : 1.2,
-            "RoF" : [
-                1
-            ],
-            "range" : 2,
-            "damege" : 4,
-            "type" : "E",
-            "recoil" : false,
-            "LL" : 2
-        }
-    ],
-    "Ranged Ammunition" : [
-        {
-            "name" : "Bow",
-            "TL" : 1,
-            "cost" : 1,
-            "weight" : 0.025,
-            "rounds" : [1]
-        },
-        {
-            "name" : "Crossbow",
-            "TL" : 2,
-            "cost" : 2,
-            "weight" : 0.02,
-            "rounds" : [1]
-        },
-        {
-            "name" : "Revolver",
-            "TL" : 4,
-            "cost" : 5,
-            "weight" : 0.1,
-            "rounds" : [6]
-        },
-        {
-            "name" : "Auto Pistol",
-            "TL" : 5,
-            "cost" : 10,
-            "weight" : 0.25,
-            "rounds" : [15]
-        },
-        {
-            "name" : "Body Pistol",
-            "TL" : 7,
-            "cost" : 20,
-            "weight" : 0.05,
-            "rounds" : [6]
-        },
-        {
-            "name" : "Snub Pistol",
-            "TL" : 8,
-            "cost" : 10,
-            "weight" : 0.03,
-            "rounds" : [6,15]
-        },
-        {
-            "name" : "Shotgun",
-            "TL" : 5,
-            "cost" : 10,
-            "weight" : 0.75,
-            "rounds" : [10]
-        },
-        {
-            "name" : "Rifle",
-            "TL" : 5,
-            "cost" : 20,
-            "weight" : 0.5,
-            "rounds" : [10]
-        },
-        {
-            "name" : "Carbine",
-            "TL" : 5,
-            "cost" : 10,
-            "weight" : 0.125,
-            "rounds" : [20]
-        },
-        {
-            "name" : "Auto Rifle",
-            "TL" : 6,
-            "cost" : 20,
-            "weight" : 0.5,
-            "rounds" : [20]
-        },
-        {
-            "name" : "Assault Rifle",
-            "TL" : 7,
-            "cost" : 20,
-            "weight" : 0.33,
-            "rounds" : [30]
-        },
-        {
-            "name" : "Accelerator Rifle",
-            "TL" : 9,
-            "cost" : 25,
-            "weight" : 0.5,
-            "rounds" : [15]
-        },
-        {
-            "name" : "Advanced Combat Rifle",
-            "TL" : 10,
-            "cost" : 15,
-            "weight" : 0.5,
-            "rounds" : [20]
-        },
-        {
-            "name" : "Gauss Rifle",
-            "TL" : 12,
-            "cost" : 30,
-            "weight" : 0.4,
-            "rounds" : [40]
-        },
-        {
-            "name" : "Submachinegun",
-            "TL" : 5,
-            "cost" : 20,
-            "weight" : 0.5,
-            "rounds" : [30]
-        },
-        {
-            "name" : "Laser Pistol",
-            "TL" : 12,
-            "cost" : 100,
-            "weight" : 0.5,
-            "rounds" : [25]
-        },
-        {
-            "name" : "Laser Carbine",
-            "TL" : 8,
-            "cost" : 200,
-            "weight" : 3,
-            "rounds" : [50]
-        },
-        {
-            "name" : "Laser Rifle",
-            "TL" : 9,
-            "cost" : 300,
-            "weight" : 4,
-            "rounds" : [100]
-        }
-    ],
-    "Weapon Accessories" : [
-        {
-            "name" : "Shoulder Stocks",
-            "TL" : 5,
-            "cost" : 75,
-            "weight" : 1
-        },
-        {
-            "name" : "Folding Stocks",
-            "TL" : 6,
-            "cost" : 100,
-            "weight" : 0.5
-        },
-        {
-            "name" : "Telescopic Sights",
-            "TL" : 8,
-            "cost" : 200,
-            "weight" : 0.8
-        },
-        {
-            "name" : "Grenade Launcher",
-            "TL" : 8,
-            "cost" : 1000
-        },
-        {
-            "name" : "Laser Sights",
-            "TL" : 8,
-            "cost" : 100,
-            "weight" : 1.5
-        },
-        {
-            "name" : "Silencer",
-            "TL" : 8,
-            "cost" : 250
-        },
-        {
-            "name" : "Gyrostabilizer",
-            "TL" : 9,
-            "cost" : 300
-        },
-        {
-            "name" : "Laser Telescopic Sights",
-            "TL" : 9,
-            "cost" : 3000,
-            "weight" : 1.8
-        },
-        {
-            "name" : "Secure Weapon",
-            "TL" : 10,
-            "cost" : 100
-        },
-        {
-            "name" : "Intelligent Weapon",
-            "TL" : 11,
-            "cost" : 1000
-        }
-    ],
-    "Grenades" : [
-        {
-            "name" : "Frag",
-            "TL" : 6,
-            "cost" : 180,
-            "weight" : 0.5,
-            "damage" : [
-                5,
-                3,
-                1
-            ]
-        },
-        {
-            "name" : "Smoke",
-            "TL" : 6,
-            "cost" : 90,
-            "weight" : 0.5
-        },
-        {
-            "name" : "Aerosol",
-            "TL" : 9,
-            "cost" : 90,
-            "weight" : 0.5
-        },
-        {
-            "name" : "Stun",
-            "TL" : 9,
-            "cost" : 180,
-            "weight" : 0.5,
-            "damage" : [
-                3
-            ]
-        }
-    ],
-    "Heavy Weapons" : [
-        {
-            "name" : "Grenade Launcher",
-            "TL" : 7,
-            "cost" : 400,
-            "weight" : 6,
-            "RoF" : [
-                1
-            ],
-            "range" : 3,
-            "recoil" : true,
-            "LL" : 3
-        },
-        {
-            "name" : "Rocket Launcher",
-            "TL" : 7,
-            "cost" : 2000,
-            "weight" : 6,
-            "RoF" : [
-                1
-            ],
-            "range" : 5,
-            "damage" : 4,
-            "recoil" : false,
-            "LL" : 3
-        },
-        {
-            "name" : "RAM Grenade Launcher",
-            "TL" : 8,
-            "cost" : 800,
-            "weight" : 6,
-            "RoF" : [
-                1,
-                3
-            ],
-            "range" : 0,
-            "recoil" : true,
-            "LL" : 3
-        },
-        {
-            "name" : "PGMP",
-            "TL" : 12,
-            "cost" : 20000,
-            "weight" : 10,
-            "RoF" : [
-                1,
-                4
-            ],
-            "range" : 4,
-            "damage" : 10,
-            "recoil" : true,
-            "LL" : 2
-        },
-        {
-            "name" : "FGMP",
-            "TL" : 14,
-            "cost" : 100000,
-            "weight" : 12,
-            "RoF" : [
-                1,
-                4
-            ],
-            "range" : 4,
-            "damage" : 16,
-            "recoil" : true,
-            "LL" : 2
-        }
-    ],
-    "Heavy Weapon Ammunition" : [
-        {
-            "name" : "Grenade Launcher",
-            "TL" : 7,
-            "cost" : 180,
-            "weight" : 0.5,
-            "rounds" : 6
-        },
-        {
-            "name" : "Rocket Launcher",
-            "TL" : 7,
-            "cost" : 300,
-            "weight" : 1,
-            "rounds" : 1
-        },
-        {
-            "name" : "RAM Rocket Launcher",
-            "TL" : 8,
-            "cost" : 180,
-            "weight" : 0.5,
-            "rounds" : 6
-        },
-        {
-            "name" : "PGMP",
-            "TL" : 12,
-            "cost" : 2500,
-            "weight" : 6,
-            "rounds" : 40
-        },
-        {
-            "name" : "FGMP",
-            "TL" : 14,
-            "cost" : 65000,
-            "weight" : 6,
-            "rounds" : 40
-        }
-    ]
+  "Armor": [
+    {
+      "id": 2,
+      "name": "Ablat",
+      "TL": 9,
+      "AR": 3,
+      "cost": 75,
+      "weight": 2,
+      "AR_laser": 8,
+      "is_AR_damageable": true
+    },
+    {
+      "id": 3,
+      "name": "Battle Dress",
+      "TL": 13,
+      "AR": 18,
+      "cost": 200000,
+      "weight": 60,
+      "skill_required": "Battle Dress"
+    },
+    {
+      "id": 4,
+      "name": "Cloth",
+      "TL": 6,
+      "AR": 9,
+      "cost": 250,
+      "weight": 2
+    },
+    {
+      "id": 5,
+      "name": "Combat Armor",
+      "TL": 11,
+      "AR": 11,
+      "cost": 20000,
+      "weight": 18,
+      "skill_required": "Zero-G"
+    },
+    {
+      "id": 6,
+      "name": "Hostile Env Vacc Suit",
+      "TL": 12,
+      "AR": 8,
+      "cost": 18000,
+      "weight": 40,
+      "skill_required": "Zero-G"
+    },
+    {
+      "id": 7,
+      "name": "Jack",
+      "TL": 1,
+      "AR": 3,
+      "cost": 50,
+      "weight": 1
+    },
+    {
+      "id": 8,
+      "name": "Mesh",
+      "TL": 7,
+      "AR": 5,
+      "cost": 150,
+      "weight": 2
+    },
+    {
+      "id": 9,
+      "name": "Reflec",
+      "TL": 10,
+      "AR": 0,
+      "cost": 1500,
+      "weight": 1,
+      "AR_laser": 14,
+      "is_multi_wearable": true
+    },
+    {
+      "id": 10,
+      "name": " ",
+      "TL": 9,
+      "AR": 6,
+      "cost": 9000,
+      "weight": 8,
+      "skill_required": "Zero-G"
+    }
+  ],
+  "Communications": [
+    {
+      "id": 11,
+      "name": "Long Range Communicator",
+      "TL": 6,
+      "cost": 500,
+      "weight": 15,
+      "range": 500
+    },
+    {
+      "id": 12,
+      "name": "Medium Range Communicator",
+      "TL": 5,
+      "cost": 200,
+      "weight": 10,
+      "range": 30
+    },
+    {
+      "id": 13,
+      "name": "Short Range Communicator",
+      "TL": 5,
+      "cost": 10,
+      "weight": 5,
+      "range": 10
+    },
+    {
+      "id": 14,
+      "name": "Personal Communicator",
+      "TL": 8,
+      "cost": 250,
+      "weight": 0.3,
+      "range": 0,
+      "is_personal_communicator": true
+    }
+  ],
+  "Computers": [
+    {
+      "id": 15,
+      "name": "Computer",
+      "TL": 7,
+      "computer_power": 0,
+      "weight": 10,
+      "cost": 50
+    },
+    {
+      "id": 16,
+      "name": "Computer",
+      "TL": 8,
+      "computer_power": 1,
+      "weight": 5,
+      "cost": 100
+    },
+    {
+      "id": 17,
+      "name": "Computer",
+      "TL": 9,
+      "computer_power": 1,
+      "weight": 5,
+      "cost": 250
+    },
+    {
+      "id": 18,
+      "name": "Computer",
+      "TL": 10,
+      "computer_power": 2,
+      "weight": 1,
+      "cost": 350
+    },
+    {
+      "id": 19,
+      "name": "Computer",
+      "TL": 11,
+      "computer_power": 2,
+      "weight": 1,
+      "cost": 500
+    },
+    {
+      "id": 20,
+      "name": "Computer",
+      "TL": 12,
+      "computer_power": 3,
+      "weight": 0.5,
+      "cost": 1000
+    },
+    {
+      "id": 21,
+      "name": "Computer",
+      "TL": 13,
+      "computer_power": 4,
+      "weight": 0.5,
+      "cost": 1500
+    },
+    {
+      "id": 22,
+      "name": "Computer",
+      "TL": 14,
+      "computer_power": 5,
+      "weight": 0.5,
+      "cost": 5000
+    },
+    {
+      "id": 23,
+      "name": "Computer Terminal",
+      "TL": 7,
+      "computer_power": 0,
+      "weight": 10,
+      "cost": 200,
+      "is_terminal": true
+    }
+  ],
+  "Computer Software": [
+    {
+      "id": 24,
+      "name": "Database",
+      "rating": -1,
+      "TL": 7,
+      "cost": 10,
+      "is_database": true,
+      "cost_min": 10,
+      "cost_max": 10000
+    },
+    {
+      "id": 25,
+      "name": "Interface",
+      "rating": 0,
+      "TL": 7,
+      "cost": 0,
+      "is_interface": true
+    },
+    {
+      "id": 26,
+      "name": "Security",
+      "rating": 0,
+      "TL": 7,
+      "cost": 0,
+      "is_security": true
+    },
+    {
+      "id": 27,
+      "name": "Security",
+      "rating": 1,
+      "TL": 9,
+      "cost": 200,
+      "is_security": true
+    },
+    {
+      "id": 28,
+      "name": "Security",
+      "rating": 2,
+      "TL": 11,
+      "cost": 1000,
+      "is_security": true
+    },
+    {
+      "id": 29,
+      "name": "Security",
+      "rating": 3,
+      "TL": 12,
+      "cost": 20000,
+      "is_security": true
+    },
+    {
+      "id": 30,
+      "name": "Translator",
+      "rating": 0,
+      "TL": 9,
+      "cost": 50,
+      "is_translator": true
+    },
+    {
+      "id": 31,
+      "name": "Translator",
+      "rating": 1,
+      "TL": 10,
+      "cost": 500,
+      "is_translator": true
+    },
+    {
+      "id": 32,
+      "name": "Intrusion",
+      "rating": 1,
+      "TL": 10,
+      "cost": 1000,
+      "is_intrusion": true
+    },
+    {
+      "id": 33,
+      "name": "Intrusion",
+      "rating": 2,
+      "TL": 11,
+      "cost": 10000,
+      "is_intrusion": true
+    },
+    {
+      "id": 34,
+      "name": "Intrusion",
+      "rating": 3,
+      "TL": 13,
+      "cost": 100000,
+      "is_intrusion": true
+    },
+    {
+      "id": 35,
+      "name": "Intrusion",
+      "rating": 4,
+      "TL": 15,
+      "cost": -2,
+      "is_intrusion": true
+    },
+    {
+      "id": 36,
+      "name": "Intelligent Interface",
+      "rating": 1,
+      "TL": 11,
+      "cost": 100,
+      "is_interface": true,
+      "is_intelligent_interface": true
+    },
+    {
+      "id": 37,
+      "name": "Intelligent Interface",
+      "rating": 2,
+      "TL": 13,
+      "cost": 1000,
+      "is_interface": true,
+      "is_intelligent_interface": true
+    },
+    {
+      "id": 38,
+      "name": "Intelligent Interface",
+      "rating": 3,
+      "TL": 17,
+      "cost": 10000,
+      "is_interface": true,
+      "is_intelligent_interface": true
+    },
+    {
+      "id": 39,
+      "name": "Expert",
+      "rating": 1,
+      "TL": 11,
+      "cost": 1000,
+      "is_expert": true
+    },
+    {
+      "id": 40,
+      "name": "Expert",
+      "rating": 2,
+      "TL": 12,
+      "cost": 10000,
+      "is_expert": true
+    },
+    {
+      "id": 41,
+      "name": "Expert",
+      "rating": 3,
+      "TL": 13,
+      "cost": 100000,
+      "is_expert": true
+    },
+    {
+      "id": 42,
+      "name": "Agent",
+      "rating": 0,
+      "TL": 11,
+      "cost": 500,
+      "is_agent": true
+    },
+    {
+      "id": 43,
+      "name": "Agent",
+      "rating": 1,
+      "TL": 12,
+      "cost": 2000,
+      "is_agent": true
+    },
+    {
+      "id": 44,
+      "name": "Agent",
+      "rating": 2,
+      "TL": 13,
+      "cost": 100000,
+      "is_agent": true
+    },
+    {
+      "id": 45,
+      "name": "Agent",
+      "rating": 3,
+      "TL": 14,
+      "cost": 250000,
+      "is_agent": true
+    },
+    {
+      "id": 46,
+      "name": "Intellect",
+      "rating": 1,
+      "TL": 12,
+      "cost": 2000,
+      "is_intellect": true
+    },
+    {
+      "id": 47,
+      "name": "Intellect",
+      "rating": 2,
+      "TL": 13,
+      "cost": 50000,
+      "is_intellect": true
+    },
+    {
+      "id": 48,
+      "name": "Intellect",
+      "rating": 3,
+      "TL": 14,
+      "cost": -1,
+      "is_intellect": true
+    }
+  ],
+  "Drugs": [
+    {
+      "id": 49,
+      "name": "Medicinal Drugs",
+      "TL": 5,
+      "cost": 5
+    },
+    {
+      "id": 50,
+      "name": "Anti-Radiation Drugs",
+      "TL": 8,
+      "cost": 1000
+    },
+    {
+      "id": 51,
+      "name": "Panaceas",
+      "TL": 8,
+      "cost": 200
+    },
+    {
+      "id": 52,
+      "name": "Stim Drugs",
+      "TL": 8,
+      "cost": 50
+    },
+    {
+      "id": 53,
+      "name": "Combat Drug",
+      "TL": 10,
+      "cost": 1000
+    },
+    {
+      "id": 54,
+      "name": "Fast Drug",
+      "TL": 10,
+      "cost": 200
+    },
+    {
+      "id": 55,
+      "name": "Metabolic Accelerator",
+      "TL": 10,
+      "cost": 500
+    },
+    {
+      "id": 56,
+      "name": "Medicinal Slow Drug",
+      "TL": 11,
+      "cost": 500
+    },
+    {
+      "id": 57,
+      "name": "Anagathics",
+      "TL": 15,
+      "cost": 2000
+    }
+  ],
+  "Explosives": [
+    {
+      "id": 58,
+      "name": "Plastic",
+      "TL": 6,
+      "damage": 3,
+      "radius": 2,
+      "cost": 200
+    },
+    {
+      "id": 59,
+      "name": "Pocket Nuke",
+      "TL": 12,
+      "damage": 2,
+      "damage_multiplier": 20,
+      "radius": 15,
+      "cost": 20000
+    },
+    {
+      "id": 60,
+      "name": "TDX",
+      "TL": 12,
+      "damage": 4,
+      "radius": 4,
+      "cost": 1000
+    }
+  ],
+  "Personal Devices": [
+    {
+      "id": 61,
+      "name": "Magnetic Compass",
+      "TL": 3,
+      "cost": 10
+    },
+    {
+      "id": 62,
+      "name": "Wrist Watch",
+      "TL": 4,
+      "cost": 100
+    },
+    {
+      "id": 63,
+      "name": "Radiation Counter",
+      "TL": 5,
+      "cost": 250,
+      "weight": 1
+    },
+    {
+      "id": 64,
+      "name": "Metal Detector",
+      "TL": 6,
+      "cost": 300,
+      "weight": 1
+    },
+    {
+      "id": 65,
+      "name": "Hand Calculator",
+      "TL": 7,
+      "cost": 10,
+      "weight": 0.1
+    },
+    {
+      "id": 66,
+      "name": "Inertial Locator",
+      "TL": 9,
+      "cost": 1200,
+      "weight": 1.5
+    },
+    {
+      "id": 67,
+      "name": "Electromagnetic Probe",
+      "TL": 10,
+      "cost": 1000
+    },
+    {
+      "id": 68,
+      "name": "Hand Computer",
+      "TL": 11,
+      "cost": 1000,
+      "weight": 0.5
+    },
+    {
+      "id": 69,
+      "name": "Holographic Projector",
+      "TL": 11,
+      "cost": 1000,
+      "weight": 1
+    },
+    {
+      "id": 70,
+      "name": "Densistometer",
+      "TL": 14,
+      "cost": 20000,
+      "weight": 5
+    },
+    {
+      "id": 71,
+      "name": "Bioscanner",
+      "TL": 15,
+      "cost": 350000,
+      "weight": 3.5
+    },
+    {
+      "id": 72,
+      "name": "Neural Activity Sensor",
+      "TL": 15,
+      "cost": 35000,
+      "weight": 10
+    }
+  ],
+  "Sensory Aids": [
+    {
+      "id": 73,
+      "name": "Torch",
+      "TL": 1,
+      "cost": 1,
+      "weight": 0.25
+    },
+    {
+      "id": 74,
+      "name": "Lamp Oil",
+      "TL": 2,
+      "cost": 2
+    },
+    {
+      "id": 75,
+      "name": "Oil Lamp",
+      "TL": 2,
+      "cost": 10,
+      "weight": 0.5
+    },
+    {
+      "id": 76,
+      "name": "Binoculars",
+      "TL": 3,
+      "cost": 75,
+      "weight": 1
+    },
+    {
+      "id": 77,
+      "name": "Electric Torch",
+      "TL": 5,
+      "cost": 10,
+      "weight": 0.5
+    },
+    {
+      "id": 78,
+      "name": "Cold Light Lantern",
+      "TL": 6,
+      "cost": 20,
+      "weight": 0.25
+    },
+    {
+      "id": 79,
+      "name": "Infrared Goggles",
+      "TL": 6,
+      "cost": 500
+    },
+    {
+      "id": 80,
+      "name": "Light Intensifier Goggles",
+      "TL": 7,
+      "cost": 500
+    }
+  ],
+  "Shelters": [
+    {
+      "id": 81,
+      "name": "Tarpaulin",
+      "TL": 1,
+      "cost": 10,
+      "weight": 2
+    },
+    {
+      "id": 82,
+      "name": "Tent",
+      "TL": 2,
+      "cost": 200,
+      "weight": 3
+    },
+    {
+      "id": 83,
+      "name": "Pre-Fabricated Cabin",
+      "TL": 6,
+      "cost": 10000,
+      "weight": 4000
+    },
+    {
+      "id": 84,
+      "name": "Basic Life Support Supplies",
+      "TL": 7,
+      "cost": 100,
+      "weight": 2
+    },
+    {
+      "id": 85,
+      "name": "Pressure Tent",
+      "TL": 7,
+      "cost": 2000,
+      "weight": 25
+    },
+    {
+      "id": 86,
+      "name": "Advanced Base",
+      "TL": 8,
+      "cost": 50000,
+      "weight": 6000
+    }
+  ],
+  "Survival Equipment": [
+    {
+      "id": 87,
+      "name": "Cold Weather Clothing",
+      "TL": 1,
+      "cost": 200,
+      "weight": 2
+    },
+    {
+      "id": 88,
+      "name": "Filter Mask",
+      "TL": 3,
+      "cost": 10
+    },
+    {
+      "id": 89,
+      "name": "Swimming Equipment",
+      "TL": 3,
+      "cost": 200,
+      "weight": 1
+    },
+    {
+      "id": 90,
+      "name": "Combination Mask",
+      "TL": 5,
+      "cost": 150
+    },
+    {
+      "id": 91,
+      "name": "Oxygen Tanks",
+      "TL": 5,
+      "cost": 500,
+      "weight": 5
+    },
+    {
+      "id": 92,
+      "name": "Respirator",
+      "TL": 5,
+      "cost": 100
+    },
+    {
+      "id": 93,
+      "name": "Underwater Air Tanks",
+      "TL": 5,
+      "cost": 800,
+      "weight": 5
+    },
+    {
+      "id": 94,
+      "name": "Artificial Gill",
+      "TL": 8,
+      "cost": 4000,
+      "weight": 4
+    },
+    {
+      "id": 95,
+      "name": "Environment Suit",
+      "TL": 8,
+      "cost": 500
+    },
+    {
+      "id": 96,
+      "name": "Rescue Bubble",
+      "TL": 9,
+      "cost": 600,
+      "weight": 3
+    },
+    {
+      "id": 97,
+      "name": "Thruster Pack",
+      "TL": 9,
+      "cost": 2000,
+      "weight": 5
+    },
+    {
+      "id": 98,
+      "name": "Portable Generator",
+      "TL": 10,
+      "cost": 500000,
+      "weight": 15
+    }
+  ],
+  "Tools": [
+    {
+      "id": 99,
+      "name": "Mechanical Toolkit",
+      "TL": 4,
+      "cost": 1000,
+      "weight": 12
+    },
+    {
+      "id": 100,
+      "name": "Electronics Toolkit",
+      "TL": 5,
+      "cost": 1000,
+      "weight": 12
+    },
+    {
+      "id": 101,
+      "name": "Lock Pick Set",
+      "TL": 5,
+      "cost": 10
+    },
+    {
+      "id": 102,
+      "name": "Medical Kit",
+      "TL": 7,
+      "cost": 1000,
+      "weight": 10
+    },
+    {
+      "id": 103,
+      "name": "Forensics Toolkit",
+      "TL": 8,
+      "cost": 1000,
+      "weight": 12
+    },
+    {
+      "id": 104,
+      "name": "Engineering Toolkit",
+      "TL": 9,
+      "cost": 1000,
+      "weight": 12
+    },
+    {
+      "id": 105,
+      "name": "Scientific Toolkit",
+      "TL": 9,
+      "cost": 1000,
+      "weight": 12
+    },
+    {
+      "id": 106,
+      "name": "Surveying Toolkit",
+      "TL": 9,
+      "cost": 1000,
+      "weight": 12
+    }
+  ],
+  "Melee Weapons": [
+    {
+      "id": 107,
+      "name": "Unarmed Strike",
+      "range": [
+        0
+      ],
+      "damege": 1,
+      "type": [
+        "B"
+      ]
+    },
+    {
+      "id": 108,
+      "name": "Cudgel",
+      "TL": 0,
+      "cost": 10,
+      "weight": 1,
+      "range": [
+        0
+      ],
+      "damege": 3,
+      "type": [
+        "B"
+      ],
+      "LL": 9
+    },
+    {
+      "id": 109,
+      "name": "Dagger",
+      "TL": 0,
+      "cost": 10,
+      "weight": 0.25,
+      "range": [
+        0,
+        2
+      ],
+      "damege": 1,
+      "type": [
+        "P"
+      ],
+      "LL": 5
+    },
+    {
+      "id": 110,
+      "name": "Spear",
+      "TL": 0,
+      "cost": 10,
+      "weight": 1.5,
+      "range": [
+        1,
+        2
+      ],
+      "damege": 3,
+      "type": [
+        "P"
+      ],
+      "LL": 8
+    },
+    {
+      "id": 111,
+      "name": "Pike",
+      "TL": 1,
+      "cost": 40,
+      "weight": 8,
+      "range": [
+        1
+      ],
+      "damege": 4,
+      "type": [
+        "P"
+      ],
+      "LL": 8
+    },
+    {
+      "id": 112,
+      "name": "Sword",
+      "TL": 1,
+      "cost": 150,
+      "weight": 1,
+      "range": [
+        1
+      ],
+      "damege": 3,
+      "type": [
+        "P",
+        "S"
+      ],
+      "LL": 8
+    },
+    {
+      "id": 113,
+      "name": "Broadsword",
+      "TL": 2,
+      "cost": 300,
+      "weight": 3,
+      "range": [
+        1
+      ],
+      "damege": 4,
+      "type": [
+        "S"
+      ],
+      "LL": 8
+    },
+    {
+      "id": 114,
+      "name": "Halberd",
+      "TL": 2,
+      "cost": 75,
+      "weight": 3,
+      "range": [
+        1
+      ],
+      "damege": 4,
+      "type": [
+        "S"
+      ],
+      "LL": 8
+    },
+    {
+      "id": 115,
+      "name": "Bayonet",
+      "TL": 3,
+      "cost": 10,
+      "weight": 0.25,
+      "range": [
+        0
+      ],
+      "damage": 1,
+      "type": [
+        "P"
+      ],
+      "LL": 5
+    },
+    {
+      "id": 116,
+      "name": "Blade",
+      "TL": 3,
+      "cost": 50,
+      "weight": 0.35,
+      "range": [
+        1
+      ],
+      "damege": 2,
+      "type": [
+        "P"
+      ],
+      "LL": 8
+    },
+    {
+      "id": 117,
+      "name": "Cutlass",
+      "TL": 3,
+      "cost": 100,
+      "weight": 1.25,
+      "range": [
+        1
+      ],
+      "damege": 3,
+      "type": [
+        "S"
+      ],
+      "LL": 8
+    },
+    {
+      "id": 118,
+      "name": "Foil",
+      "TL": 3,
+      "cost": 100,
+      "weight": 0.5,
+      "range": [
+        1
+      ],
+      "damege": 3,
+      "type": [
+        "P"
+      ],
+      "LL": 8
+    }
+  ],
+  "Ranged Weapons": [
+    {
+      "id": 119,
+      "name": "Bow",
+      "TL": 1,
+      "cost": 60,
+      "weight": 1,
+      "RoF": [
+        1
+      ],
+      "range": 0,
+      "damege": 2,
+      "type": "P",
+      "recoil": true,
+      "LL": 6
+    },
+    {
+      "id": 120,
+      "name": "Crossbow",
+      "TL": 2,
+      "cost": 75,
+      "weight": 3,
+      "RoF": [
+        1
+      ],
+      "range": 1,
+      "damege": 2,
+      "type": "P",
+      "recoil": true,
+      "LL": 6
+    },
+    {
+      "id": 121,
+      "name": "Revolver",
+      "TL": 4,
+      "cost": 150,
+      "weight": 0.9,
+      "RoF": [
+        1
+      ],
+      "range": 2,
+      "damege": 2,
+      "type": "P",
+      "recoil": true,
+      "LL": 6
+    },
+    {
+      "id": 122,
+      "name": "Auto Pistol",
+      "TL": 5,
+      "cost": 200,
+      "weight": 0.75,
+      "RoF": [
+        1
+      ],
+      "range": 2,
+      "damege": 2,
+      "type": "P",
+      "recoil": true,
+      "LL": 6
+    },
+    {
+      "id": 123,
+      "name": "Carbine",
+      "TL": 5,
+      "cost": 200,
+      "weight": 3,
+      "RoF": [
+        1
+      ],
+      "range": 3,
+      "damege": 2,
+      "type": "P",
+      "recoil": true,
+      "LL": 6
+    },
+    {
+      "id": 124,
+      "name": "Rifle",
+      "TL": 5,
+      "cost": 200,
+      "weight": 4,
+      "RoF": [
+        1
+      ],
+      "range": 1,
+      "damege": 3,
+      "type": "P",
+      "recoil": true,
+      "LL": 6
+    },
+    {
+      "id": 125,
+      "name": "Shotgun",
+      "TL": 5,
+      "cost": 150,
+      "weight": 3.75,
+      "RoF": [
+        1
+      ],
+      "range": 3,
+      "damege": 4,
+      "type": "P",
+      "recoil": true,
+      "LL": 7
+    },
+    {
+      "id": 126,
+      "name": "Submachinegun",
+      "TL": 5,
+      "cost": 500,
+      "weight": 2.5,
+      "RoF": [
+        0,
+        4
+      ],
+      "range": 0,
+      "damege": 2,
+      "type": "P",
+      "recoil": true,
+      "LL": 4
+    },
+    {
+      "id": 127,
+      "name": "Auto Rifle",
+      "TL": 6,
+      "cost": 1000,
+      "weight": 5,
+      "RoF": [
+        1,
+        4
+      ],
+      "range": 1,
+      "damege": 3,
+      "type": "P",
+      "recoil": true,
+      "LL": 6
+    },
+    {
+      "id": 128,
+      "name": "Assault Rifle",
+      "TL": 7,
+      "cost": 300,
+      "weight": 3,
+      "RoF": [
+        1,
+        4
+      ],
+      "range": 0,
+      "damege": 3,
+      "type": "P",
+      "recoil": true,
+      "LL": 4
+    },
+    {
+      "id": 129,
+      "name": "Body Pistol",
+      "TL": 7,
+      "cost": 500,
+      "weight": 0.25,
+      "RoF": [
+        1
+      ],
+      "range": 2,
+      "damege": 2,
+      "type": "P",
+      "recoil": true,
+      "LL": 1
+    },
+    {
+      "id": 130,
+      "name": "Laser Carbine",
+      "TL": 8,
+      "cost": 2.5,
+      "weight": 5,
+      "RoF": [
+        1
+      ],
+      "range": 2,
+      "damege": 4,
+      "type": "E",
+      "recoil": false,
+      "LL": 2
+    },
+    {
+      "id": 131,
+      "name": "Snub Pistol",
+      "TL": 8,
+      "cost": 150,
+      "weight": 0.25,
+      "RoF": [
+        1
+      ],
+      "range": 2,
+      "damege": 2,
+      "type": "P",
+      "recoil": false,
+      "LL": 6
+    },
+    {
+      "id": 132,
+      "name": "Accelerator Rifle",
+      "TL": 9,
+      "cost": 900,
+      "weight": 2.5,
+      "RoF": [
+        1,
+        3
+      ],
+      "range": 1,
+      "damege": 3,
+      "type": "P",
+      "recoil": false,
+      "LL": 6
+    },
+    {
+      "id": 133,
+      "name": "Laser Rifle",
+      "TL": 9,
+      "cost": 3500,
+      "weight": 6,
+      "RoF": [
+        1
+      ],
+      "range": 1,
+      "damege": 5,
+      "type": "E",
+      "recoil": false,
+      "LL": 2
+    },
+    {
+      "id": 134,
+      "name": "Advanced Combat Rifle",
+      "TL": 10,
+      "cost": 1000,
+      "weight": 3500,
+      "RoF": [
+        1,
+        4
+      ],
+      "range": 1,
+      "damege": 3,
+      "type": "P",
+      "recoil": true,
+      "LL": 6
+    },
+    {
+      "id": 135,
+      "name": "Gauss Rifle",
+      "TL": 12,
+      "cost": 1500,
+      "weight": 3.5,
+      "RoF": [
+        1,
+        4,
+        10
+      ],
+      "range": 1,
+      "damege": 4,
+      "type": "P",
+      "recoil": false,
+      "LL": 6
+    },
+    {
+      "id": 136,
+      "name": "Laser Pistol",
+      "TL": 12,
+      "cost": 1000,
+      "weight": 1.2,
+      "RoF": [
+        1
+      ],
+      "range": 2,
+      "damege": 4,
+      "type": "E",
+      "recoil": false,
+      "LL": 2
+    }
+  ],
+  "Ranged Ammunition": [
+    {
+      "id": 137,
+      "name": "Bow",
+      "TL": 1,
+      "cost": 1,
+      "weight": 0.025,
+      "rounds": [
+        1
+      ]
+    },
+    {
+      "id": 138,
+      "name": "Crossbow",
+      "TL": 2,
+      "cost": 2,
+      "weight": 0.02,
+      "rounds": [
+        1
+      ]
+    },
+    {
+      "id": 139,
+      "name": "Revolver",
+      "TL": 4,
+      "cost": 5,
+      "weight": 0.1,
+      "rounds": [
+        6
+      ]
+    },
+    {
+      "id": 140,
+      "name": "Auto Pistol",
+      "TL": 5,
+      "cost": 10,
+      "weight": 0.25,
+      "rounds": [
+        15
+      ]
+    },
+    {
+      "id": 141,
+      "name": "Body Pistol",
+      "TL": 7,
+      "cost": 20,
+      "weight": 0.05,
+      "rounds": [
+        6
+      ]
+    },
+    {
+      "id": 142,
+      "name": "Snub Pistol",
+      "TL": 8,
+      "cost": 10,
+      "weight": 0.03,
+      "rounds": [
+        6,
+        15
+      ]
+    },
+    {
+      "id": 143,
+      "name": "Shotgun",
+      "TL": 5,
+      "cost": 10,
+      "weight": 0.75,
+      "rounds": [
+        10
+      ]
+    },
+    {
+      "id": 144,
+      "name": "Rifle",
+      "TL": 5,
+      "cost": 20,
+      "weight": 0.5,
+      "rounds": [
+        10
+      ]
+    },
+    {
+      "id": 145,
+      "name": "Carbine",
+      "TL": 5,
+      "cost": 10,
+      "weight": 0.125,
+      "rounds": [
+        20
+      ]
+    },
+    {
+      "id": 146,
+      "name": "Auto Rifle",
+      "TL": 6,
+      "cost": 20,
+      "weight": 0.5,
+      "rounds": [
+        20
+      ]
+    },
+    {
+      "id": 147,
+      "name": "Assault Rifle",
+      "TL": 7,
+      "cost": 20,
+      "weight": 0.33,
+      "rounds": [
+        30
+      ]
+    },
+    {
+      "id": 148,
+      "name": "Accelerator Rifle",
+      "TL": 9,
+      "cost": 25,
+      "weight": 0.5,
+      "rounds": [
+        15
+      ]
+    },
+    {
+      "id": 149,
+      "name": "Advanced Combat Rifle",
+      "TL": 10,
+      "cost": 15,
+      "weight": 0.5,
+      "rounds": [
+        20
+      ]
+    },
+    {
+      "id": 150,
+      "name": "Gauss Rifle",
+      "TL": 12,
+      "cost": 30,
+      "weight": 0.4,
+      "rounds": [
+        40
+      ]
+    },
+    {
+      "id": 151,
+      "name": "Submachinegun",
+      "TL": 5,
+      "cost": 20,
+      "weight": 0.5,
+      "rounds": [
+        30
+      ]
+    },
+    {
+      "id": 152,
+      "name": "Laser Pistol",
+      "TL": 12,
+      "cost": 100,
+      "weight": 0.5,
+      "rounds": [
+        25
+      ]
+    },
+    {
+      "id": 153,
+      "name": "Laser Carbine",
+      "TL": 8,
+      "cost": 200,
+      "weight": 3,
+      "rounds": [
+        50
+      ]
+    },
+    {
+      "id": 154,
+      "name": "Laser Rifle",
+      "TL": 9,
+      "cost": 300,
+      "weight": 4,
+      "rounds": [
+        100
+      ]
+    }
+  ],
+  "Weapon Accessories": [
+    {
+      "id": 155,
+      "name": "Shoulder Stocks",
+      "TL": 5,
+      "cost": 75,
+      "weight": 1
+    },
+    {
+      "id": 156,
+      "name": "Folding Stocks",
+      "TL": 6,
+      "cost": 100,
+      "weight": 0.5
+    },
+    {
+      "id": 157,
+      "name": "Telescopic Sights",
+      "TL": 8,
+      "cost": 200,
+      "weight": 0.8
+    },
+    {
+      "id": 158,
+      "name": "Grenade Launcher",
+      "TL": 8,
+      "cost": 1000
+    },
+    {
+      "id": 159,
+      "name": "Laser Sights",
+      "TL": 8,
+      "cost": 100,
+      "weight": 1.5
+    },
+    {
+      "id": 160,
+      "name": "Silencer",
+      "TL": 8,
+      "cost": 250
+    },
+    {
+      "id": 161,
+      "name": "Gyrostabilizer",
+      "TL": 9,
+      "cost": 300
+    },
+    {
+      "id": 162,
+      "name": "Laser Telescopic Sights",
+      "TL": 9,
+      "cost": 3000,
+      "weight": 1.8
+    },
+    {
+      "id": 163,
+      "name": "Secure Weapon",
+      "TL": 10,
+      "cost": 100
+    },
+    {
+      "id": 164,
+      "name": "Intelligent Weapon",
+      "TL": 11,
+      "cost": 1000
+    }
+  ],
+  "Grenades": [
+    {
+      "id": 165,
+      "name": "Frag",
+      "TL": 6,
+      "cost": 180,
+      "weight": 0.5,
+      "damage": [
+        5,
+        3,
+        1
+      ]
+    },
+    {
+      "id": 166,
+      "name": "Smoke",
+      "TL": 6,
+      "cost": 90,
+      "weight": 0.5
+    },
+    {
+      "id": 167,
+      "name": "Aerosol",
+      "TL": 9,
+      "cost": 90,
+      "weight": 0.5
+    },
+    {
+      "id": 168,
+      "name": "Stun",
+      "TL": 9,
+      "cost": 180,
+      "weight": 0.5,
+      "damage": [
+        3
+      ]
+    }
+  ],
+  "Heavy Weapons": [
+    {
+      "id": 169,
+      "name": "Grenade Launcher",
+      "TL": 7,
+      "cost": 400,
+      "weight": 6,
+      "RoF": [
+        1
+      ],
+      "range": 3,
+      "recoil": true,
+      "LL": 3
+    },
+    {
+      "id": 170,
+      "name": "Rocket Launcher",
+      "TL": 7,
+      "cost": 2000,
+      "weight": 6,
+      "RoF": [
+        1
+      ],
+      "range": 5,
+      "damage": 4,
+      "recoil": false,
+      "LL": 3
+    },
+    {
+      "id": 171,
+      "name": "RAM Grenade Launcher",
+      "TL": 8,
+      "cost": 800,
+      "weight": 6,
+      "RoF": [
+        1,
+        3
+      ],
+      "range": 0,
+      "recoil": true,
+      "LL": 3
+    },
+    {
+      "id": 172,
+      "name": "PGMP",
+      "TL": 12,
+      "cost": 20000,
+      "weight": 10,
+      "RoF": [
+        1,
+        4
+      ],
+      "range": 4,
+      "damage": 10,
+      "recoil": true,
+      "LL": 2
+    },
+    {
+      "id": 173,
+      "name": "FGMP",
+      "TL": 14,
+      "cost": 100000,
+      "weight": 12,
+      "RoF": [
+        1,
+        4
+      ],
+      "range": 4,
+      "damage": 16,
+      "recoil": true,
+      "LL": 2
+    }
+  ],
+  "Heavy Weapon Ammunition": [
+    {
+      "id": 174,
+      "name": "Grenade Launcher",
+      "TL": 7,
+      "cost": 180,
+      "weight": 0.5,
+      "rounds": 6
+    },
+    {
+      "id": 175,
+      "name": "Rocket Launcher",
+      "TL": 7,
+      "cost": 300,
+      "weight": 1,
+      "rounds": 1
+    },
+    {
+      "id": 176,
+      "name": "RAM Rocket Launcher",
+      "TL": 8,
+      "cost": 180,
+      "weight": 0.5,
+      "rounds": 6
+    },
+    {
+      "id": 177,
+      "name": "PGMP",
+      "TL": 12,
+      "cost": 2500,
+      "weight": 6,
+      "rounds": 40
+    },
+    {
+      "id": 178,
+      "name": "FGMP",
+      "TL": 14,
+      "cost": 65000,
+      "weight": 6,
+      "rounds": 40
+    }
+  ]
 }
