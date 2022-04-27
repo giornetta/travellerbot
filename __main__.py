@@ -2,7 +2,8 @@ import dotenv
 import psycopg2
 from telegram.ext import Updater, PicklePersistence
 
-from adventure_setup.controller import SetupController
+from adventure_setup.service import SetupController
+from character_creation.service import CharacterCreator
 from conversations.conversation import handler
 
 from travellermap.api import TravellerMap
@@ -29,7 +30,10 @@ if __name__ == '__main__':
     )
     dispatcher = updater.dispatcher
 
-    conversation = handler(SetupController(conn), api)
+    character_creator = CharacterCreator(conn)
+    setup_controller = SetupController(conn, character_creator)
+
+    conversation = handler(setup_controller, character_creator, api)
     dispatcher.add_handler(conversation)
 
     updater.start_polling()

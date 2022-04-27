@@ -1,4 +1,3 @@
-import curses.ascii
 import string
 import random
 from typing import Optional, Tuple
@@ -7,11 +6,14 @@ import psycopg2
 import psycopg2.errors
 from psycopg2.extensions import connection
 
+from character_creation.service import CharacterCreator
+
 
 class SetupController:
     db: connection
+    character_creator: CharacterCreator
 
-    def __init__(self, db: connection):
+    def __init__(self, db: connection, character_creator: CharacterCreator):
         self.db = db
 
     def join_adventure(self, user_id: int, code: str) -> Optional[Tuple[str, bool]]:
@@ -30,13 +32,19 @@ class SetupController:
         return res
 
     def create_adventure(self, referee: int, adventure_name: str, sector: str, world: str, terms: int, survival_kills: bool) -> Optional[str]:
-        code = ''.join(random.choices(string.ascii_letters + string.digits, k=6)).upper()  # TODO loop until it's unique
+        adventure_id = ''.join(random.choices(string.ascii_letters + string.digits, k=6)).upper()
+        created = False
 
-        with self.db:
-            with self.db.cursor() as cur:
-                cur.execute('INSERT INTO users(id) VALUES(%s) ON CONFLICT DO NOTHING;', (referee, ))
-                cur.execute('INSERT INTO adventures VALUES(%s, %s, %s, %s, %s, %s, %s);',
-                            (code, adventure_name, sector, world, terms, survival_kills, referee))
-                cur.execute('UPDATE users SET active_adventure = %s WHERE id = %s;', (code, referee))
+        while not created:
+            with self.db:
+                with self.db.cursor() as cur:
+                    try:
+                        cur.execute('INSERT INTO users(id) VALUES(%s) ON CONFLICT DO NOTHING;', (referee, ))
+                        cur.execute('INSERT INTO adventures VALUES(%s, %s, %s, %s, %s, %s, %s);',
+                                    (adventure_id, adventure_name, sector, world, terms, survival_kills, referee))
+                        cur.execute('UPDATE users SET active_adventure = %s WHERE id = %s;', (adventure_id, referee))
+                        created = True
+                    except psycopg2.errors.UniqueViolation:
+                        adventure_id = ''.join(random.choices(string.ascii_letters + string.digits, k=6)).upper()
 
-        return code
+        return adventure_id

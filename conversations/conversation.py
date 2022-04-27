@@ -1,19 +1,21 @@
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ConversationHandler, CommandHandler, MessageHandler, CallbackContext, Filters
 
-from adventure_setup.controller import SetupController
+from adventure_setup.service import SetupController
+from character_creation.bot import CharacterCreationConversation
+from character_creation.service import CharacterCreator
 from conversations.adventure_setup import SetupConversation
 from conversations.state import ConversationState
 from travellermap.api import TravellerMap
 
 
-def handler(setup_controller: SetupController, traveller_map: TravellerMap):
+def handler(setup_controller: SetupController, character_creator: CharacterCreator, traveller_map: TravellerMap):
     return ConversationHandler(
         entry_points=[CommandHandler('start', _handle_start)],
         states={
-            ConversationState.ADVENTURE_SETUP: SetupConversation(setup_controller, traveller_map).handlers(),
+            ConversationState.ADVENTURE_SETUP: SetupConversation(setup_controller, character_creator, traveller_map).handlers(),
             ConversationState.REFEREE_IDLE: [MessageHandler(Filters.text, _handle_ref)],
-            ConversationState.CHARACTER_CREATION: [MessageHandler(Filters.text, _handle_name)]
+            ConversationState.CHARACTER_CREATION: CharacterCreationConversation(traveller_map).handlers()
         },
         fallbacks=[],
         name='conversation',

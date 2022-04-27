@@ -4,7 +4,8 @@ from typing import List
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackContext
 
-from adventure_setup.controller import SetupController
+from adventure_setup.service import SetupController
+from character_creation.service import CharacterCreator
 from conversations.state import ConversationState
 from travellermap.api import TravellerMap
 
@@ -18,14 +19,17 @@ class State(Enum):
     SURVIVAL = 5
     END = 6
     END_REF = 7
+    END_IDLE = 8
 
 
 class SetupConversation:
     controller: SetupController
+    character_creator: CharacterCreator
     traveller_map: TravellerMap
 
-    def __init__(self, controller: SetupController, traveller_map: TravellerMap):
+    def __init__(self, controller: SetupController, character_creator: CharacterCreator, traveller_map: TravellerMap):
         self.controller = controller
+        self.character_creator = character_creator
         self.traveller_map = traveller_map
 
     def handlers(self) -> List[ConversationHandler]:
@@ -66,7 +70,8 @@ class SetupConversation:
                 fallbacks=[],
                 map_to_parent={
                     State.END: ConversationState.CHARACTER_CREATION,
-                    State.END_REF: ConversationState.REFEREE_IDLE
+                    State.END_REF: ConversationState.REFEREE_IDLE,
+                    State.END_IDLE: ConversationState.PLAYER_IDLE,
                 },
                 name='join_adventure',
                 persistent=True
@@ -81,15 +86,37 @@ class SetupConversation:
         return State.CODE
 
     def _handle_adventure_code(self, update: Update, context: CallbackContext) -> State:
-        res = self.controller.join_adventure(update.message.from_user.id, update.message.text)
+        user_id = update.message.from_user.id
+        adventure_id = update.message.text
+
+        res = self.controller.join_adventure(user_id, adventure_id)
         if res:
-            adventure, is_ref = res
-            update.message.reply_text(f'Joined Adventure "{adventure}"')
+            adventure_name, is_ref = res
+            update.message.reply_text(f'Joined Adventure "{adventure_name}"')
             if is_ref:
                 return State.END_REF
-            else:
-                update.message.reply_text('Let\'s create a Character for this Adventure, choose a name:')
-                return State.END
+            else:  # TODO Should check if an alive character already exists.
+                if self.character_creator.alive_character_exists(user_id, adventure_id):
+                    return State.END_IDLE
+                else:
+                    update.message.reply_text('Let\'s create a Character for this Adventure!:')
+
+                    chars = CharacterCreator.roll()
+                    context.user_data['characteristics'] = chars
+                    update.message.reply_text(f'STR: {chars["STR"]}\nDEX: {chars["DEX"]}')
+
+                    sector = self.character_creator.sector(adventure_id)
+                    update.message.reply_text(f'Pick your homeworld from {sector}!')
+                    update.message.reply_text(
+                        text='Choose the Minimum desired Population',
+                        reply_markup=ReplyKeyboardMarkup([
+                            ['1', '2', '3'],
+                            ['4', '5', '6'],
+                            ['7', '8', '9'],
+                            ['10', 'Ignore']
+                        ], one_time_keyboard=True)
+                    )
+                    return State.END
         else:
             update.message.reply_text('The provided code isn\'t valid, try again.')
             return State.CODE

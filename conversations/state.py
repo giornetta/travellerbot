@@ -1,5 +1,6 @@
 from enum import Enum, auto
 
+
 class ConversationState(Enum):
     ADVENTURE_SETUP = auto()
     AFTER_SETUP = auto()

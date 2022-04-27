@@ -18,11 +18,14 @@ ALTER TABLE users ADD CONSTRAINT fkActiveAdventure FOREIGN KEY(active_adventure)
 
 CREATE TABLE characters (
     id SERIAL PRIMARY KEY,
+    alive BOOLEAN NOT NULL DEFAULT TRUE,
 
     user_id BIGINT NOT NULL REFERENCES users(id),
     adventure_id CHAR(6) NOT NULL REFERENCES adventures(id),
 
-    credits BIGINT NOT NULL
+    credits BIGINT NOT NULL,
+
+    UNIQUE (alive, user_id)
 );
 
 CREATE TABLE equipments (
