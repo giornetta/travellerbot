@@ -6,7 +6,7 @@ from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackC
 
 from adventure_setup.controller import SetupController
 from conversations.state import ConversationState
-from keyboards import keyboards
+from keyboards import adv_setup_kb
 from travellermap.api import TravellerMap
 
 
@@ -73,31 +73,31 @@ class SetupConversation:
         ]
 
     def _ask_adventure_code(self, update: Update, context: CallbackContext) -> State:
-        keyboards.adv_code.reply_text(update)
+        adv_setup_kb.adv_code.reply_text(update)
         return State.CODE
 
     def _handle_adventure_code(self, update: Update, context: CallbackContext) -> State:
         adventure = self.controller.join_adventure(update.message.from_user.id, update.message.text)
         if adventure:
-            keyboards.join_adventure.reply_text(update, adventure)
-            keyboards.create_char.reply_text(update)
+            adv_setup_kb.join_adventure.reply_text(update, adventure)
+            adv_setup_kb.create_char.reply_text(update)
             return State.END
         else:
-            keyboards.invalid_code.reply_text(update)
+            adv_setup_kb.invalid_code.reply_text(update)
             return State.CODE
 
     def _ask_adventure_name(self, update: Update, context: CallbackContext) -> State:
-        keyboards.adv_name.reply_text(update)
+        adv_setup_kb.adv_name.reply_text(update)
         return State.NAME
 
     def _handle_adventure_name(self, update: Update, context: CallbackContext) -> State:
         # TODO check if valid
         context.user_data["adventure_name"] = update.message.text
-        keyboards.sector.reply_text(update)
+        adv_setup_kb.sector.reply_text(update)
         return State.SECTOR
 
     def _ask_sector(self, update: Update, context: CallbackContext) -> State:
-        keyboards.sector_name.reply_text(update)
+        adv_setup_kb.sector_name.reply_text(update)
         return State.SECTOR
 
     def _handle_sector(self, update: Update, context: CallbackContext) -> State:
@@ -105,26 +105,26 @@ class SetupConversation:
 
         if sector in self.traveller_map.sectors:
             context.user_data['adventure_sector'] = sector
-            keyboards.world.reply_text(update)
+            adv_setup_kb.world.reply_text(update)
             return State.WORLD
         else:
-            keyboards.no_sector.reply_text(update)
+            adv_setup_kb.no_sector.reply_text(update)
             return State.SECTOR
 
     def _handle_random_sector(self, update: Update, context: CallbackContext) -> State:
         sector = self.traveller_map.random_sector()
 
         context.user_data['adventure_sector'] = sector
-        keyboards.confirm_sector.reply_text(update, sector)
+        adv_setup_kb.confirm_sector.reply_text(update, sector)
 
         return State.SECTOR
 
     def _handle_accept_random_sector(self, update: Update, context: CallbackContext) -> State:
-        keyboards.world.reply_text(update)
+        adv_setup_kb.world.reply_text(update)
         return State.WORLD
 
     def _ask_world(self, update: Update, context: CallbackContext) -> State:
-        keyboards.world_name.reply_text(update)
+        adv_setup_kb.world_name.reply_text(update)
         return State.WORLD
 
     def _handle_world(self, update: Update, context: CallbackContext) -> State:
@@ -132,32 +132,32 @@ class SetupConversation:
 
         if world in self.traveller_map.worlds(context.user_data["adventure_sector"]):
             context.user_data["adventure_world"] = world
-            keyboards.terms.reply_text(update)
+            adv_setup_kb.terms.reply_text(update)
             return State.TERMS
         else:
-            keyboards.no_world.reply_text(update)
+            adv_setup_kb.no_world.reply_text(update)
             return State.WORLD
 
     def _handle_random_world(self, update: Update, context: CallbackContext) -> State:
         world = self.traveller_map.random_world(context.user_data["adventure_sector"])
 
         context.user_data["adventure_world"] = world
-        keyboards.confirm_world.reply_text(update,world)
+        adv_setup_kb.confirm_world.reply_text(update, world)
 
         return State.WORLD
 
     def _handle_accept_random_world(self, update: Update, context: CallbackContext) -> State:
-        keyboards.terms.reply_text(update)
+        adv_setup_kb.terms.reply_text(update)
         return State.TERMS
 
     def _handle_terms(self, update: Update, context: CallbackContext) -> State:
         try:
             terms = int(update.message.text)
             context.user_data["adventure_terms"] = terms
-            keyboards.survival_roll.reply_text(update)
+            adv_setup_kb.survival_roll.reply_text(update)
             return State.SURVIVAL
         except ValueError:
-            keyboards.invalid_choice.reply_text(update)
+            adv_setup_kb.invalid_choice.reply_text(update)
             return State.TERMS
 
     def _handle_survival(self, update: Update, context: CallbackContext) -> State:

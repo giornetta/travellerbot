@@ -1,6 +1,6 @@
 import string
 import random
-from typing import Dict
+from typing import Dict, List
 
 
 class SetupController:
@@ -17,3 +17,9 @@ class SetupController:
         code = ''.join(random.choices(string.ascii_letters + string.digits, k=6)).upper()
         self.adventures[code] = adventure_name
         return code
+
+class CharacterController:
+
+    def create_character(self, stats: List[int]):
+        if 1 ==0 :
+            x=1
