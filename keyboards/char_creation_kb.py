@@ -61,6 +61,44 @@ draft_or_driften = Keyboard('You failed to qualify. Choose to become a Drifter o
                                 ['Drifter', 'Draft']
                             ], one_time_keyboard=True))
 
-draft = FKeyboard('You were drafted into "%s"',)
+draft = FKeyboard('You were drafted into "%s"', )
 
-survival_death = Keyboard('You died during this term. Start over.')
+survival_death = Keyboard('You died during this term. Start over.'
+                          'Your stats are:\n "%s","%s","%s","%s","%s","%s"\nDo you want to choose a starting Homeworld '
+                          'or do you want to generate one randomly?',
+                          reply_markup=ReplyKeyboardMarkup([
+                              ['Generate Random', 'Let me choose', 'Search for a world']
+                          ], one_time_keyboard=True))
+
+table_choice = FKeyboard('You got promoted to Rank "%s"! On which Table do you want to roll?',
+                         reply_markup=ReplyKeyboardMarkup([
+                             ['Personal Development', 'Service Skills', 'Specialist Skills', 'Advanced Education']
+                         ], one_time_keyboard=True))
+
+table_choice_no_promo = FKeyboard('On which Table do you want to roll?',
+                                  reply_markup=ReplyKeyboardMarkup([
+                                      ['Personal Development', 'Service Skills', 'Specialist Skills',
+                                       'Advanced Education']
+                                  ], one_time_keyboard=True))
+
+retire = Keyboard('Do you want to retire?',
+                  reply_markup=ReplyKeyboardMarkup([
+                      ['Yes', 'No']
+                  ], one_time_keyboard=True))
+
+change_career = Keyboard('Do you want to change career?',
+                         reply_markup=ReplyKeyboardMarkup([
+                             ['Yes', 'No']
+                         ], one_time_keyboard=True))
+
+muster_choice = Keyboard('Do you want to roll on Money or MaterialBenefits?',
+                         reply_markup=ReplyKeyboardMarkup([
+                             ['Money', 'MaterialBenefits']
+                         ], one_time_keyboard=True))
+
+character_name = Keyboard('What\'s your name?')
+
+buy_equip = FKeyboard('You have "%s" credits, do you want to buy something?',
+                      reply_markup=ReplyKeyboardMarkup([
+                          ['A', 'B', '...', 'No']
+                      ], one_time_keyboard=True))

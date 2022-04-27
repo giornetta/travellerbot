@@ -45,16 +45,40 @@ stateDiagram-v2
     GenerateHomeworld --> AskHomeworld: Let me choose
     GenerateHomeworld --> ChooseBackgroundSkill: Accept
     ChooseBackgroundSkill --> ChooseBackgroundSkill: Another to choose
-    ChooseBackgroundSkill --> FirstCareer: All chosen
-    FirstCareer --> FirstCareerRank0: Qualify
-    FirstCareer --> DraftorDriften: Not qualified
+    ChooseBackgroundSkill --> Career: All chosen
+    Career --> CareerRank0: Qualify
+    Career --> DraftorDriften: Not qualified
     DraftorDriften --> Driften: Driften
     DraftorDriften --> Draft: Draft
     
-    FirstCareerRank0 --> SurvivalRoll
+    CareerRank0 --> SurvivalRoll
     Driften --> SurvivalRoll
     Draft --> SurvivalRoll
     
     SurvivalRoll --> StartCharacterCreation: Death
+    
+    SurvivalRoll --> ChooseTable0: If gets rank
+    SurvivalRoll --> ChooseTable+: If no rank but gets promo
+    SurvivalRoll --> ChooseTable1: No rank no promo
+    ChooseTable0 --> ChooseTable: If gets rank but no promo
+    ChooseTable0 --> ChooseTable+: If gets rank and promo
+    ChooseTable+ --> ChooseTable: At the end of term
+    ChooseTable1 --> ChooseTable2: If there is no rank and promo
+    ChooseTable2 --> Reenrollment
+    ChooseTable --> Reenrollment
+    Reenrollment --> SurvivalRoll: If 12 or no retirement
+    Reenrollment --> Retire: Terms over o retirement
+    Retire --> Mustering
+    Reenrollment --> Mustering: If changing career
+    Mustering --> Money: If possible and choose money
+    Mustering --> MaterialBenefit: else
+    Money --> Mustering: If another muster aviable
+    MaterialBenefit --> Mustering: If another muster aviable
+    Money --> Career: If no other muster and changing career
+    MaterialBenefit --> Career: If no other muster and changing career
+    Money --> LastDetails: If no other muster and retirement
+    MaterialBenefit --> LastDetails: If no other muster and retirement
+    LastDetails --> IdleGame
+    
     
 ```
