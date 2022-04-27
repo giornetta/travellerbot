@@ -30,7 +30,7 @@ if __name__ == '__main__':
     )
     dispatcher = updater.dispatcher
 
-    character_creator = CharacterCreator(conn)
+    character_creator = CharacterCreator(conn, api)
     setup_controller = SetupController(conn, character_creator)
 
     conversation = handler(setup_controller, character_creator, api)
