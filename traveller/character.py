@@ -4,17 +4,18 @@ from enum import Enum
 from traveller.common import Characteristics
 from traveller.equipment import Equipment, Armor, Weapon
 
-from typing import Dict, List
+from typing import Dict, List, cast
 
 
-# This represent the Sex of a Character.
+# This represents the Sex of a Character.
 # It will be used to determine appropriate noble/work titles.
 class Sex(Enum):
     M: str = 'Male'
     F: str = 'Female'
 
 
-# This represents the current Stance of a Character, and will be mainly used during combat to determine damage or movement modifiers.
+# This represents the current Stance of a Character,
+# and will be mainly used during combat to determine damage or movement modifiers.
 class Stance(Enum):
     Prone: int = 0
     Crouched: int = 1
@@ -42,7 +43,6 @@ class Character:
     drawn_weapon: Weapon
     inventory: List[Equipment]
 
-
     # Statuses
     stance: Stance
     rads: int
@@ -52,6 +52,4 @@ class Character:
     def equip_armor(self, armor_name: str):
         for item in self.inventory:
             if item.name is armor_name and item.__class__ is Armor:
-                self.equipped_armor = item
-
-
+                self.equipped_armor = cast(Armor, item)

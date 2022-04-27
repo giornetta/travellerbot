@@ -1,4 +1,5 @@
 import dotenv
+import psycopg2
 from telegram.ext import Updater, PicklePersistence
 
 from adventure_setup.controller import SetupController
@@ -15,6 +16,13 @@ if __name__ == '__main__':
 
     config = dotenv.dotenv_values()
 
+    conn = psycopg2.connect(
+        user=config['DB_USER'],
+        password=config['DB_PASS'],
+        database=config['DB_NAME'],
+        host='127.0.0.1',
+        port=5432
+    )
     updater = Updater(
         token=config['TELEGRAM_TOKEN'],
         use_context=True,
@@ -22,7 +30,7 @@ if __name__ == '__main__':
     )
     dispatcher = updater.dispatcher
 
-    conversation = handler(SetupController(), api)
+    conversation = handler(SetupController(conn), api)
     dispatcher.add_handler(conversation)
 
     updater.start_polling()

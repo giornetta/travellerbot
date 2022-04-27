@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
+
 class DamageType(Enum):
     Normal: int
     Acid: int
