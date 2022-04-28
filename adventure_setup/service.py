@@ -6,14 +6,11 @@ import psycopg2
 import psycopg2.errors
 from psycopg2.extensions import connection
 
-from character_creation.service import CharacterCreator
 
-
-class SetupController:
+class AdventureSetupService:
     db: connection
-    character_creator: CharacterCreator
 
-    def __init__(self, db: connection, character_creator: CharacterCreator):
+    def __init__(self, db: connection):
         self.db = db
 
     def join_adventure(self, user_id: int, code: str) -> Optional[Tuple[str, bool]]:

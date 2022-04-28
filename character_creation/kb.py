@@ -23,7 +23,7 @@ ask_max = Keyboard('Choose the Maximum desired "%s"',
                        ['0', '1', '...', 'Ignore']
                    ], one_time_keyboard=True))
 
-choose_world = Keyboard('These are the available Worlds on "%s" that match your criteria!',
+choose_world = Keyboard('These are the available Worlds on %s that match your criteria!',
                         reply_markup=ReplyKeyboardMarkup([
                             ['A', 'B', '...']
                         ], one_time_keyboard=True))

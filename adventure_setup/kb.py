@@ -34,7 +34,7 @@ no_sector = Keyboard('No such sector exists in this universe.',
                          ['Choose another', 'Generate Random']
                      ], one_time_keyboard=True))
 
-confirm_sector = Keyboard('Will the adventure be set in "%s"?',
+confirm_sector = Keyboard('Will the adventure be set in %s?',
                           reply_markup=ReplyKeyboardMarkup([
                               ['Accept', 'Generate another', 'Let me choose']
                           ], one_time_keyboard=True))
