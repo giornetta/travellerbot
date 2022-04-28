@@ -18,25 +18,44 @@ ALTER TABLE users ADD CONSTRAINT fkActiveAdventure FOREIGN KEY(active_adventure)
 
 CREATE TABLE characters (
     id SERIAL PRIMARY KEY,
+    char_name VARCHAR(32) NOT NULL,
+    sex CHAR CHECK (sex = 'M' OR sex = 'F') NOT NULL,
     alive BOOLEAN NOT NULL DEFAULT TRUE,
 
     user_id BIGINT NOT NULL REFERENCES users(id),
     adventure_id CHAR(6) NOT NULL REFERENCES adventures(id),
 
+    strength INT NOT NULL,
+    dexterity INT NOT NULL,
+    endurance INT NOT NULL,
+    intelligence INT NOT NULL,
+    education INT NOT NULL,
+    social_standing INT NOT NULL,
+
+    str_mod INT NOT NULL,
+    dex_mod INT NOT NULL,
+    end_mod INT NOT NULL,
+    int_mod INT NOT NULL,
+    edu_mod INT NOT NULL,
+    soc_mod INT NOT NULL,
     credits BIGINT NOT NULL,
+
+    equipped_armor INT,
+    equipped_reflec INT,
+    drawn_weapon INT,
+    stance SMALLINT NOT NULL CHECK (stance BETWEEN 0 AND 2),
+    rads INT NOT NULL,
+    is_fatigued BOOLEAN NOT NULL,
+    stims_taken INT NOT NULL,
 
     UNIQUE (alive, user_id)
 );
 
-CREATE TABLE equipments (
-    id SERIAL PRIMARY KEY
-);
-
 CREATE TABLE inventories (
-    character_id INT REFERENCES characters(id),
-    equipment_id INT REFERENCES equipments(id),
+    character_id INT NOT NULL,
+    equipment_id INT NOT NULL,
     amount INT NOT NULL,
-
+    damage INT,
     PRIMARY KEY(character_id, equipment_id)
 );
 
