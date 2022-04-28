@@ -4,6 +4,7 @@ from telegram.ext import ConversationHandler, CommandHandler, MessageHandler, Ca
 from adventure_setup.controller import SetupController
 from conversations.adventure_setup import SetupConversation
 from conversations.state import ConversationState
+from keyboards import keyboards
 from travellermap.api import TravellerMap
 
 
@@ -21,19 +22,11 @@ def handler(setup_controller: SetupController, traveller_map: TravellerMap):
 
 
 def _handle_start(update: Update, context: CallbackContext) -> ConversationState:
-    update.message.reply_text(
-        text='Welcome to Traveller, do you want to create or join an Adventure?',
-        reply_markup=ReplyKeyboardMarkup([
-            ['Create', 'Join']
-        ], one_time_keyboard=True)
-    )
-
+    keyboards.welcome.reply_text(update)
     return ConversationState.ADVENTURE_SETUP
 
 
 def _handle_name(update: Update, context: CallbackContext) -> ConversationState:
-    update.message.reply_text(
-        text='Great name!',
-    )
+    keyboards.name.reply_text(update)
 
     return ConversationState.CHARACTER_CREATION
