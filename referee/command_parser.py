@@ -19,7 +19,7 @@ class CommandParser:
                 else:
                     return False, 'use /info {<name>|world|map|scene|adventure}'
             elif cmd[0] == "set":
-                if len(cmd) > 4:
+                if len(cmd) >= 4:
                     name = cmd[1]
                     last = cmd[-1]
                     if re.match(r'^[+\-]?\d+$', last):
@@ -28,11 +28,11 @@ class CommandParser:
                     elif re.match('^(true|yes|no|false)$', last):
                         value = 1 if re.match('^(true|yes)$', last) else 0
                         return self.callbacks[cmd[0]](name, cmd[2:-1], value)
-                    return self.callbacks[cmd[0]](name, cmd[2:], 0)
+                    return self.callbacks[cmd[0]](name, cmd[2:], 1)
                 else:
                     return False, 'use /set <name> <... fieldName> [{+|-}][<value>]'
             elif cmd[0] == "shop":
-                if len(cmd) == 2:
+                if len(cmd) >= 2:
                     return self.callbacks[cmd[0]](cmd[1:])
                 else:
                     return False, 'use /shop {[... <type>]|close}'
