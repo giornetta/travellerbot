@@ -1,27 +1,18 @@
 from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup
 
-from keyboards.keyboards import Keyboard, FKeyboard
-
-welcome = Keyboard(
-    'Welcome to Traveller, do you want to create or join an Adventure?',
-    reply_markup=ReplyKeyboardMarkup([
-        ['Create', 'Join']
-    ], one_time_keyboard=True)
-)
-
-name = Keyboard('Great Name!')
+from keyboards.keyboards import Keyboard
 
 adv_code = Keyboard('What\'s the code of the Adventure you\'d like to join?',
                     reply_markup=ReplyKeyboardRemove())
 
-join_adventure = FKeyboard('Joined Adventure "%s"')
+join_adventure = Keyboard('Joined Adventure "%s"')
 
 create_char = Keyboard('Let\'s create a Character for this Adventure, choose a name:')
 
 invalid_code = Keyboard('The provided code isn\'t valid, try again."')
 
-adv_name = Keyboard('Choose a name for the adventure you want to create:',
-                    reply_markup=ReplyKeyboardRemove())
+title = Keyboard('Choose a title for the adventure you want to create:',
+                 reply_markup=ReplyKeyboardRemove())
 
 sector = Keyboard(
     'Do you want to choose a starting Sector for the Adventurers or do you want to generate one randomly?',
@@ -43,16 +34,16 @@ no_sector = Keyboard('No such sector exists in this universe.',
                          ['Choose another', 'Generate Random']
                      ], one_time_keyboard=True))
 
-confirm_sector = FKeyboard('Will the adventure be set in "%s"?',
-                           reply_markup=ReplyKeyboardMarkup([
-                               ['Accept', 'Generate another', 'Let me choose']
-                           ], one_time_keyboard=True))
+confirm_sector = Keyboard('Will the adventure be set in "%s"?',
+                          reply_markup=ReplyKeyboardMarkup([
+                              ['Accept', 'Generate another', 'Let me choose']
+                          ], one_time_keyboard=True))
 
 world_name = Keyboard('What\'s the name of the World?',
                       reply_markup=ReplyKeyboardRemove())
 
 terms = Keyboard('How many terms will the adventurers spend working before having to retire? '
-                 '(Default is 7, Infinite is -1)',
+                 '(Default is 7, Infinite is any negative number)',
                  reply_markup=ReplyKeyboardRemove())
 
 no_world = Keyboard('No such world exists in this universe.',
@@ -60,10 +51,10 @@ no_world = Keyboard('No such world exists in this universe.',
                         ['Choose another', 'Generate Random']
                     ], one_time_keyboard=True))
 
-confirm_world = FKeyboard('Will the adventure begin in "%s"?',
-                          reply_markup=ReplyKeyboardMarkup([
-                              ['Accept', 'Generate another', 'Let me choose']
-                          ], one_time_keyboard=True))
+confirm_world = Keyboard('Will the adventure begin in "%s"?',
+                         reply_markup=ReplyKeyboardMarkup([
+                             ['Accept', 'Generate another', 'Let me choose']
+                         ], one_time_keyboard=True))
 
 survival_roll = Keyboard('When a Survival Check is failed, will the Adventurer die?',
                          reply_markup=ReplyKeyboardMarkup([
