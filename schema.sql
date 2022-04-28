@@ -19,7 +19,7 @@ ALTER TABLE users ADD CONSTRAINT fkActiveAdventure FOREIGN KEY(active_adventure)
 CREATE TABLE characters (
     id SERIAL PRIMARY KEY,
     char_name VARCHAR(32) NOT NULL,
-    sex CHAR CHECK (sex = 'M' OR sex = 'F') NOT NULL,
+    sex CHAR NOT NULL CHECK (sex = 'M' OR sex = 'F'),
     alive BOOLEAN NOT NULL DEFAULT TRUE,
 
     user_id BIGINT NOT NULL REFERENCES users(id),
@@ -46,9 +46,7 @@ CREATE TABLE characters (
     stance SMALLINT NOT NULL CHECK (stance BETWEEN 0 AND 2),
     rads INT NOT NULL,
     is_fatigued BOOLEAN NOT NULL,
-    stims_taken INT NOT NULL,
-
-    UNIQUE (alive, user_id)
+    stims_taken INT NOT NULL
 );
 
 CREATE TABLE inventories (

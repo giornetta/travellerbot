@@ -5,9 +5,9 @@ from enum import Enum
 
 # This represents the available Characteristics for any character.
 class Characteristics(Enum):
-    STR: str = 'Strength'
-    DEX: str = 'Dexterity'
-    END: str = 'Endurance'
-    INT: str = 'Intelligence'
-    EDU: str = 'Education'
-    SOC: str = 'Social Standing'
+    STR = 'Strength'
+    DEX = 'Dexterity'
+    END = 'Endurance'
+    INT = 'Intelligence'
+    EDU = 'Education'
+    SOC = 'Social Standing'
