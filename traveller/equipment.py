@@ -20,9 +20,9 @@ ranges_description: Dict[int, str] = {
 }
 
 
-def load_equipment():
+def load_equipment(path: str):
     if len(equipments) == 0:
-        with open('data/equipment.json') as f:
+        with open(path) as f:
             eq = json.load(f)
         for eq_type in eq:
             for equip in eq[eq_type]:
