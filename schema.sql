@@ -57,14 +57,9 @@ CREATE TABLE inventories (
     PRIMARY KEY(character_id, equipment_id)
 );
 
-CREATE TABLE skills (
-    name VARCHAR(32) PRIMARY KEY,
-    is_passive BOOLEAN NOT NULL
-);
-
 CREATE TABLE skill_sets (
     character_id INT REFERENCES characters(id),
-    skill_name VARCHAR(32) REFERENCES skills(name),
+    skill_name VARCHAR(32),
 
     level INT NOT NULL,
 
