@@ -804,26 +804,15 @@
   ],
   "Melee Weapons": [
     {
-      "id": 107,
-      "name": "Unarmed Strike",
-      "range": [
-        0
-      ],
-      "damege": 1,
-      "type": [
-        "B"
-      ]
-    },
-    {
       "id": 108,
       "name": "Cudgel",
       "TL": 0,
       "cost": 10,
       "weight": 1,
       "range": [
-        0
+        6
       ],
-      "damege": 3,
+      "damage": 3,
       "type": [
         "B"
       ],
@@ -836,10 +825,10 @@
       "cost": 10,
       "weight": 0.25,
       "range": [
-        0,
-        2
+        6,
+        8
       ],
-      "damege": 1,
+      "damage": 1,
       "type": [
         "P"
       ],
@@ -852,10 +841,10 @@
       "cost": 10,
       "weight": 1.5,
       "range": [
-        1,
-        2
+        7,
+        8
       ],
-      "damege": 3,
+      "damage": 3,
       "type": [
         "P"
       ],
@@ -868,9 +857,9 @@
       "cost": 40,
       "weight": 8,
       "range": [
-        1
+        7
       ],
-      "damege": 4,
+      "damage": 4,
       "type": [
         "P"
       ],
@@ -883,9 +872,9 @@
       "cost": 150,
       "weight": 1,
       "range": [
-        1
+        7
       ],
-      "damege": 3,
+      "damage": 3,
       "type": [
         "P",
         "S"
@@ -899,9 +888,9 @@
       "cost": 300,
       "weight": 3,
       "range": [
-        1
+        7
       ],
-      "damege": 4,
+      "damage": 4,
       "type": [
         "S"
       ],
@@ -914,9 +903,9 @@
       "cost": 75,
       "weight": 3,
       "range": [
-        1
+        7
       ],
-      "damege": 4,
+      "damage": 4,
       "type": [
         "S"
       ],
@@ -929,7 +918,7 @@
       "cost": 10,
       "weight": 0.25,
       "range": [
-        0
+        6
       ],
       "damage": 1,
       "type": [
@@ -944,9 +933,9 @@
       "cost": 50,
       "weight": 0.35,
       "range": [
-        1
+        7
       ],
-      "damege": 2,
+      "damage": 2,
       "type": [
         "P"
       ],
@@ -959,9 +948,9 @@
       "cost": 100,
       "weight": 1.25,
       "range": [
-        1
+        7
       ],
-      "damege": 3,
+      "damage": 3,
       "type": [
         "S"
       ],
@@ -974,9 +963,9 @@
       "cost": 100,
       "weight": 0.5,
       "range": [
-        1
+        7
       ],
-      "damege": 3,
+      "damage": 3,
       "type": [
         "P"
       ],
@@ -994,7 +983,7 @@
         1
       ],
       "range": 0,
-      "damege": 2,
+      "damage": 2,
       "type": "P",
       "recoil": true,
       "LL": 6
@@ -1009,7 +998,7 @@
         1
       ],
       "range": 1,
-      "damege": 2,
+      "damage": 2,
       "type": "P",
       "recoil": true,
       "LL": 6
@@ -1024,7 +1013,7 @@
         1
       ],
       "range": 2,
-      "damege": 2,
+      "damage": 2,
       "type": "P",
       "recoil": true,
       "LL": 6
@@ -1039,7 +1028,7 @@
         1
       ],
       "range": 2,
-      "damege": 2,
+      "damage": 2,
       "type": "P",
       "recoil": true,
       "LL": 6
@@ -1054,7 +1043,7 @@
         1
       ],
       "range": 3,
-      "damege": 2,
+      "damage": 2,
       "type": "P",
       "recoil": true,
       "LL": 6
@@ -1069,7 +1058,7 @@
         1
       ],
       "range": 1,
-      "damege": 3,
+      "damage": 3,
       "type": "P",
       "recoil": true,
       "LL": 6
@@ -1084,7 +1073,7 @@
         1
       ],
       "range": 3,
-      "damege": 4,
+      "damage": 4,
       "type": "P",
       "recoil": true,
       "LL": 7
@@ -1100,7 +1089,7 @@
         4
       ],
       "range": 0,
-      "damege": 2,
+      "damage": 2,
       "type": "P",
       "recoil": true,
       "LL": 4
@@ -1116,7 +1105,7 @@
         4
       ],
       "range": 1,
-      "damege": 3,
+      "damage": 3,
       "type": "P",
       "recoil": true,
       "LL": 6
@@ -1132,7 +1121,7 @@
         4
       ],
       "range": 0,
-      "damege": 3,
+      "damage": 3,
       "type": "P",
       "recoil": true,
       "LL": 4
@@ -1147,7 +1136,7 @@
         1
       ],
       "range": 2,
-      "damege": 2,
+      "damage": 2,
       "type": "P",
       "recoil": true,
       "LL": 1
@@ -1162,7 +1151,7 @@
         1
       ],
       "range": 2,
-      "damege": 4,
+      "damage": 4,
       "type": "E",
       "recoil": false,
       "LL": 2
@@ -1177,7 +1166,7 @@
         1
       ],
       "range": 2,
-      "damege": 2,
+      "damage": 2,
       "type": "P",
       "recoil": false,
       "LL": 6
@@ -1193,7 +1182,7 @@
         3
       ],
       "range": 1,
-      "damege": 3,
+      "damage": 3,
       "type": "P",
       "recoil": false,
       "LL": 6
@@ -1208,7 +1197,7 @@
         1
       ],
       "range": 1,
-      "damege": 5,
+      "damage": 5,
       "type": "E",
       "recoil": false,
       "LL": 2
@@ -1224,7 +1213,7 @@
         4
       ],
       "range": 1,
-      "damege": 3,
+      "damage": 3,
       "type": "P",
       "recoil": true,
       "LL": 6
@@ -1241,7 +1230,7 @@
         10
       ],
       "range": 1,
-      "damege": 4,
+      "damage": 4,
       "type": "P",
       "recoil": false,
       "LL": 6
@@ -1256,7 +1245,7 @@
         1
       ],
       "range": 2,
-      "damege": 4,
+      "damage": 4,
       "type": "E",
       "recoil": false,
       "LL": 2

@@ -6,10 +6,12 @@ from adventure_setup.controller import SetupController
 from conversations.conversation import handler
 
 from travellermap.api import TravellerMap
+import traveller.equipment as equipment
 
 JOINING_ADVENTURE, CREATING_ADVENTURE = map(chr, range(2))
 
 if __name__ == '__main__':
+    equipment.load_equipment('data/equipment.json')
     api = TravellerMap('data/map.json')
 
     config = dotenv.dotenv_values()
