@@ -1,4 +1,3 @@
-import curses.ascii
 import string
 import random
 from typing import Optional
