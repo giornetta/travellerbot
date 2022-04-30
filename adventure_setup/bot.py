@@ -4,13 +4,13 @@ from typing import List
 from telegram import Update
 from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackContext
 
-import character_creation
-from adventure_setup import kb
-from adventure_setup.service import SetupController
+from adventure_setup.service import AdventureSetupService
+from bot.context import Context
 from character_creation.service import CharacterCreator
-from conversations.state import ConversationState
-from character_creation import kb
-from travellermap.api import TravellerMap
+from bot.state import ConversationState
+from adventure_setup import kb
+from character_creation import kb as ckb
+from travellermap import api
 
 
 class State(Enum):
@@ -26,14 +26,12 @@ class State(Enum):
 
 
 class SetupConversation:
-    controller: SetupController
+    service: AdventureSetupService
     character_creator: CharacterCreator
-    traveller_map: TravellerMap
 
-    def __init__(self, controller: SetupController, character_creator: CharacterCreator, traveller_map: TravellerMap):
-        self.controller = controller
+    def __init__(self, service: AdventureSetupService, character_creator: CharacterCreator):
+        self.service = service
         self.character_creator = character_creator
-        self.traveller_map = traveller_map
 
     def handlers(self) -> List[ConversationHandler]:
         return [
@@ -77,43 +75,47 @@ class SetupConversation:
                     State.END_IDLE: ConversationState.PLAYER_IDLE,
                 },
                 name='join_adventure',
-                persistent=True
+                persistent=True,
             )
         ]
 
-    def _ask_adventure_code(self, update: Update, context: CallbackContext) -> State:
+    def _ask_adventure_code(self, update: Update, context: Context) -> State:
         kb.adv_code.reply_text(update)
         return State.CODE
 
-    def _handle_adventure_code(self, update: Update, context: CallbackContext) -> State:
+    def _handle_adventure_code(self, update: Update, context: Context) -> State:
         user_id = update.message.from_user.id
         adventure_id = update.message.text
 
-        res = self.controller.join_adventure(user_id, adventure_id)
+        res = self.service.join_adventure(user_id, adventure_id)  # TODO This could return an adventure
         if res:
+            # Create a new adventure to store the information
+            context.user_data.new_adventure()
+            context.user_data.adventure.id = adventure_id
+
             adventure_name, is_ref = res
-            kb.join_adventure(adventure_name)
+            kb.join_adventure.reply_text(update, adventure_name)
+
             if is_ref:
                 return State.END_REF
             else:
                 if self.character_creator.alive_character_exists(user_id, adventure_id):
                     return State.END_IDLE
                 else:
-                    kb.create_char.reply_text()
+                    kb.create_char.reply_text(update)
 
-                    chars = CharacterCreator.roll()
-                    context.user_data['characteristics'] = chars
-                    update.message.reply_text(f'STR: {chars["STR"]}\nDEX: {chars["DEX"]}')
+                    # Create a new character to store the information during character creation
+                    context.user_data.new_character()
+                    context.user_data.character.roll_stats()
 
-                    character_creation.kb.characteristics.reply_text(
-                        update, 
-                        params=(chars['STR'], chars['END'], chars['DEX'], chars['INT'], chars['EDU'], chars['SOC'])
-                    )
+                    ckb.characteristics.reply_text(update, params=context.user_data.character.stats_tuple)
 
-                    sector = self.character_creator.sector(adventure_id)
-                    character_creation.kb.world(sector)
+                    sector = self.character_creator.sector(adventure_id)  # TODO this can be moved in join_adventure
+                    context.user_data.adventure.sector = sector
 
-                    character_creation.kb.ask_min.reply_text(
+                    ckb.world.reply_text(update, params=sector)
+
+                    ckb.ask_min.reply_text(
                         update, params='Starport',
                         keys=[['X', 'E', 'D'], ['C', 'B', 'A'], ['Ignore']]
                     )
@@ -122,93 +124,89 @@ class SetupConversation:
             update.message.reply_text('The provided code isn\'t valid, try again.')
             return State.CODE
 
-    def _ask_adventure_name(self, update: Update, context: CallbackContext) -> State:
+    def _ask_adventure_name(self, update: Update, context: Context) -> State:
         kb.title.reply_text(update)
         return State.NAME
 
-    def _handle_adventure_name(self, update: Update, context: CallbackContext) -> State:
+    def _handle_adventure_name(self, update: Update, context: Context) -> State:
         # TODO check if valid
-        context.user_data["adventure_name"] = update.message.text
+        context.user_data.new_adventure()
+        context.user_data.adventure.name = update.message.text
+
         kb.sector.reply_text(update)
         return State.SECTOR
 
-    def _ask_sector(self, update: Update, context: CallbackContext) -> State:
+    def _ask_sector(self, update: Update, context: Context) -> State:
         kb.sector_name.reply_text(update)
         return State.SECTOR
 
-    def _handle_sector(self, update: Update, context: CallbackContext) -> State:
+    def _handle_sector(self, update: Update, context: Context) -> State:
         sector = update.message.text.title()
 
-        if sector in self.traveller_map.sectors:
-            context.user_data['adventure_sector'] = sector
+        if sector in api.sectors():
+            context.user_data.adventure.sector = sector
             kb.world.reply_text(update)
             return State.WORLD
         else:
             kb.no_sector.reply_text(update)
             return State.SECTOR
 
-    def _handle_random_sector(self, update: Update, context: CallbackContext) -> State:
-        sector = self.traveller_map.random_sector()
+    def _handle_random_sector(self, update: Update, context: Context) -> State:
+        sector = api.random_sector()
 
-        context.user_data['adventure_sector'] = sector
-        kb.confirm_sector.reply_text(update, sector)
+        context.user_data.adventure.sector = sector
+        kb.confirm_sector.reply_text(update, params=sector)
 
         return State.SECTOR
 
-    def _handle_accept_random_sector(self, update: Update, context: CallbackContext) -> State:
+    def _handle_accept_random_sector(self, update: Update, context: Context) -> State:
         kb.world.reply_text(update)
         return State.WORLD
 
-    def _ask_world(self, update: Update, context: CallbackContext) -> State:
+    def _ask_world(self, update: Update, context: Context) -> State:
         kb.world_name.reply_text(update)
         return State.WORLD
 
-    def _handle_world(self, update: Update, context: CallbackContext) -> State:
+    def _handle_world(self, update: Update, context: Context) -> State:
         world = update.message.text.title()
 
-        if world in self.traveller_map.worlds(context.user_data["adventure_sector"]):
-            context.user_data["adventure_world"] = world
+        if world in api.world_names(context.user_data.adventure.sector):
+            context.user_data.adventure.world = world
             kb.terms.reply_text(update)
             return State.TERMS
         else:
             kb.no_world.reply_text(update)
             return State.WORLD
 
-    def _handle_random_world(self, update: Update, context: CallbackContext) -> State:
-        world = self.traveller_map.random_world(context.user_data["adventure_sector"])
+    def _handle_random_world(self, update: Update, context: Context) -> State:
+        world = api.random_world(context.user_data.adventure.sector)
 
-        context.user_data["adventure_world"] = world
+        context.user_data.adventure.world = world.name
         kb.confirm_world.reply_text(update, world)
 
         return State.WORLD
 
-    def _handle_accept_random_world(self, update: Update, context: CallbackContext) -> State:
+    def _handle_accept_random_world(self, update: Update, context: Context) -> State:
         kb.terms.reply_text(update)
         return State.TERMS
 
-    def _handle_terms(self, update: Update, context: CallbackContext) -> State:
+    def _handle_terms(self, update: Update, context: Context) -> State:
         try:
             terms = int(update.message.text)
-            context.user_data["adventure_terms"] = terms
+            context.user_data.adventure.terms = terms
             kb.survival_roll.reply_text(update)
             return State.SURVIVAL
         except ValueError:
             kb.invalid_choice.reply_text(update)
             return State.TERMS
 
-    def _handle_survival(self, update: Update, context: CallbackContext) -> State:
+    def _handle_survival(self, update: Update, context: Context) -> State:
         if update.message.text == "Yes" or "No":
-            context.user_data["adventure_survival"] = update.message.text == "Yes"
+            context.user_data.adventure.survival_kills = update.message.text == "Yes"
 
-            code = self.controller.create_adventure(
-                update.message.from_user.id,
-                context.user_data["adventure_name"],
-                context.user_data["adventure_sector"],
-                context.user_data["adventure_world"],
-                context.user_data["adventure_terms"],
-                context.user_data["adventure_survival"]
-            )
+            adv_id = self.service.create_adventure(update.message.from_user.id, context.user_data.adventure)
+            context.user_data.adventure.id = adv_id
 
-            kb.adventure_created.reply_text(params=code)
+            kb.adventure_created.reply_text(update, params=adv_id)
             
             return State.END
