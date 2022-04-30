@@ -1,10 +1,11 @@
 import dotenv
 import psycopg2
-from telegram.ext import Updater, PicklePersistence
+from telegram.ext import Updater, PicklePersistence, ContextTypes
 
 from adventure_setup.service import AdventureSetupService
+from bot.context import Context, UserData
 from character_creation.service import CharacterCreator
-from conversations.conversation import handler
+from bot.conversation import handler
 
 from travellermap import api
 import traveller.equipment as equipment
@@ -28,8 +29,9 @@ if __name__ == '__main__':
 
     updater = Updater(
         token=config['TELEGRAM_TOKEN'],
-        use_context=True,
-        persistence=PicklePersistence(filename='data/conversations.pickle')
+        # use_context=True,
+        persistence=PicklePersistence(filename='data/conversations.pickle'),
+        context_types=ContextTypes(context=Context, user_data=UserData)
     )
     dispatcher = updater.dispatcher
 

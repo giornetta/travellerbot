@@ -2,10 +2,11 @@ from telegram import Update
 from telegram.ext import ConversationHandler, CommandHandler, MessageHandler, CallbackContext, Filters
 
 from adventure_setup.service import AdventureSetupService
+from bot.context import Context
 from character_creation.bot import CharacterCreationConversation
 from character_creation.service import CharacterCreator
-from conversations.adventure_setup import SetupConversation
-from conversations.state import ConversationState
+from adventure_setup.bot import SetupConversation
+from bot.state import ConversationState
 from keyboards import keyboards
 
 
@@ -23,12 +24,12 @@ def handler(setup_controller: AdventureSetupService, character_creator: Characte
     )
 
 
-def _handle_start(update: Update, context: CallbackContext) -> ConversationState:
+def _handle_start(update: Update, context: Context) -> ConversationState:
     keyboards.welcome.reply_text(update)
     return ConversationState.ADVENTURE_SETUP
 
 
-def _handle_ref(update: Update, context: CallbackContext) -> ConversationState:
+def _handle_ref(update: Update, context: Context) -> ConversationState:
     update.message.reply_text(text='Executing command...')
     return ConversationState.REFEREE_IDLE
 

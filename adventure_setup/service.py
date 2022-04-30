@@ -6,6 +6,8 @@ import psycopg2
 import psycopg2.errors
 from psycopg2.extensions import connection
 
+from traveller.adventure import Adventure
+
 
 class AdventureSetupService:
     db: connection
@@ -28,18 +30,21 @@ class AdventureSetupService:
 
         return res
 
-    def create_adventure(self, referee: int, adventure_name: str, sector: str, world: str, terms: int, survival_kills: bool) -> Optional[str]:
+    def create_adventure(self, referee_id: int, adv: Adventure) -> Optional[str]:
         adventure_id = ''.join(random.choices(string.ascii_letters + string.digits, k=6)).upper()
         created = False
+
+        if adv.terms < 0:
+            adv.terms = -1
 
         while not created:
             with self.db:
                 with self.db.cursor() as cur:
                     try:
-                        cur.execute('INSERT INTO users(id) VALUES(%s) ON CONFLICT DO NOTHING;', (referee, ))
+                        cur.execute('INSERT INTO users(id) VALUES(%s) ON CONFLICT DO NOTHING;', (referee_id, ))
                         cur.execute('INSERT INTO adventures VALUES(%s, %s, %s, %s, %s, %s, %s);',
-                                    (adventure_id, adventure_name, sector, world, terms, survival_kills, referee))
-                        cur.execute('UPDATE users SET active_adventure = %s WHERE id = %s;', (adventure_id, referee))
+                                    (adventure_id, adv.name, adv.sector, adv.world, adv.terms, adv.survival_kills, referee_id))
+                        cur.execute('UPDATE users SET active_adventure = %s WHERE id = %s;', (adventure_id, referee_id))
                         created = True
                     except psycopg2.errors.UniqueViolation:
                         adventure_id = ''.join(random.choices(string.ascii_letters + string.digits, k=6)).upper()
