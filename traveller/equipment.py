@@ -39,29 +39,29 @@ def load_equipment(path: str):
                 elif eq_type == "Explosives":
                     equipments[equip['id']] = Explosive(equip)
                 elif eq_type == "Personal Devices":
-                    equipments[equip['id']] = Personal_Device(equip)
+                    equipments[equip['id']] = PersonalDevice(equip)
                 elif eq_type == "Sensory Aids":
-                    equipments[equip['id']] = Sensory_Aid(equip)
+                    equipments[equip['id']] = SensoryAid(equip)
                 elif eq_type == "Shelters":
                     equipments[equip['id']] = Shelter(equip)
                 elif eq_type == "Survival Equipment":
-                    equipments[equip['id']] = Survival_Equipment(equip)
+                    equipments[equip['id']] = SurvivalEquipment(equip)
                 elif eq_type == "Tools":
                     equipments[equip['id']] = Tool(equip)
                 elif eq_type == "Melee Weapons":
-                    equipments[equip['id']] = Melee_Weapon(equip)
+                    equipments[equip['id']] = MeleeWeapon(equip)
                 elif eq_type == "Ranged Weapons":
-                    equipments[equip['id']] = Ranged_Weapon(equip)
+                    equipments[equip['id']] = RangedWeapon(equip)
                 elif eq_type == "Ranged Ammunition":
-                    equipments[equip['id']] = Ranged_Ammunition(equip)
+                    equipments[equip['id']] = RangedAmmunition(equip)
                 elif eq_type == "Weapon Accessories":
-                    equipments[equip['id']] = Weapon_Accessory(equip)
+                    equipments[equip['id']] = WeaponAccessory(equip)
                 elif eq_type == "Grenades":
                     equipments[equip['id']] = Grenade(equip)
                 elif eq_type == "Heavy Weapons":
-                    equipments[equip['id']] = Heavy_Weapon(equip)
+                    equipments[equip['id']] = HeavyWeapon(equip)
                 elif eq_type == "Heavy Weapon Ammunition":
-                    equipments[equip['id']] = Heavy_Weapon_Ammunition(equip)
+                    equipments[equip['id']] = HeavyWeaponAmmunition(equip)
                 else:
                     equipments[equip['id']] = Equipment(equip)
 
@@ -164,7 +164,7 @@ class Explosive(Equipment):
         self.damage_multiplier = data.get('damage_multiplier')
 
 
-class Personal_Device(Equipment):
+class PersonalDevice(Equipment):
     weight: Optional[float]
 
     def __init__(self, data: Dict):
@@ -172,7 +172,7 @@ class Personal_Device(Equipment):
         self.weight = data.get('weight')
 
 
-class Sensory_Aid(Equipment):
+class SensoryAid(Equipment):
     weight: Optional[float]
 
     def __init__(self, data: Dict):
@@ -188,7 +188,7 @@ class Shelter(Equipment):
         self.weight = data['weight']
 
 
-class Survival_Equipment(Equipment):
+class SurvivalEquipment(Equipment):
     weight: Optional[float]
 
     def __init__(self, data: Dict):
@@ -216,7 +216,7 @@ class Weapon(Equipment):
         self.damage = data['damage']
 
 
-class Melee_Weapon(Weapon):
+class MeleeWeapon(Weapon):
     types: List[str]
     range: List[int]
 
@@ -226,7 +226,7 @@ class Melee_Weapon(Weapon):
         self.range = data['range']
 
 
-class Ranged_Weapon(Weapon):
+class RangedWeapon(Weapon):
     rate_of_fire: List[int]
     type: str
     recoil: bool
@@ -240,7 +240,7 @@ class Ranged_Weapon(Weapon):
         self.range = data['range']
 
 
-class Ranged_Ammunition(Equipment):
+class RangedAmmunition(Equipment):
     weight: float
     rounds: List[int]
 
@@ -250,7 +250,7 @@ class Ranged_Ammunition(Equipment):
         self.rounds = data['rounds']
 
 
-class Weapon_Accessory(Equipment):
+class WeaponAccessory(Equipment):
     weight: Optional[float]
 
     def __init__(self, data: Dict):
@@ -270,7 +270,7 @@ class Grenade(Equipment):
         self.law_level = data['LL']
 
 
-class Heavy_Weapon(Weapon):
+class HeavyWeapon(Weapon):
     rate_of_fire: List[int]
     recoil: bool
     range: int
@@ -282,7 +282,7 @@ class Heavy_Weapon(Weapon):
         self.range = data['range']
 
 
-class Heavy_Weapon_Ammunition(Equipment):
+class HeavyWeaponAmmunition(Equipment):
     weight: float
     rounds: int
 
