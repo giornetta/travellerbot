@@ -1,14 +1,13 @@
-from collections import OrderedDict
-from enum import Enum, auto
-from typing import List, Callable
+from typing import Callable
 
 from telegram import Update
-from telegram.ext import ConversationHandler, MessageHandler, CallbackContext, Filters
+from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackContext
 
-from bot.context import Context
+from cache.userdata import user_data
 from character_creation import kb
 from character_creation.service import CharacterCreator
-from traveller.common import Characteristics
+from traveller.characteristic import Characteristic
+from traveller.world import *
 from traveller.world import Attribute, starport_values
 from travellermap import api
 
@@ -33,17 +32,6 @@ class State(Enum):
     WORLD = auto()
     HOMEWORLD_SKILL = auto()
 
-
-params = OrderedDict({
-    'starport': ('Starport', 'A'),
-    'size': ('Size', 10),
-    'atm': ('Atmosphere', 15),
-    'hydro': ('Hydrographics', 10),
-    'pop': ('Population', 10),
-    'gov': ('Government', 15),
-    'law': ('Law Level', 10),
-    'tech': ('Technology Level', 15)
-})
 
 filter_starport = Filters.regex('^(X|E|D|C|B|A|Ignore)$')
 filter_10 = Filters.regex('^([0-9]|10|Ignore)$')
@@ -82,18 +70,15 @@ class CharacterCreationConversation:
             fallbacks=[]
         )]
 
-    def _handle_min_starport(self, update: Update, context: Context) -> State:
-        context.user_data.new_filters()
+    def _handle_min_starport(self, update: Update, context: CallbackContext) -> State:
+        user_id = update.message.from_user.id
+        user_data[user_id].init_filters()
 
         if update.message.text == 'Ignore':
-            context.user_data.homeworld_filters[Attribute.STARPORT].min = 0
-            context.user_data.homeworld_filters[Attribute.STARPORT].max = Attribute.STARPORT.max
-
             kb.ask_min.reply_text(update, params=Attribute.SIZE.full_name, keys=num_keys(0, Attribute.SIZE.max))
-
             return State.MIN_SIZE
 
-        context.user_data.homeworld_filters[Attribute.STARPORT].min = starport_values[update.message.text]
+        user_data[user_id].filters[Attribute.STARPORT].min = starport_values[update.message.text]
 
         vals = ['X', 'E', 'D', 'C', 'B', 'A', 'Ignore']
         kl = [vals[i] for i in range(vals.index(update.message.text), len(vals))]
@@ -103,27 +88,22 @@ class CharacterCreationConversation:
 
         return State.MAX_STARPORT
 
-    def _handle_max_starport(self, update: Update, context: Context) -> State:
+    def _handle_max_starport(self, update: Update, context: CallbackContext) -> State:
+        user_id = update.message.from_user.id
         val = update.message.text
         vals = ['X', 'E', 'D', 'C', 'B', 'A', 'Ignore']
 
-        if val == 'Ignore':
-            context.user_data.homeworld_filters[Attribute.STARPORT].max = Attribute.STARPORT.max
-        else:
-            if starport_values[val] < context.user_data.homeworld_filters[Attribute.STARPORT].min:
-                context.user_data.homeworld_filters[Attribute.STARPORT].max = context.user_data.homeworld_filters[Attribute.STARPORT].min
-            else:
-                context.user_data.homeworld_filters[Attribute.STARPORT].max = val
+        if val != 'Ignore':
+            user_data[user_id].filters[Attribute.STARPORT].max = min(user_data[user_id].filters[Attribute.STARPORT].min, starport_values[val])
 
         kb.ask_min.reply_text(update, params=Attribute.SIZE.full_name, keys=num_keys(0, Attribute.SIZE.max))
         return State.MIN_SIZE
 
-    def _handle_min(self, attr: Attribute) -> Callable[[Update, Context], State]:
-        def min_cb(update: Update, context: Context) -> State:
-            if update.message.text == 'Ignore':
-                context.user_data.homeworld_filters[attr].min = 0
-                context.user_data.homeworld_filters[attr].max = attr.max
+    def _handle_min(self, attr: Attribute) -> Callable[[Update, CallbackContext], State]:
+        def min_cb(update: Update, context: CallbackContext) -> State:
+            user_id = update.message.from_user.id
 
+            if update.message.text == 'Ignore':
                 next_index = list(Attribute).index(attr) + 1
                 next_attr: Attribute = list(Attribute)[next_index]
 
@@ -132,7 +112,7 @@ class CharacterCreationConversation:
                 return State[f'MIN_{next_attr.name}']
 
             val = int(update.message.text)
-            context.user_data.homeworld_filters[attr].min = val
+            user_data[user_id].filters[attr].min = val
 
             kb.ask_max.reply_text(update, params=attr.full_name, keys=num_keys(val, attr.max))
 
@@ -140,88 +120,88 @@ class CharacterCreationConversation:
 
         return min_cb
 
-    def _handle_max(self, attr: Attribute) -> Callable[[Update, Context], State]:
-        def max_cb(update: Update, context: Context) -> State:
-            if update.message.text == 'Ignore':
-                context.user_data.homeworld_filters[attr].max = attr.max
-            else:
-                val = int(update.message.text)
-                if val >= context.user_data.homeworld_filters[attr].min:
-                    context.user_data.homeworld_filters[attr].max = val
-                else:
-                    context.user_data.homeworld_filters[attr].max = context.user_data.homeworld_filters[attr].min
+    def _handle_max(self, attr: Attribute) -> Callable[[Update, CallbackContext], State]:
+        def max_cb(update: Update, context: CallbackContext) -> State:
+            user_id = update.message.from_user.id
+
+            if update.message.text != 'Ignore':
+                user_data[user_id].filters[attr].max = min(user_data[user_id].filters[attr].min, int(update.message.text))
 
             next_index = list(Attribute).index(attr) + 1
-            next_attr: Attribute = list(Attribute)[next_index]
+            next_attr = list(Attribute)[next_index]
 
             kb.ask_min.reply_text(update, params=next_attr.full_name, keys=num_keys(0, next_attr.max))
             return State[f'MIN_{next_attr.name}']
 
         return max_cb
 
-    def _handle_min_tech(self, update: Update, context: Context):
-        if update.message.text == 'Ignore':
-            context.user_data.homeworld_filters[Attribute.TECH].min = 0
-            context.user_data.homeworld_filters[Attribute.TECH].max = Attribute.TECH.max
+    def _handle_min_tech(self, update: Update, context: CallbackContext):
+        user_id = update.message.from_user.id
 
-            return self._world_selection(update, context)
+        if update.message.text == 'Ignore':
+            return self._world_selection(update)
 
         val = int(update.message.text)
-        context.user_data.homeworld_filters[Attribute.TECH].min = val
+        user_data[user_id].filters[Attribute.TECH].min = val
+
         kb.ask_max.reply_text(update, params=Attribute.TECH.full_name, keys=num_keys(val, Attribute.TECH.max))
 
         return State.MAX_TECH
 
-    def _handle_max_tech(self, update: Update, context: Context) -> State:
-        if update.message.text == 'Ignore':
-            context.user_data.homeworld_filters[Attribute.TECH].max = Attribute.TECH.max
-        else:
-            val = int(update.message.text)
-            if val >= context.user_data.homeworld_filters[Attribute.TECH].min:
-                context.user_data.homeworld_filters[Attribute.TECH].max = val
-            else:
-                context.user_data.homeworld_filters[Attribute.TECH].max = context.user_data.homeworld_filters[Attribute.TECH].min
+    def _handle_max_tech(self, update: Update, context: CallbackContext) -> State:
+        user_id = update.message.from_user.id
 
-        return self._world_selection(update, context)
+        if update.message.text != 'Ignore':
+            user_data[user_id].filters[Attribute.TECH].max = min(user_data[user_id].filters[Attribute.TECH].min, int(update.message.text))
 
-    def _world_selection(self, update: Update, context: Context):
-        worlds = api.world_filter(context.user_data.adventure.sector, context.user_data.homeworld_filters)
+        return self._world_selection(update)
+
+    def _world_selection(self, update: Update):
+        user_id = update.message.from_user.id
+
+        worlds = api.world_filter(user_data[user_id].adventure.sector, user_data[user_id].filters)
 
         if len(worlds) == 0:
             kb.no_world_found.reply_text(update)
             kb.ask_min.reply_text(update, params=Attribute.STARPORT.full_name, keys=[['X', 'E', 'D'], ['C', 'B', 'A'], ['Ignore']])
             return State.MIN_STARPORT
 
-        kb.choose_world.reply_text(update, params=context.user_data.adventure.sector, keys=single_keys(worlds))
+        kb.choose_world.reply_text(update, params=user_data[user_id].adventure.sector, keys=single_keys(worlds))
 
         return State.WORLD
 
-    def _handle_world(self, update: Update, context: Context):
-        homeworld = api.world(context.user_data.adventure.sector, update.message.text)
+    def _handle_world(self, update: Update, context: CallbackContext):
+        user_id = update.message.from_user.id
+
+        homeworld = api.world(user_data[user_id].adventure.sector, update.message.text)
         if not homeworld:
             return State.WORLD
 
-        context.user_data.character.homeworld = homeworld
-        context.user_data.initial_skills_left = 3 + context.user_data.character.modifiers[Characteristics.EDU]
+        user_data[user_id].character.homeworld = homeworld
+        user_data[user_id].initial_skills_left = 3 + user_data[user_id].character.modifiers[Characteristic.EDU]
 
         kb.ask_homeworld_skill.reply_text(update, keys=single_keys(homeworld.homeworld_skills))
         return State.HOMEWORLD_SKILL
 
-    def _handle_homeworld_skill(self, update: Update, context: Context):
+    def _handle_homeworld_skill(self, update: Update, context: CallbackContext):
+        user_id = update.message.from_user.id
+
         skill = update.message.text
-        if skill not in context.user_data.character.homeworld.homeworld_skills:
+        if skill not in user_data[user_id].character.homeworld.homeworld_skills:
             return State.HOMEWORLD_SKILL
 
-        if len(context.user_data.character.skills) == 0:
-            context.user_data.character.skills = []
+        if len(user_data[user_id].character.skills) == 0:
+            user_data[user_id].character.skills = []
 
-        context.user_data.character.skills.append(skill)
+        user_data[user_id].character.skills.append(skill)
+
 
 def num_keys(start: int, end: int) -> List[List[str]]:
     kl = [str(i) for i in range(start, end + 1)]
     kl.append('Ignore')
 
     return [kl[i: i + 3] for i in range(0, len(kl), 3)]
+
 
 def single_keys(l: List[str]) -> List[List[str]]:
     return [l[i: i + 1] for i in range(0, len(l), 1)]

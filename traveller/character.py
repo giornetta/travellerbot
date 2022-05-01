@@ -3,17 +3,15 @@ from __future__ import annotations
 from enum import Enum
 from random import Random
 
-from traveller.common import Characteristics
+from traveller.characteristic import Characteristic
 from traveller.equipment import Equipment, Armor, Weapon
 
-from typing import Dict, List, cast, Tuple
+from typing import Dict, List, cast
+from traveller.world import World
 
 
 # This represents the Sex of a Character.
 # It will be used to determine appropriate noble/work titles.
-from traveller.world import World
-
-
 class Sex(Enum):
     M: str = 'Male'
     F: str = 'Female'
@@ -38,8 +36,8 @@ class Character:
     sex: Sex
 
     # Statistics
-    stats: Dict[Characteristics, int]
-    modifiers: Dict[Characteristics, int]
+    stats: Dict[Characteristics, int] = {}
+    modifiers: Dict[Characteristics, int] = {}
 
     # Homeworld
     homeworld: World
@@ -58,26 +56,15 @@ class Character:
     stims_taken: int
 
     # Skills
-    skills: List[str]  # TODO Turn into List[Skill] and add functionalities
+    skills: List[str] = []  # TODO Turn into List[Skill] and add functionalities
 
     def equip_armor(self, armor_name: str):
         for item in self.inventory:
-            if item.name is armor_name and item.__class__ is Armor:
+            if item.name is armor_name and isinstance(item, Armor):
                 self.equipped_armor = cast(Armor, item)
 
     def roll_stats(self):
-        for c in Characteristics:
+        for c in Characteristic:
             v = Random().randint(1, 6) + Random().randint(1, 6)
             self.stats[c] = v
             self.modifiers[c] = v // 3 - 2
-
-    @property
-    def stats_tuple(self) -> Tuple[int, int, int, int, int, int]:
-        return (
-            self.stats[Characteristics.STR],
-            self.stats[Characteristics.END],
-            self.stats[Characteristics.DEX],
-            self.stats[Characteristics.INT],
-            self.stats[Characteristics.EDU],
-            self.stats[Characteristics.SOC]
-        )

@@ -9,7 +9,7 @@ class CharacterCreator:
 
     # This stores the characters being created
     # before they're actually saved into the db.
-    characters: Dict[int, Character]  # TODO Could also use context?
+    characters: Dict[int, Character]  # TODO Could also use CallbackContext?
 
     db: connection
 

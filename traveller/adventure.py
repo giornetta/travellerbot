@@ -1,6 +1,6 @@
 class Adventure:
     id: str
-    name: str
+    title: str
     sector: str
     world: str  # TODO for now the name is enough
     terms: int

@@ -1,23 +1,23 @@
 import dotenv
 import psycopg2
-from telegram.ext import Updater, PicklePersistence, ContextTypes
+from telegram.ext import Updater, PicklePersistence
 
+from cache import userdata
 from adventure_setup.service import AdventureSetupService
-from bot.context import Context, UserData
 from character_creation.service import CharacterCreator
 from bot.conversation import handler
 
 from travellermap import api
-import traveller.equipment as equipment
+from traveller import equipment
 
-JOINING_ADVENTURE, CREATING_ADVENTURE = map(chr, range(2))
 
 if __name__ == '__main__':
-    # Load global data
-    equipment.load_equipment('data/equipment.json')
-    api.load_map('data/map.json')
-
     config = dotenv.dotenv_values()
+
+    # Load global data
+    equipment.load_equipment(config['EQUIP_PATH'])
+    api.load_map(config['MAP_PATH'])
+    userdata.load_data(config['CACHE_PATH'])
 
     conn = psycopg2.connect(
         user=config['DB_USER'],
@@ -29,17 +29,16 @@ if __name__ == '__main__':
 
     updater = Updater(
         token=config['TELEGRAM_TOKEN'],
-        # use_context=True,
-        persistence=PicklePersistence(filename='data/conversations.pickle'),
-        context_types=ContextTypes(context=Context, user_data=UserData)
+        persistence=PicklePersistence(filename=config['CONV_PATH']),
+        use_context=False,
     )
-    dispatcher = updater.dispatcher
-
     character_creator = CharacterCreator(conn)
     setup_controller = AdventureSetupService(conn)
 
     conversation = handler(setup_controller, character_creator)
-    dispatcher.add_handler(conversation)
+    updater.dispatcher.add_handler(conversation)
 
     updater.start_polling()
     updater.idle()
+
+    userdata.write_data(config['CACHE_PATH'])

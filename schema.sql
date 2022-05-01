@@ -5,7 +5,7 @@ CREATE TABLE users (
 
 CREATE TABLE adventures (
    id CHAR(6) PRIMARY KEY,
-   title VARCHAR(16) NOT NULL,
+   title VARCHAR(32) NOT NULL,
    sector VARCHAR(64) NOT NULL,
    planet VARCHAR(64) NOT NULL,
    max_terms INT NOT NULL,

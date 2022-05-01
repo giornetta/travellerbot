@@ -23,11 +23,6 @@ class TradeCode(Enum):
     VACUUM = auto()
 
 
-class AttrFilter:
-    min: int
-    max: int
-
-
 class AttrVal(NamedTuple):
     full_name: str
     max: int
@@ -40,8 +35,17 @@ class Attribute(AttrVal, Enum):
     HYDRO = AttrVal('Hydrographics', 10)
     POP = AttrVal('Population', 10)
     GOV = AttrVal('Government', 15)
-    LAW = AttrVal('Law Level', 10)
-    TECH = AttrVal('Tech Level', 15)
+    LAW = AttrVal('Law', 10)
+    TECH = AttrVal('Tech', 15)
+
+
+class AttrFilter:
+    min: int
+    max: int
+
+    def __init__(self, attr: Attribute):
+        self.min = 0
+        self.max = attr.max
 
 
 starport_values = {'X': 0, 'E': 1, 'D': 2, 'C': 3, 'B': 4, 'A': 5}
