@@ -23,7 +23,7 @@ if __name__ == '__main__':
         user=config['DB_USER'],
         password=config['DB_PASS'],
         database=config['DB_NAME'],
-        host='127.0.0.1',
+        host='localhost',
         port=5432
     )
 

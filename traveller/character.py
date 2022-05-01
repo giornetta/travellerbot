@@ -1,22 +1,14 @@
 from __future__ import annotations
 
 from enum import Enum
-<<<<<<< HEAD
-
 from psycopg2.extensions import connection
-=======
 from random import Random
->>>>>>> e8f1352ec043d25064b2ec8df3e7da4e5059b7a4
 
 from traveller.common import Characteristics
 from traveller.equipment import Equipment, Armor, Weapon
 
 from typing import Dict, List, cast, Tuple
-<<<<<<< HEAD
 from traveller.skill import Skill
-=======
->>>>>>> e8f1352ec043d25064b2ec8df3e7da4e5059b7a4
-
 
 # This represents the Sex of a Character.
 # It will be used to determine appropriate noble/work titles.
@@ -50,12 +42,9 @@ class Character:
     stats: Dict[Characteristics, int]
     modifiers: Dict[Characteristics, int]
 
-<<<<<<< HEAD
-=======
     # Homeworld
     homeworld: World
-    
->>>>>>> e8f1352ec043d25064b2ec8df3e7da4e5059b7a4
+
     # Possessions
     credits: int
     equipped_armor: Armor = None
@@ -80,7 +69,6 @@ class Character:
             if item.name is armor_name and item.__class__ is Armor:
                 self.equipped_armor = cast(Armor, item)
 
-<<<<<<< HEAD
     def write(self, user_id, adventure_id, db: connection):
         with db:
             with db.cursor() as cur:
@@ -110,7 +98,7 @@ class Character:
                     cur.execute('INSERT INTO inventories VALUES(%s, %s, %s, 0);', (char_id, eq.id, qt))
                 for skill in self.skills:
                     cur.execute('INSERT INTO skill_sets VALUES(%s, %s, %s);', (char_id, skill.name, skill.level))
-=======
+
     def roll_stats(self):
         for c in Characteristics:
             v = Random().randint(1, 6) + Random().randint(1, 6)
@@ -127,4 +115,3 @@ class Character:
             self.stats[Characteristics.EDU],
             self.stats[Characteristics.SOC]
         )
->>>>>>> e8f1352ec043d25064b2ec8df3e7da4e5059b7a4

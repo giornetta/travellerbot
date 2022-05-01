@@ -32,12 +32,12 @@ CREATE TABLE characters (
     education INT NOT NULL,
     social_standing INT NOT NULL,
 
-    str_mod INT NOT NULL,
-    dex_mod INT NOT NULL,
-    end_mod INT NOT NULL,
-    int_mod INT NOT NULL,
-    edu_mod INT NOT NULL,
-    soc_mod INT NOT NULL,
+    strength_mod INT NOT NULL,
+    dexterity_mod INT NOT NULL,
+    endurance_mod INT NOT NULL,
+    intelligence_mod INT NOT NULL,
+    education_mod INT NOT NULL,
+    social_standing_mod INT NOT NULL,
     credits BIGINT NOT NULL,
 
     equipped_armor INT,
@@ -45,6 +45,7 @@ CREATE TABLE characters (
     drawn_weapon INT,
     stance SMALLINT NOT NULL CHECK (stance BETWEEN 0 AND 2),
     rads INT NOT NULL,
+    wounded BOOLEAN NOT NULL,
     is_fatigued BOOLEAN NOT NULL,
     stims_taken INT NOT NULL
 );
