@@ -30,7 +30,7 @@ if __name__ == '__main__':
     updater = Updater(
         token=config['TELEGRAM_TOKEN'],
         persistence=PicklePersistence(filename=config['CONV_PATH']),
-        use_context=False,
+        use_context=True,
     )
     character_creator = CharacterCreator(conn)
     setup_controller = AdventureSetupService(conn)

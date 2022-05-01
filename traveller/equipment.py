@@ -164,7 +164,7 @@ class Explosive(Equipment):
         self.damage_multiplier = data.get('damage_multiplier')
 
 
-class Personal_Device(Equipment):
+class PersonalDevice(Equipment):
     weight: Optional[float]
 
     def __init__(self, data: Dict):
