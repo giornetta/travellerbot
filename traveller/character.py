@@ -73,9 +73,9 @@ class Character:
         with db:
             with db.cursor() as cur:
                 cur.execute('INSERT INTO characters '
-                            'VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+                            'VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
                             'ON CONFLICT DO NOTHING;',
-                            (self.name, self.sex.value, True, user_id, adventure_id,
+                            (self.name, self.sex.value, True, self.age, user_id, adventure_id,
                              self.stats[Characteristics.STR],
                              self.stats[Characteristics.DEX],
                              self.stats[Characteristics.END],

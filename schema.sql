@@ -4,14 +4,16 @@ CREATE TABLE users (
 );
 
 CREATE TABLE adventures (
-   id CHAR(6) PRIMARY KEY,
-   title VARCHAR(16) NOT NULL,
-   sector VARCHAR(64) NOT NULL,
-   planet VARCHAR(64) NOT NULL,
-   max_terms INT NOT NULL,
-   survival_fail_kills BOOLEAN NOT NULL,
 
-   referee_id BIGINT NOT NULL REFERENCES users(id)
+    id CHAR(6) PRIMARY KEY,
+    title VARCHAR(16) NOT NULL,
+    sector VARCHAR(64) NOT NULL,
+    planet VARCHAR(64) NOT NULL,
+    max_terms INT NOT NULL,
+    survival_fail_kills BOOLEAN NOT NULL,
+
+    combat_id INT,
+    referee_id BIGINT NOT NULL REFERENCES users(id)
 );
 
 ALTER TABLE users ADD CONSTRAINT fkActiveAdventure FOREIGN KEY(active_adventure) REFERENCES adventures(id);
@@ -21,6 +23,7 @@ CREATE TABLE characters (
     char_name VARCHAR(32) NOT NULL,
     sex CHAR NOT NULL CHECK (sex = 'M' OR sex = 'F'),
     alive BOOLEAN NOT NULL DEFAULT TRUE,
+    age INT NOT NULL,
 
     user_id BIGINT NOT NULL REFERENCES users(id),
     adventure_id CHAR(6) NOT NULL REFERENCES adventures(id),
@@ -66,3 +69,9 @@ CREATE TABLE skill_sets (
 
     PRIMARY KEY (character_id, skill_name)
 );
+
+CREATE TABLE shop (
+    adventure_id CHAR(6) REFERENCES adventures(id),
+    equipment_id INT,
+    PRIMARY KEY(adventure_id,equipment_id)
+)

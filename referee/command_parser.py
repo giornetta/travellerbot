@@ -1,9 +1,21 @@
 from typing import Callable, List, Optional, Dict, Tuple
 import re
 
+from referee.referee_commands import RefereeCommands as Rc
+
 
 class CommandParser:
-    callbacks: Dict[str, Callable] = {}
+    callbacks: Dict[str, Callable] = {
+        "info": Rc.info,
+        "set": Rc.set,
+        "shop": Rc.shop,
+        "rest": Rc.rest,
+        "combat": Rc.combat,
+        "travel": Rc.travel,
+        "age": Rc.age,
+        "scene": Rc.scene,
+        "exit": Rc.exit
+    }
 
     def execute(self, command: str) -> (bool, str):
         if re.match(r'^/[0-9a-zA-Z+\- :]+$', command):
