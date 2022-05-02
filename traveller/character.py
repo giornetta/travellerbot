@@ -11,7 +11,7 @@ from psycopg2.extensions import connection
 from traveller.equipment import Equipment, Armor, Weapon
 
 from typing import Dict, List, cast, Tuple
-from traveller.skill import Skill
+from traveller.skill import Skill, skills
 
 
 # This represents the Sex of a Character.
@@ -60,10 +60,7 @@ class Character:
     stims_taken: int = 0
 
     # Skills
-    skills: List[Skill]
-
-    # Skills
-    skills: List[str] = []  # TODO Turn into List[Skill] and add functionalities
+    skills: List[Skill] = []
 
     def equip_armor(self, armor_name: str):
         for item, qt in self.inventory:
@@ -76,28 +73,40 @@ class Character:
             self.stats[c] = v
             self.modifiers[c] = v // 3 - 2
 
+    @property
+    def skill_names(self):
+        return [s.name for s in self.skills]
+
+    def acquire_skill(self, skill_name: str):
+        if skill_name in skills:
+            try:
+                i = [s.name for s in self.skills].index(skill_name)
+                self.skills[i].level += 1
+            except ValueError:
+                self.skills.append(Skill(skill_name, 0))
+
     def write(self, user_id, adventure_id, db: connection):
         with db:
             with db.cursor() as cur:
                 cur.execute('INSERT INTO characters '
                             'VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-                            'ON CONFLICT DO NOTHING;',
-                            (self.name, self.sex.value, True, user_id, adventure_id,
-                             self.stats[Characteristic.STR],
-                             self.stats[Characteristic.DEX],
-                             self.stats[Characteristic.END],
-                             self.stats[Characteristic.INT],
-                             self.stats[Characteristic.EDU],
-                             self.stats[Characteristic.SOC],
-                             self.modifiers[Characteristic.STR],
-                             self.modifiers[Characteristic.DEX],
-                             self.modifiers[Characteristic.END],
-                             self.modifiers[Characteristic.INT],
-                             self.modifiers[Characteristic.EDU],
-                             self.modifiers[Characteristic.SOC],
-                             self.credits, None, None, None, self.stance, self.rads,
-                             self.is_fatigued, self.stims_taken
-                             ))
+                            'ON CONFLICT DO NOTHING;', (
+                                self.name, self.sex.value, True, user_id, adventure_id,
+                                self.stats[Characteristic.STR],
+                                self.stats[Characteristic.DEX],
+                                self.stats[Characteristic.END],
+                                self.stats[Characteristic.INT],
+                                self.stats[Characteristic.EDU],
+                                self.stats[Characteristic.SOC],
+                                self.modifiers[Characteristic.STR],
+                                self.modifiers[Characteristic.DEX],
+                                self.modifiers[Characteristic.END],
+                                self.modifiers[Characteristic.INT],
+                                self.modifiers[Characteristic.EDU],
+                                self.modifiers[Characteristic.SOC],
+                                self.credits, None, None, None, self.stance, self.rads,
+                                self.is_fatigued, self.stims_taken
+                            ))
                 cur.execute('SELECT id FROM characters WHERE alive=TRUE AND user_id = %s AND adventure_id = %s;',
                             (user_id, adventure_id))
                 char_id = cur.fetchone()[0]

@@ -37,6 +37,12 @@ ask_homeworld_skill = Keyboard('Choose a Homeworld skill',
                                    ['Skill1', 'Skill2', '...']
                                ], one_time_keyboard=False))
 
+ask_education_skill = Keyboard('Choose an Education skill',
+                               reply_markup=ReplyKeyboardMarkup([
+                                   ['Skill1', 'Skill2', '...']
+                               ], one_time_keyboard=False))
+
+
 choose_skill = Keyboard('Choose your next skill (skill left to choose: "%s")',
                         reply_markup=ReplyKeyboardMarkup([
                             ['Skill1', 'Skill2', '...']

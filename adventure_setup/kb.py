@@ -7,7 +7,7 @@ adv_code = Keyboard('What\'s the code of the Adventure you\'d like to join?',
 
 join_adventure = Keyboard('Joined Adventure "%s"')
 
-create_char = Keyboard('Let\'s create a Character for this Adventure, choose a name:')
+create_char = Keyboard('Let\'s create a Character for this Adventure!')
 
 invalid_code = Keyboard('The provided code isn\'t valid, try again.')
 

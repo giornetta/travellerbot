@@ -7,6 +7,7 @@ from cache.userdata import user_data
 from character_creation import kb
 from character_creation.service import CharacterCreator
 from traveller.characteristic import Characteristic
+from traveller.skill import education_skills
 from traveller.world import *
 from traveller.world import Attribute, starport_values
 from travellermap import api
@@ -31,6 +32,8 @@ class State(Enum):
     MAX_TECH = auto()
     WORLD = auto()
     HOMEWORLD_SKILL = auto()
+    EDUCATION_SKILL = auto()
+    CAREER = auto()
 
 
 filter_starport = Filters.regex('^(X|E|D|C|B|A|Ignore)$')
@@ -65,7 +68,9 @@ class CharacterCreationConversation:
                 State.MIN_TECH: [MessageHandler(filter_15, self._handle_min_tech)],
                 State.MAX_TECH: [MessageHandler(filter_15, self._handle_max_tech)],
                 State.WORLD: [MessageHandler(Filters.text, self._handle_world)],
-                State.HOMEWORLD_SKILL: [MessageHandler(Filters.text, self._handle_homeworld_skill)]
+                State.HOMEWORLD_SKILL: [MessageHandler(Filters.text, self._handle_homeworld_skill)],
+                State.EDUCATION_SKILL: [MessageHandler(Filters.text, self._handle_education_skill)],
+                State.CAREER: [MessageHandler(Filters.text, self._handle_career)]
             },
             fallbacks=[]
         )]
@@ -94,7 +99,7 @@ class CharacterCreationConversation:
         vals = ['X', 'E', 'D', 'C', 'B', 'A', 'Ignore']
 
         if val != 'Ignore':
-            user_data[user_id].filters[Attribute.STARPORT].max = min(user_data[user_id].filters[Attribute.STARPORT].min, starport_values[val])
+            user_data[user_id].filters[Attribute.STARPORT].max = max(user_data[user_id].filters[Attribute.STARPORT].min, starport_values[val])
 
         kb.ask_min.reply_text(update, params=Attribute.SIZE.full_name, keys=num_keys(0, Attribute.SIZE.max))
         return State.MIN_SIZE
@@ -125,7 +130,7 @@ class CharacterCreationConversation:
             user_id = update.message.from_user.id
 
             if update.message.text != 'Ignore':
-                user_data[user_id].filters[attr].max = min(user_data[user_id].filters[attr].min, int(update.message.text))
+                user_data[user_id].filters[attr].max = max(user_data[user_id].filters[attr].min, int(update.message.text))
 
             next_index = list(Attribute).index(attr) + 1
             next_attr = list(Attribute)[next_index]
@@ -152,7 +157,7 @@ class CharacterCreationConversation:
         user_id = update.message.from_user.id
 
         if update.message.text != 'Ignore':
-            user_data[user_id].filters[Attribute.TECH].max = min(user_data[user_id].filters[Attribute.TECH].min, int(update.message.text))
+            user_data[user_id].filters[Attribute.TECH].max = max(user_data[user_id].filters[Attribute.TECH].min, int(update.message.text))
 
         return self._world_selection(update)
 
@@ -178,7 +183,9 @@ class CharacterCreationConversation:
             return State.WORLD
 
         user_data[user_id].character.homeworld = homeworld
-        user_data[user_id].initial_skills_left = 3 + user_data[user_id].character.modifiers[Characteristic.EDU]
+        skills = 3 + user_data[user_id].character.modifiers[Characteristic.EDU]
+        user_data[user_id].homeworld_skills_left = min(skills, min(2, len(homeworld.homeworld_skills)))
+        user_data[user_id].education_skills_left = max(0, skills - user_data[user_id].homeworld_skills_left)
 
         kb.ask_homeworld_skill.reply_text(update, keys=single_keys(homeworld.homeworld_skills))
         return State.HOMEWORLD_SKILL
@@ -187,13 +194,45 @@ class CharacterCreationConversation:
         user_id = update.message.from_user.id
 
         skill = update.message.text
-        if skill not in user_data[user_id].character.homeworld.homeworld_skills:
+        if skill not in user_data[user_id].character.homeworld.homeworld_skills or skill in user_data[user_id].character.skill_names:
             return State.HOMEWORLD_SKILL
 
-        if len(user_data[user_id].character.skills) == 0:
-            user_data[user_id].character.skills = []
+        user_data[user_id].character.acquire_skill(skill)
+        user_data[user_id].homeworld_skills_left -= 1
 
-        user_data[user_id].character.skills.append(skill)
+        if user_data[user_id].homeworld_skills_left > 0:
+            skills_left = user_data[user_id].character.homeworld.homeworld_skills
+            skills_left.remove(skill)
+            kb.ask_homeworld_skill.reply_text(update, keys=single_keys(skills_left))
+            return State.HOMEWORLD_SKILL
+        elif user_data[user_id].education_skills_left > 0:
+            kb.ask_education_skill.reply_text(update, keys=single_keys(education_skills))
+            return State.EDUCATION_SKILL
+        else:
+            kb.career.reply_text(update)  # TODO add careers list
+
+    def _handle_education_skill(self, update: Update, context: CallbackContext) -> State:
+        user_id = update.message.from_user.id
+
+        skill = update.message.text
+        if skill not in education_skills or skill in user_data[user_id].character.skill_names:
+            return State.EDUCATION_SKILL
+
+        user_data[user_id].character.acquire_skill(skill)
+        user_data[user_id].education_skills_left -= 1
+
+        if user_data[user_id].education_skills_left > 0:
+            skills_left = education_skills.copy()
+            skills_left.remove(skill)
+            kb.ask_education_skill.reply_text(update, keys=single_keys(skills_left))
+            return State.EDUCATION_SKILL
+        else:
+            kb.career.reply_text(update)  # TODO add careers list
+            return State.CAREER
+
+    def _handle_career(self, update: Update, context: CallbackContext) -> State:
+        update.message.reply_text('Yoo')
+        return State.CAREER
 
 
 def num_keys(start: int, end: int) -> List[List[str]]:

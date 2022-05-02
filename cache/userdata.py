@@ -14,8 +14,8 @@ class UserData:
     # Used for character creation
     character: Character
     filters: Dict[Attribute, AttrFilter]
-
-    initial_skills_left: int
+    homeworld_skills_left: int
+    education_skills_left: int
 
     def init_filters(self):
         self.filters: Dict[Attribute, AttrFilter] = {}
