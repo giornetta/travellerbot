@@ -9,8 +9,8 @@ class Career:
     name: str
     qualification: Tuple[Ch, int]
     survival: Tuple[Ch, int]
-    commission: Optional[Ch, int]
-    advancement: Optional[Ch, int]
+    commission: Optional[Union[Ch, int]]
+    advancement: Optional[Union[Ch, int]]
     re_enlistment: int
     ranks: Dict[int, Union[Ch, str]]
     skill_and_training: List[Dict[int, str]]
@@ -151,7 +151,6 @@ physician = Career(
     cash={1: 2000, 2: 10000, 3: 20000, 4: 20000, 5: 50000, 6: 100000, 7: 100000}
 )
 
-
 pirate = Career(
     name='Pirate',
     qualification=(Ch.DEX, 5),
@@ -201,7 +200,8 @@ scientist = Career(
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: Ch.INT, 5: Ch.EDU, 6: "Gun Combat"},
                         {1: 'Admin', 2: 'Computer', 3: 'Electronics', 4: 'Electronics', 5: 'Bribery', 6: 'Sciences'},
                         {1: 'Sciences', 2: 'Admin', 3: 'Sciences', 4: 'Sciences', 5: 'Animals', 6: 'Vehicle'},
-                        {1: 'Advocate', 2: 'Computer', 3: 'Jack-of-All-Trades', 4: 'Linguistics', 5: 'Medicine', 6: 'Sciences'}],
+                        {1: 'Advocate', 2: 'Computer', 3: 'Jack-of-All-Trades', 4: 'Linguistics', 5: 'Medicine',
+                         6: 'Sciences'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: Ch.INT, 4: 2, 5: Ch.SOC, 6: 3, 7: 5},
     cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
 )
@@ -216,7 +216,8 @@ scout = Career(
     ranks={0: 'Pilot'},
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: 'Jack-of-All-Trades', 5: Ch.EDU, 6: "Melee Combat"},
                         {1: 'Comms', 2: 'Electronics', 3: 'Gun Combat', 4: 'Gunnery', 5: 'Recon', 6: 'Piloting'},
-                        {1: 'Engineering', 2: 'Gunnery', 3: 'Demolitions', 4: 'Navigation', 5: 'Medicine', 6: 'Vehicle'},
+                        {1: 'Engineering', 2: 'Gunnery', 3: 'Demolitions', 4: 'Navigation', 5: 'Medicine',
+                         6: 'Vehicle'},
                         {1: 'Advocate', 2: 'Computer', 3: 'Linguistics', 4: 'Medicine', 5: 'Navigation', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: 'Weapon', 4: 2, 5: 'Society', 6: 4},
     cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
@@ -468,3 +469,30 @@ surface_defense = Career(
     material_benefits={1: 1, 2: Ch.INT, 3: 'Weapon', 4: 2, 5: 'Weapon', 6: 3, 7: Ch.SOC},
     cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
 )
+
+careers: List[Career] = [
+    athlete,
+    maritime_defence,
+    mercenary,
+    merchant,
+    navy,
+    noble,
+    physician,
+    pirate,
+    rogue,
+    scientist,
+    scout,
+    aerospace_defence,
+    agent,
+    barbarian,
+    belter,
+    bureaucrat,
+    colonist,
+    diplomat,
+    drifter,
+    entertainer,
+    hunter,
+    marine,
+    technician,
+    surface_defense
+]

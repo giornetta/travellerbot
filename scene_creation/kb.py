@@ -12,7 +12,7 @@ ch_gen = Keyboard('How do you want to generate characteristics?',
                       ['Manually', 'Random']
                   ], one_time_keyboard=True))
 
-ch_manual_gen = Keyboard('STR DEX END INT EDU SOC',
+ch_manual_gen = Keyboard('Insert the stats separated by spaces: STR DEX END INT EDU SOC.',
                          reply_markup=ReplyKeyboardRemove())
 
 ch_random_gen = Keyboard('%s %s %s %s %s %s?',

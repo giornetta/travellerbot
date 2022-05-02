@@ -7,6 +7,14 @@ from traveller.skill import Skill
 
 equipments: Dict[int, Equipment] = {}
 
+
+def get_equipment_by_name(name: str):
+    for e in equipments:
+        if equipments[e].name == name:
+            return equipments[e]
+    return None
+
+
 ranges_description: Dict[int, str] = {
     0: "assault weapon",
     1: "rifle",
