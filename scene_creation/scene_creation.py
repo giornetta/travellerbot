@@ -7,8 +7,12 @@ import re
 from telegram import Update
 from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackContext
 
-from conversations.state import ConversationState
+from psycopg2.extensions import connection
+
+from bot.state import ConversationState
 from scene_creation import kb
+
+from cache.userdata import user_data
 
 import traveller.equipment as eq
 import traveller.career as career
@@ -44,10 +48,8 @@ class Npc:
 
 
 class SceneCreationConversation:
-    npc: Npc
-
-    def __init__(self):
-        pass
+    def __init__(self, db: connection):
+        self.db = db
 
     def handlers(self) -> List[ConversationHandler]:
         return [
@@ -87,7 +89,7 @@ class SceneCreationConversation:
 
     def _ask_characteristics_generation(self, update: Update, context: CallbackContext) -> State:
         kb.ch_gen.reply_text(update)
-        self.npc = Npc()
+        user_data[update.message.from_user.id].npc = Npc()
         return State.CH_GEN
 
     def _handle_manual_gen(self, update: Update, context: CallbackContext) -> State:
@@ -95,46 +97,50 @@ class SceneCreationConversation:
         return State.CH_GEN
 
     def _handle_random_gen(self, update: Update, context: CallbackContext) -> State:
-        self.npc.STR = randint(1, 6)
-        self.npc.DEX = randint(1, 6)
-        self.npc.END = randint(1, 6)
-        self.npc.INT = randint(1, 6)
-        self.npc.EDU = randint(1, 6)
-        self.npc.SOC = randint(1, 6)
-        kb.ch_random_gen.reply_text(update, params=(self.npc.STR, self.npc.DEX, self.npc.END,
-                                                    self.npc.INT, self.npc.EDU, self.npc.SOC))
+        npc = user_data[update.message.from_user.id].npc
+        npc.STR = randint(1, 6)
+        npc.DEX = randint(1, 6)
+        npc.END = randint(1, 6)
+        npc.INT = randint(1, 6)
+        npc.EDU = randint(1, 6)
+        npc.SOC = randint(1, 6)
+        kb.ch_random_gen.reply_text(update, params=(npc.STR, npc.DEX, npc.END,
+                                                    npc.INT, npc.EDU, npc.SOC))
         return State.CH_GEN
 
     def _ask_career(self, update: Update, context: CallbackContext) -> State:
+        npc = user_data[update.message.from_user.id].npc
         if update.message.text != 'Accept':
             v = update.message.text.split(' ')
             for val in v:
                 if int(val) <= 1:
                     update.message.reply_text('Values not admissible.')
                     return State.CH_GEN
-            self.npc.STR = int(v[0])
-            self.npc.DEX = int(v[1])
-            self.npc.END = int(v[2])
-            self.npc.INT = int(v[3])
-            self.npc.EDU = int(v[4])
-            self.npc.SOC = int(v[5])
+            npc.STR = int(v[0])
+            npc.DEX = int(v[1])
+            npc.END = int(v[2])
+            npc.INT = int(v[3])
+            npc.EDU = int(v[4])
+            npc.SOC = int(v[5])
 
         kb.career.reply_text(update, keys=[[c.name] for c in career.careers])
         return State.RANK
 
     def _ask_rank(self, update: Update, context: CallbackContext) -> State:
+        npc = user_data[update.message.from_user.id].npc
         for c in career.careers:
             if c.name == update.message.text:
-                self.npc.career = c
+                npc.career = c
                 break
         kb.rank.reply_text(update, keys=[[1, 2, 3], [4, 5, 6], [0]])
         return State.ARMOR
 
     def _ask_armor(self, update: Update, context: CallbackContext) -> State:
+        npc = user_data[update.message.from_user.id].npc
         if not re.match(r'^\d+$', update.message.text):
             return State.RANK
-        self.npc.rank = int(update.message.text)
-        if self.npc.rank > 6:
+        npc.rank = int(update.message.text)
+        if npc.rank > 6:
             return State.RANK
         keys = []
         for _id in eq.equipments:
@@ -146,8 +152,9 @@ class SceneCreationConversation:
         return State.WEAPON
 
     def _ask_weapon(self, update: Update, context: CallbackContext) -> State:
-        self.npc.armor = eq.get_equipment_by_name(update.message.text)
-        if not self.npc.armor:
+        npc = user_data[update.message.from_user.id].npc
+        npc.armor = eq.get_equipment_by_name(update.message.text)
+        if not npc.armor:
             return State.ARMOR
         keys = []
         for _id in eq.equipments:
@@ -159,20 +166,23 @@ class SceneCreationConversation:
         return State.NAME
 
     def _ask_name(self, update: Update, context: CallbackContext) -> State:
-        self.npc.armor = eq.get_equipment_by_name(update.message.text)
-        if not self.npc.armor:
+        npc = user_data[update.message.from_user.id].npc
+        npc.armor = eq.get_equipment_by_name(update.message.text)
+        if not npc.armor:
             return State.WEAPON
         kb.name.reply_text(update)
         return State.ALLY
 
     def _ask_ally(self, update: Update, context: CallbackContext) -> State:
-        self.npc.name = update.message.text
-        if not re.match(r'^\w+$', self.npc.name):
+        npc = user_data[update.message.from_user.id].npc
+        npc.name = update.message.text
+        if not re.match(r'^\w+$', npc.name):
             return State.NAME
         kb.ally.reply_text(update)
         return State.NPC_END
 
     def _handle_npc_registration(self, update: Update, context: CallbackContext) -> State:
-        self.npc.ally = update.message.text == 'Ally'
-        # TODO register npc
+        npc = user_data[update.message.from_user.id].npc
+        npc.ally = update.message.text == 'Ally'
+        # TODO register npc to self.db
         return State.NEXT
