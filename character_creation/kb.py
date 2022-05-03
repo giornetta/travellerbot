@@ -12,7 +12,6 @@ characteristics = Keyboard(
 
 world = Keyboard('Choose your homeworld from %s.')
 
-
 ask_min = Keyboard('Choose the Minimum desired "%s"',
                    reply_markup=ReplyKeyboardMarkup([
                        ['0', '1', '...', 'Ignore']
@@ -26,22 +25,23 @@ ask_max = Keyboard('Choose the Maximum desired "%s"',
 choose_world = Keyboard('These are the available Worlds on %s that match your criteria!',
                         reply_markup=ReplyKeyboardMarkup([
                             ['A', 'B', '...']
-                        ], one_time_keyboard=True))
+                        ], one_time_keyboard=False))
 
-no_world_found = Keyboard('No such planet satisfy the filters',
+no_world_found = Keyboard('No such world satisfies the filters',
                           reply_markup=ReplyKeyboardMarkup([
                               ['Let me choose', 'Generate Random', 'Search again']
                           ], one_time_keyboard=True))
 
-first_homeworld_skill = Keyboard('Choose your Homeworld skill',
-                                 reply_markup=ReplyKeyboardMarkup([
-                                     ['Skill1', 'Skill2', '...']
-                                 ], one_time_keyboard=True))
+ask_homeworld_skill = Keyboard('Choose a Homeworld skill',
+                               reply_markup=ReplyKeyboardMarkup([
+                                   ['Skill1', 'Skill2', '...']
+                               ], one_time_keyboard=False))
 
-second_homeworld_skill = Keyboard('Choose your second Homeworld skill',
-                                  reply_markup=ReplyKeyboardMarkup([
-                                      ['Skill1', 'Skill2', '...']
-                                  ], one_time_keyboard=True))
+ask_education_skill = Keyboard('Choose an Education skill',
+                               reply_markup=ReplyKeyboardMarkup([
+                                   ['Skill1', 'Skill2', '...']
+                               ], one_time_keyboard=False))
+
 
 choose_skill = Keyboard('Choose your next skill (skill left to choose: "%s")',
                         reply_markup=ReplyKeyboardMarkup([
@@ -73,7 +73,7 @@ aging = Keyboard('You are now "%s"')
 
 roll_age = Keyboard('You are now "%s" and the age "%s"')
 
-reenlistment_12 = Keyboard('You are too good and must continue in these career')
+reenlistment_12 = Keyboard('You are too good and must continue in this career')
 
 reenlistment_fail = Keyboard('You failed to reenlist')
 

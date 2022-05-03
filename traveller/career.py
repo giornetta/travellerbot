@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Tuple, Optional, Dict, List, Union
 
-from traveller.common import Characteristics as Ch
+from traveller.characteristic import Characteristic as Ch
 
 
 @dataclass

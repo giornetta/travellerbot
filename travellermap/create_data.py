@@ -12,8 +12,12 @@ if __name__ == '__main__':
         sec_name = worlds[0]['World']['Sector']
         data[sec_name] = []
         for w in worlds:
-            if len(w['World']['Name']) > 0 and '?' not in w['World']['Uwp']:
-                data[sec_name].append((w['World']['Name'], w['World']['Uwp']))
+            uwp: str = w['World']['Uwp']
+            if len(w['World']['Name']) > 0 and '?' not in uwp:
+                for i in range(1, len(uwp)):
+                    if uwp[i] > 'F':
+                        uwp = uwp[:i] + 'F' + uwp[i+1:]
+                data[sec_name].append((w['World']['Name'], uwp))
 
         # Remove sectors with less than 25 worlds in them
         if len(data[sec_name]) < 25:
