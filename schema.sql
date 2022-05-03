@@ -35,12 +35,12 @@ CREATE TABLE characters (
     education INT NOT NULL,
     social_standing INT NOT NULL,
 
-    strength_mod INT NOT NULL,
-    dexterity_mod INT NOT NULL,
-    endurance_mod INT NOT NULL,
-    intelligence_mod INT NOT NULL,
-    education_mod INT NOT NULL,
-    social_standing_mod INT NOT NULL,
+    str_mod INT NOT NULL DEFAULT 0,
+    dex_mod INT NOT NULL DEFAULT 0,
+    end_mod INT NOT NULL DEFAULT 0,
+    int_mod INT NOT NULL DEFAULT 0,
+    edu_mod INT NOT NULL DEFAULT 0,
+    soc_mod INT NOT NULL DEFAULT 0,
     credits BIGINT NOT NULL,
 
     equipped_armor INT,
