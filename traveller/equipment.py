@@ -277,7 +277,7 @@ class HeavyWeapon(Weapon):
 
     def __init__(self, data: Dict):
         super().__init__(data)
-        self.rate_of_fire = data['Rof']
+        self.rate_of_fire = data['RoF']
         self.recoil = data['recoil']
         self.range = data['range']
 

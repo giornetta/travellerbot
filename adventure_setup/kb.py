@@ -7,12 +7,14 @@ adv_code = Keyboard('What\'s the code of the Adventure you\'d like to join?',
 
 join_adventure = Keyboard('Joined Adventure "%s"')
 
-create_char = Keyboard('Let\'s create a Character for this Adventure, choose a name:')
+create_char = Keyboard('Let\'s create a Character for this Adventure!')
 
-invalid_code = Keyboard('The provided code isn\'t valid, try again."')
+invalid_code = Keyboard('The provided code isn\'t valid, try again.')
 
 title = Keyboard('Choose a title for the adventure you want to create:',
                  reply_markup=ReplyKeyboardRemove())
+
+invalid_title = Keyboard('The provided title isn\'t valid, try again.')
 
 sector = Keyboard(
     'Do you want to choose a starting Sector for the Adventurers or do you want to generate one randomly?',
@@ -34,7 +36,7 @@ no_sector = Keyboard('No such sector exists in this universe.',
                          ['Choose another', 'Generate Random']
                      ], one_time_keyboard=True))
 
-confirm_sector = Keyboard('Will the adventure be set in "%s"?',
+confirm_sector = Keyboard('Will the adventure be set in %s?',
                           reply_markup=ReplyKeyboardMarkup([
                               ['Accept', 'Generate another', 'Let me choose']
                           ], one_time_keyboard=True))
@@ -51,7 +53,7 @@ no_world = Keyboard('No such world exists in this universe.',
                         ['Choose another', 'Generate Random']
                     ], one_time_keyboard=True))
 
-confirm_world = Keyboard('Will the adventure begin in "%s"?',
+confirm_world = Keyboard('Will the adventure begin in %s?',
                          reply_markup=ReplyKeyboardMarkup([
                              ['Accept', 'Generate another', 'Let me choose']
                          ], one_time_keyboard=True))
