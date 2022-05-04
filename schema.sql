@@ -4,7 +4,6 @@ CREATE TABLE users (
 );
 
 CREATE TABLE adventures (
-
     id CHAR(6) PRIMARY KEY,
     title VARCHAR(16) NOT NULL,
     sector VARCHAR(64) NOT NULL,

@@ -49,6 +49,7 @@ def world(sector: str, world_name: str) -> Optional[World]:
 
     return None
 
+
 def world_filter(sector: str, filters: Dict[Attribute, AttrFilter]) -> List[str]:
     worlds = []
     for w in data[sector]:

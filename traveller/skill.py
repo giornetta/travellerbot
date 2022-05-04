@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Dict
 
 skills: Dict[str, bool] = {  # Name, is_passive
@@ -47,7 +48,13 @@ skills: Dict[str, bool] = {  # Name, is_passive
     "Leadership": False
 }
 
+education_skills = [
+    'Admin', 'Advocate', 'Animals', 'Carousing', 'Comms', 'Computer', 'Electronics', 'Engineering',
+    'Life Sciences', 'Linguistics', 'Mechanics', 'Medicine', 'Physical Sciences', 'Social Sciences', 'Space Sciences'
+]
 
+
+@dataclass
 class Skill:
     name: str
     level: int

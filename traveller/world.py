@@ -23,11 +23,6 @@ class TradeCode(Enum):
     VACUUM = auto()
 
 
-class AttrFilter:
-    min: int
-    max: int
-
-
 class AttrVal(NamedTuple):
     full_name: str
     max: int
@@ -40,8 +35,17 @@ class Attribute(AttrVal, Enum):
     HYDRO = AttrVal('Hydrographics', 10)
     POP = AttrVal('Population', 10)
     GOV = AttrVal('Government', 15)
-    LAW = AttrVal('Law Level', 10)
-    TECH = AttrVal('Tech Level', 15)
+    LAW = AttrVal('Law', 10)
+    TECH = AttrVal('Tech', 15)
+
+
+class AttrFilter:
+    min: int
+    max: int
+
+    def __init__(self, attr: Attribute):
+        self.min = 0
+        self.max = attr.max
 
 
 starport_values = {'X': 0, 'E': 1, 'D': 2, 'C': 3, 'B': 4, 'A': 5}
@@ -127,24 +131,24 @@ class World:
         skills: List[str] = []
 
         if 0 <= self.attr[Attribute.LAW] <= 6:
-            skills.append('Gun Combat-0')
+            skills.append('Gun Combat')
         elif 7 <= self.attr[Attribute.LAW] <= 9:
-            skills.append('Melee Combat-0')
+            skills.append('Melee Combat')
 
         tc_skills = {
-            TradeCode.AGRICULTURAL: 'Animals-0',
-            TradeCode.ASTEROID: 'Zero-G-0',
-            TradeCode.DESERT: 'Survival-0',
-            TradeCode.FLUID_OCEANS: 'Vehicle-0',
-            TradeCode.GARDEN: 'Animals-0',
-            TradeCode.HIGH_TECHNOLOGY: 'Streetwise-0',
-            TradeCode.ICE_CAPPED: 'Zero-G-0',
-            TradeCode.INDUSTRIAL: 'Broker-0',
-            TradeCode.LOW_TECHNOLOGY: 'Survival-0',
-            TradeCode.POOR: 'Animals-0',
-            TradeCode.RICH: 'Carousing-0',
-            TradeCode.WATER_WORLD: 'Vehicle-0',
-            TradeCode.VACUUM: 'Zero-G-0'
+            TradeCode.AGRICULTURAL: 'Animals',
+            TradeCode.ASTEROID: 'Zero-G',
+            TradeCode.DESERT: 'Survival',
+            TradeCode.FLUID_OCEANS: 'Vehicle',
+            TradeCode.GARDEN: 'Animals',
+            TradeCode.HIGH_TECHNOLOGY: 'Streetwise',
+            TradeCode.ICE_CAPPED: 'Zero-G',
+            TradeCode.INDUSTRIAL: 'Broker',
+            TradeCode.LOW_TECHNOLOGY: 'Survival',
+            TradeCode.POOR: 'Animals',
+            TradeCode.RICH: 'Carousing',
+            TradeCode.WATER_WORLD: 'Vehicle',
+            TradeCode.VACUUM: 'Zero-G'
         }
 
         for c in self.trade_codes:
