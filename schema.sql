@@ -48,7 +48,7 @@ CREATE TABLE characters (
     stance SMALLINT NOT NULL CHECK (stance BETWEEN 0 AND 2),
     rads INT NOT NULL,
     wounded BOOLEAN NOT NULL,
-    is_fatigued BOOLEAN NOT NULL,
+    fatigued BOOLEAN NOT NULL,
     stims_taken INT NOT NULL
 );
 

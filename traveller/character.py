@@ -56,7 +56,7 @@ class Character:
     # Statuses
     stance: Stance = 2
     rads: int = 0
-    is_fatigued: bool = False
+    fatigued: bool = False
     stims_taken: int = 0
 
     # Skills
@@ -116,7 +116,7 @@ class Character:
                                 self.modifiers[Characteristic.EDU],
                                 self.modifiers[Characteristic.SOC],
                                 self.credits, None, None, None, self.stance, self.rads,
-                                self.is_fatigued, self.stims_taken
+                                self.fatigued, self.stims_taken
                             ))
                 cur.execute('SELECT id FROM characters WHERE alive=TRUE AND user_id = %s AND adventure_id = %s;',
                             (user_id, adventure_id))

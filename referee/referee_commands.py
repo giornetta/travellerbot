@@ -125,14 +125,14 @@ class RefereeCommands:
                     cur.execute('SELECT sex, age, strength, dexterity, endurance, '
                                 'intelligence, education, social_standing, '
                                 'str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits, '
-                                'equipped_armor, drawn_weapon, stance, rads, wounded, is_fatigued, stims_taken '
+                                'equipped_armor, drawn_weapon, stance, rads, wounded, fatigued, stims_taken '
                                 'FROM characters WHERE char_name = %s AND adventure_id = %s;', (info, adv_id))
                     player_info = cur.fetchone()
                     if not player_info:
                         return False, 'No one has this name'
                     sex, age, strength, dexterity, endurance, intelligence, education, social_standing, \
                     str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits_holded, \
-                    equipped_armor, drawn_weapon, stance, rads, wounded, is_fatigued, stims_taken = player_info
+                    equipped_armor, drawn_weapon, stance, rads, wounded, fatigued, stims_taken = player_info
                     stance_mod = ['prone', 'crouched', 'standing']
                     return True, \
                            info + 'is ' + ('Male, he is ' if sex == 'M' else 'Female, she is ') + age + \
@@ -148,7 +148,7 @@ class RefereeCommands:
                            '\nThe actual stance is: ' + stance_mod[stance] + \
                            '\nThe rads count is: ' + str(rads) + \
                            ('\nThe player is wounded' if wounded else '') + \
-                           ('\nThe player is fatigued' if is_fatigued else '') + \
+                           ('\nThe player is fatigued' if fatigued else '') + \
                            ('\nThe player has taken' + str(stims_taken) + 'stims' if stims_taken > 0 else '')
 
     def set(self, name: str, cmd: List[str], value: str) -> (bool, str):
@@ -166,11 +166,13 @@ class RefereeCommands:
                 cur.execute('UPDATE characters SET %s = %s WHERE id = %s;', (cmd[1], value, char_id))
                 return True
             if cmd[0] == 'status':
-                cur.execute('UPDATE characters SET %s = %s WHERE id = %s;',
-                            (cmd[1], value == 1, char_id))  # If status is non-existent it does nothing
-                return True
+                if cmd[1] == 'wounded' or cmd[1] == 'fatigued':
+                    cur.execute('UPDATE characters SET %s = %s WHERE id = %s;',
+                                (cmd[1], value == 1, char_id))  # If status is non-existent it does nothing
+                    return True
+                return False, 'No such status exists'
             if cmd[0] == 'cr' or cmd[0] == 'credits':
-                cur.execute('UPDATE characters SET %s = %s WHERE id = %s;', (cmd[1], value, char_id))
+                cur.execute('UPDATE characters SET credits = %s WHERE id = %s;', (value, char_id))
                 return True
             if cmd[0] == 'inv' or cmd[0] == 'inventory' or cmd[0] == 'equipment':
                 if cmd[1] == 'rm' or cmd[1] == 'remove':
@@ -244,11 +246,11 @@ class RefereeCommands:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (self.referee_id,))
                 adv_id = cur.fetchone()[0]
                 if cmd == 'short':
-                    cur.execute('UPDATE characters SET is_fatigued = FALSE WHERE adventure_id = %s AND alive = TRUE;',
+                    cur.execute('UPDATE characters SET fatigued = FALSE WHERE adventure_id = %s AND alive = TRUE;',
                                 (adv_id,))
                     return True
                 if cmd == 'long':
-                    cur.execute('UPDATE characters SET is_fatigued = FALSE WHERE adventure_id = %s AND alive = TRUE;',
+                    cur.execute('UPDATE characters SET fatigued = FALSE WHERE adventure_id = %s AND alive = TRUE;',
                                 (adv_id,))
                     cur.execute('UPDATE characters SET str_mod = 0, dex_mod = 0, end_mod = 0, '
                                 'int_mod = 0, edu_mod = 0, soc_mod = 0')
