@@ -9,7 +9,7 @@ from typing import List, Dict, Tuple
 import traveller.equipment as eq
 
 from referee.command_parser import CommandParser
-from traveller.common import Characteristics as Ch
+from traveller.characteristic import Characteristic as Ch
 
 
 def calculate_age_damage(stats: Tuple, age) -> (Tuple, int):
