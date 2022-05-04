@@ -12,7 +12,7 @@ CREATE TABLE adventures (
     max_terms INT NOT NULL,
     survival_fail_kills BOOLEAN NOT NULL,
 
-    combat_id INT,
+    scene_id INT,
     referee_id BIGINT NOT NULL REFERENCES users(id)
 );
 
