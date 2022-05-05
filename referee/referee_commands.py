@@ -104,9 +104,7 @@ class RefereeCommands:
                     cur.execute('SELECT sector FROM adventures WHERE id = %s;', (adv_id,))
                     sector = cur.fetchone()[0]
                     url = 'https://travellermap.com/api/poster?sector=' + sector
-                    map = Image.open(requests.get(url, stream=True).raw)
-                    # TODO send info
-                    return True
+                    return True, url
                 elif info == 'scene':
                     pass  # TODO
                 elif info == 'adventure':
@@ -164,16 +162,16 @@ class RefereeCommands:
                 char_id = char_id_tuple[0]
             if cmd[0] == 'stat':
                 cur.execute('UPDATE characters SET %s = %s WHERE id = %s;', (cmd[1], value, char_id))
-                return True
+                return True, None
             if cmd[0] == 'status':
                 if cmd[1] == 'wounded' or cmd[1] == 'fatigued':
                     cur.execute('UPDATE characters SET %s = %s WHERE id = %s;',
                                 (cmd[1], value == 1, char_id))  # If status is non-existent it does nothing
-                    return True
+                    return True, None
                 return False, 'No such status exists'
             if cmd[0] == 'cr' or cmd[0] == 'credits':
                 cur.execute('UPDATE characters SET credits = %s WHERE id = %s;', (value, char_id))
-                return True
+                return True, None
             if cmd[0] == 'inv' or cmd[0] == 'inventory' or cmd[0] == 'equipment':
                 if cmd[1] == 'rm' or cmd[1] == 'remove':
                     # From now on it will be Eqtype.Eqname.EventualLevel and it will be case-insensitive
@@ -195,7 +193,7 @@ class RefereeCommands:
                                 if eq_name.upper() == eq.equipments[i].name:
                                     cur.execute('DELETE FROM inventories WHERE character_id = %s '
                                                 'AND equipment_id = %s;', (e, char_id))
-                    return True
+                    return True, None
                 if cmd[1] == 'add':
                     for i in range(2, len(cmd) - 1):
                         command = cmd[i]
@@ -231,14 +229,14 @@ class RefereeCommands:
                 adv_id = cur.fetchone()[0]
                 if cmd[-1] == 'close':
                     cur.execute('DELETE FROM shop WHERE adventure_id = %s;', (adv_id,))
-                    return True
+                    return True, None
                 for c in cmd:  # Check to see if existing shop?
                     for e in eq.equipments:
                         if self.is_coherent(c, e):
                             cur.execute(
                                 'INSERT INTO shop(adventure_id, equipment_id) VALUES(%s,%s) ON CONFLICT DO NOTHING;',
                                 (adv_id, e))
-                    return True
+                    return True, None
 
     def rest(self, cmd: str) -> (bool, str):
         with self.db:
@@ -248,14 +246,14 @@ class RefereeCommands:
                 if cmd == 'short':
                     cur.execute('UPDATE characters SET fatigued = FALSE WHERE adventure_id = %s AND alive = TRUE;',
                                 (adv_id,))
-                    return True
+                    return True, None
                 if cmd == 'long':
                     cur.execute('UPDATE characters SET fatigued = FALSE WHERE adventure_id = %s AND alive = TRUE;',
                                 (adv_id,))
                     cur.execute('UPDATE characters SET str_mod = 0, dex_mod = 0, end_mod = 0, '
                                 'int_mod = 0, edu_mod = 0, soc_mod = 0')
-                    return True
-            return False
+                    return True, None
+            return False, None
 
     def combat(self, combat: str, end: str) -> (bool, str):
         with self.db:
@@ -264,11 +262,11 @@ class RefereeCommands:
                 adv_id = cur.fetchone()[0]
             if end:
                 cur.execute('UPDATE adventures SET scene_id = NULL WHERE id = %s;', (adv_id,))
-                return True
+                return True, None
             else:
                 cur.execute('UPDATE adventures SET scene_id = %s WHERE id = %s;',
                             (combat, adv_id))  # check if it doesn't exist?
-                return True
+                return True, None
 
     def travel(self, world: str) -> (bool, str):
         with self.db:
@@ -276,7 +274,7 @@ class RefereeCommands:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (self.referee_id,))
                 adv_id = cur.fetchone()[0]
                 cur.execute('UPDATE adventures SET planet = %s WHERE id = %s;', (world, adv_id))
-                return True
+                return True, None
 
     def age(self, drug_users: List[str], drug_droppers: List[str]) -> (bool, str):
         with self.db:
@@ -300,7 +298,7 @@ class RefereeCommands:
 
     def scene(self, new: str, name: str) -> (bool, str):
         if new != 'new':
-            return False
+            return False, None
         with self.db:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (self.referee_id,))
@@ -311,8 +309,9 @@ class RefereeCommands:
         with self.db:
             with self.db.cursor() as cur:
                 cur.execute('UPDATE users SET active_adventure = NULL WHERE id = %s', (self.referee_id,))
+                return True, None
 
-    def is_coherent(self, c: str, i: int):
+    def is_coherent(self, c: str, i: int) -> bool:
         e = eq.equipments[i]
         return c.upper() == 'Armor'.upper() and isinstance(e, eq.Armor) or \
                c.upper() == "Communicator".upper() and isinstance(e, eq.Communicator) or \
