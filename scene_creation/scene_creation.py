@@ -54,7 +54,7 @@ class SceneCreationConversation:
     def handlers(self) -> List[ConversationHandler]:
         return [
             ConversationHandler(
-                entry_points=[MessageHandler(Filters.regex(r'^/scene +new +[\w]+$'), self._ask_next_npc)],
+                entry_points=[MessageHandler(Filters.regex(r'^/scene +new +[\w]+$'), self._ask_first_npc)],
                 states={
                     State.NPC: [MessageHandler(Filters.text('Add'), self._ask_characteristics_generation),
                                 MessageHandler(Filters.text('End'), self._handle_end)
@@ -79,6 +79,15 @@ class SceneCreationConversation:
                 persistent=True
             )
         ]
+
+    def _ask_first_npc(self, update: Update, context: CallbackContext) -> State:
+        scene_name = update.message.text.split(' ')[2]
+        user_data[update.message.from_user.id].scene_name = scene_name
+        with self.db:
+            with self.db.cursor() as cur:
+                cur.execute('INSERT INTO scene(scene_name) VALUES(%s) ON CONFLICT DO NOTHING;', (scene_name,))
+        kb.next_npc.reply_text(update)
+        return State.NPC
 
     def _ask_next_npc(self, update: Update, context: CallbackContext) -> State:
         kb.next_npc.reply_text(update)
@@ -183,6 +192,15 @@ class SceneCreationConversation:
 
     def _handle_npc_registration(self, update: Update, context: CallbackContext) -> State:
         npc = user_data[update.message.from_user.id].npc
+        scene_name = user_data[update.message.from_user.id].scene_name
         npc.ally = update.message.text == 'Ally'
         # TODO register npc to self.db
+        with self.db:
+            with self.db.cursor() as cur:
+                cur.execute('INSERT INTO npcs(npc_name, strength, dexterity, endurance, intelligence, education,'
+                            ' social_standing, career, rank, armor, weapon, ally, scene) '
+                            'VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) '
+                            'ON CONFLICT(id) DO NOTHING;', (npc.name, npc.STR, npc.DEX, npc.END, npc.INT,
+                                                            npc.EDU, npc.SOC, npc.career, npc.rank, npc.armor,
+                                                            npc.weapon, npc.ally, scene_name))
         return State.NEXT

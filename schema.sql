@@ -46,7 +46,9 @@ CREATE TABLE characters (
     stance SMALLINT NOT NULL CHECK (stance BETWEEN 0 AND 2),
     rads INT NOT NULL,
     is_fatigued BOOLEAN NOT NULL,
-    stims_taken INT NOT NULL
+    stims_taken INT NOT NULL,
+
+    pos INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE inventories (
@@ -64,4 +66,37 @@ CREATE TABLE skill_sets (
     level INT NOT NULL,
 
     PRIMARY KEY (character_id, skill_name)
+);
+
+CREATE TABLE npcs(
+    id SERIAL PRIMARY KEY,
+    npc_name VARCHAR(32) NOT NULL,
+
+    strength INT NOT NULL,
+    dexterity INT NOT NULL,
+    endurance INT NOT NULL,
+    intelligence INT NOT NULL,
+    education INT NOT NULL,
+    social_standing INT NOT NULL,
+    career VARCHAR(32) NOT NULL,
+    rank INT NOT NULL,
+    armor INT NOT NULL,
+    weapon INT NOT NULL,
+    ally BOOLEAN NOT NULL DEFAULT FALSE,
+
+    scene INT REFERENCES scene(id),
+    pos INT NOT NULL DEFAULT 0 --scene position
+);
+
+CREATE TABLE scene(
+    id SERIAL PRIMARY KEY,
+    scene_name VARCHAR(32)
+);
+
+CREATE TABLE careers(
+    char_id SERIAL REFERENCES characters(id),
+    career VARCHAR(32),
+    rank INT NOT NULL,
+
+    PRIMARY KEY (char_id, career)
 );

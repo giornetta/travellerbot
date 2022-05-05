@@ -12,6 +12,7 @@ class UserData:
     # Used for adventure creation
     adventure: Adventure
     npc: Npc
+    scene_name: str
 
     # Used for character creation
     character: Character
