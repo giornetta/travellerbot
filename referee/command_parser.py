@@ -3,7 +3,8 @@ import re
 
 
 class CommandParser:
-    callbacks: Dict[str, Callable] = {}
+    callbacks: Dict[str, Callable] = {
+    }
 
     def execute(self, command: str) -> (bool, str):
         if re.match(r'^/[0-9a-zA-Z+\- :]+$', command):

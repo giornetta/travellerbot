@@ -9,8 +9,8 @@ class Career:
     name: str
     qualification: Tuple[Ch, int]
     survival: Tuple[Ch, int]
-    commission: Optional[Union[Ch, int]]
-    advancement: Optional[Union[Ch, int]]
+    commission: Optional[Tuple[Ch, int]]
+    advancement: Optional[Tuple[Ch, int]]
     re_enlistment: int
     ranks: Dict[int, Union[Ch, str]]
     skill_and_training: List[Dict[int, str]]
@@ -46,7 +46,7 @@ maritime_defence = Career(
     re_enlistment=5,
     ranks={0: 'Vehicle', 3: 'Leadership'},
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: 'Athletics', 5: "Melee Combat", 6: "Vehicle"},
-                        {1: 'Mechanics', 2: 'Gun Combat', 3: 'Gunnery',
+                        {1: 'Mechanics', 2: 'Gun Combat', 3: 'Gun Combat',
                          4: 'Melee Combat', 5: 'Survival', 6: 'Vehicle'},
                         {1: 'Comms', 2: 'Electronics', 3: 'Gun Combat',
                          4: 'Demolitions', 5: 'Recon', 6: 'Vehicle'},
@@ -67,7 +67,7 @@ mercenary = Career(
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: 'Zero-G', 5: "Melee Combat", 6: "Gambling"},
                         {1: 'Comms', 2: 'Mechanics', 3: 'Gun Combat',
                          4: 'Melee Combat', 5: 'Gambling', 6: 'Battle Dress'},
-                        {1: 'Gravitics', 2: 'Gun Combat', 3: 'Gunnery',
+                        {1: 'Gravitics', 2: 'Gun Combat', 3: 'Gun Combat',
                          4: 'Melee Combat', 5: 'Recon', 6: 'Vehicle'},
                         {1: 'Advocate', 2: 'Engineering', 3: 'Medicine',
                          4: 'Medicine', 5: 'Sciences', 6: 'Tactics'}],
@@ -86,7 +86,7 @@ merchant = Career(
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: 'Zero-G', 5: "Melee Combat", 6: "Steward"},
                         {1: 'Comms', 2: 'Engineering', 3: 'Gun Combat',
                          4: 'Melee Combat', 5: 'Broker', 6: 'Vehicle'},
-                        {1: 'Carousing', 2: 'Gunnery', 3: 'Jack-of-All-Trades',
+                        {1: 'Carousing', 2: 'Gun Combat', 3: 'Jack-of-All-Trades',
                          4: 'Medicine', 5: 'Navigation', 6: 'Piloting'},
                         {1: 'Advocate', 2: 'Engineering', 3: 'Medicine',
                          4: 'Medicine', 5: 'Sciences', 6: 'Tactics'}],
@@ -104,7 +104,7 @@ navy = Career(
     ranks={0: 'Zero-G', 3: 'Tactics'},
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: Ch.INT, 5: Ch.EDU, 6: "Melee Combat"},
                         {1: 'Comms', 2: 'Engineering',
-                         3: 'Gun Combat', 4: 'Gunnery', 5: 'Melee Combat', 6: 'Vehicle'},
+                         3: 'Gun Combat', 4: 'Gun Combat', 5: 'Melee Combat', 6: 'Vehicle'},
                         {1: 'Gravitics', 2: 'Jack-of-All-Trades',
                          3: 'Melee Combat', 4: 'Navigation', 5: 'Leadership', 6: 'Piloting'},
                         {1: 'Advocate', 2: 'Piloting', 3: 'Engineering',
@@ -158,12 +158,12 @@ pirate = Career(
     commission=(Ch.STR, 5),
     advancement=(Ch.INT, 6),
     re_enlistment=5,
-    ranks={0: 'Gunnery', 3: 'Pilot'},
+    ranks={0: 'Gun Combat', 3: 'Pilot'},
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: 'Melee Combat', 5: 'Bribery', 6: "Gambling"},
                         {1: 'Streetwise', 2: 'Electronics', 3: 'Gun Combat',
                          4: 'Melee Combat', 5: 'Recon', 6: 'Vehicle'},
                         {1: 'Zero-G', 2: 'Comms', 3: 'Engineering',
-                         4: 'Gunnery', 5: 'Navigation', 6: 'Navigation'},
+                         4: 'Gun Combat', 5: 'Navigation', 6: 'Navigation'},
                         {1: 'Computer', 2: 'Gravitics', 3: 'Jack-of-All-Trades',
                          4: 'Medicine', 5: 'Advocate', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'Weapon', 4: 2, 5: Ch.SOC, 6: 3, 7: Ch.SOC},
@@ -215,9 +215,8 @@ scout = Career(
     re_enlistment=6,
     ranks={0: 'Pilot'},
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: 'Jack-of-All-Trades', 5: Ch.EDU, 6: "Melee Combat"},
-                        {1: 'Comms', 2: 'Electronics', 3: 'Gun Combat', 4: 'Gunnery', 5: 'Recon', 6: 'Piloting'},
-                        {1: 'Engineering', 2: 'Gunnery', 3: 'Demolitions', 4: 'Navigation', 5: 'Medicine',
-                         6: 'Vehicle'},
+                        {1: 'Comms', 2: 'Electronics', 3: 'Gun Combat', 4: 'Gun Combat', 5: 'Recon', 6: 'Piloting'},
+                        {1: 'Engineering', 2: 'Gun Combat', 3: 'Demolitions', 4: 'Navigation', 5: 'Medicine', 6: 'Vehicle'},
                         {1: 'Advocate', 2: 'Computer', 3: 'Linguistics', 4: 'Medicine', 5: 'Navigation', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: 'Weapon', 4: 2, 5: 'Society', 6: 4},
     cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
@@ -232,10 +231,10 @@ aerospace_defence = Career(
     re_enlistment=5,
     ranks={0: 'Aircraft', 3: 'Leadership'},
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: 'Athletics', 5: 'Melee Combat', 6: 'Vehicle'},
-                        {1: 'Electronics', 2: 'Gun Combat', 3: 'Gunnery',
+                        {1: 'Electronics', 2: 'Gun Combat', 3: 'Gun Combat',
                          4: 'Melee Combat', 5: 'Survival', 6: 'Vehicle'},
                         {1: 'Comms', 2: 'Gravitics', 3: 'Gun Combat',
-                         4: 'Gunnery', 5: 'Recon', 6: 'Piloting'},
+                         4: 'Gun Combat', 5: 'Recon', 6: 'Piloting'},
                         {1: 'Advocate', 2: 'Computer', 3: 'Jack-of-All-Trades',
                          4: 'Medicine', 5: 'Leadership', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: 'Weapon', 4: 2, 5: 3, 6: 3, 7: Ch.SOC},
@@ -290,7 +289,7 @@ belter = Career(
     ranks={0: 'Zero-G'},
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: 'Zero-G', 5: 'Melee Combat', 6: 'Gambling'},
                         {1: 'Comms', 2: 'Demolition', 3: 'Gun Combat',
-                         4: 'Gunnery', 5: 'Prospecting', 6: 'Piloting'},
+                         4: 'Gun Combat', 5: 'Prospecting', 6: 'Piloting'},
                         {1: 'Zero-G', 2: 'Computer', 3: 'Electronics',
                          4: 'Prospecting', 5: 'Sciences', 6: 'Vehicle'},
                         {1: 'Advocate', 2: 'Engineering', 3: 'Medicine',
@@ -423,7 +422,7 @@ marine = Career(
     ranks={0: 'Zero-G', 3: 'Tactics'},
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: Ch.INT, 5: Ch.EDU, 6: 'Melee Combat'},
                         {1: 'Comms', 2: 'Demolitions', 3: 'Gun Combat',
-                         4: 'Gunnery', 5: 'Melee Combat', 6: 'Battle Dress'},
+                         4: 'Gun Combat', 5: 'Melee Combat', 6: 'Battle Dress'},
                         {1: 'Electronics', 2: 'Gun Combat', 3: 'Melee Combat',
                          4: 'Survival', 5: 'Recon', 6: 'Vehicle'},
                         {1: 'Advocate', 2: 'Computer', 3: 'Gravitics',
@@ -460,7 +459,7 @@ surface_defense = Career(
     re_enlistment=5,
     ranks={0: 'Gun Combat', 3: 'Leadership'},
     skill_and_training=[{1: Ch.DEX, 2: Ch.INT, 3: Ch.EDU, 4: Ch.SOC, 5: 'Carousing', 6: 'Melee Combat'},
-                        {1: 'Mechanics', 2: 'Gun Combat', 3: 'Gunnery',
+                        {1: 'Mechanics', 2: 'Gun Combat', 3: 'Gun Combat',
                          4: 'Melee Combat', 5: 'Recon', 6: 'Battle Dress'},
                         {1: 'Comms', 2: 'Demolitions', 3: 'Gun Combat',
                          4: 'Melee Combat', 5: 'Survival', 6: 'Vehicle'},
