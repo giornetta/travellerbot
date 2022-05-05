@@ -30,23 +30,6 @@ class State(Enum):
     NEXT = auto(),
     NPC_END = auto()
 
-
-@dataclass
-class Npc:
-    STR: int = 2
-    DEX: int = 2
-    END: int = 2
-    INT: int = 2
-    EDU: int = 2
-    SOC: int = 2
-    career: career.Career = None
-    rank: int = 0
-    armor: eq.Armor = None
-    weapon: eq.Weapon = None
-    name: str = ""
-    ally: bool = False
-
-
 class SceneCreationConversation:
     def __init__(self, db: connection):
         self.db = db

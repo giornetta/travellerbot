@@ -3,8 +3,6 @@ import psycopg2
 from telegram.ext import Updater, PicklePersistence
 
 from cache import userdata
-from adventure_setup.service import AdventureSetupService
-from character_creation.service import CharacterCreator
 from bot.conversation import handler
 
 from travellermap import api
@@ -32,10 +30,8 @@ if __name__ == '__main__':
         persistence=PicklePersistence(filename=config['CONV_PATH']),
         use_context=True,
     )
-    character_creator = CharacterCreator(conn)
-    setup_controller = AdventureSetupService(conn)
 
-    conversation = handler(setup_controller, character_creator)
+    conversation = handler(conn)
     updater.dispatcher.add_handler(conversation)
 
     updater.start_polling()

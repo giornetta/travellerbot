@@ -1,3 +1,4 @@
+from psycopg2.extensions import connection
 from telegram import Update
 from telegram.ext import ConversationHandler, CommandHandler, MessageHandler, Filters, CallbackContext
 
@@ -8,14 +9,21 @@ from character_creation.service import CharacterCreator
 from adventure_setup.bot import SetupConversation
 from bot.state import ConversationState
 from keyboards import keyboards
+from referee.bot import RefereeCommandsConversation
+from referee.referee_commands import RefereeCommands
 
 
-def handler(setup_controller: AdventureSetupService, character_creator: CharacterCreator):
+def handler(conn: connection):
+
+    character_creator = CharacterCreator(conn)
+    setup_controller = AdventureSetupService(conn)
+    referee_commands = RefereeCommands(conn)
+
     return ConversationHandler(
         entry_points=[CommandHandler('start', _handle_start)],
         states={
             ConversationState.ADVENTURE_SETUP: SetupConversation(setup_controller, character_creator).handlers(),
-            ConversationState.REFEREE_IDLE: [MessageHandler(Filters.text, _handle_ref)],
+            ConversationState.REFEREE_IDLE: RefereeCommandsConversation(referee_commands).handlers(),
             ConversationState.CHARACTER_CREATION: CharacterCreationConversation(character_creator).handlers()
         },
         fallbacks=[],

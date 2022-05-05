@@ -3,10 +3,9 @@ import re
 
 
 class CommandParser:
-    callbacks: Dict[str, Callable] = {
-    }
+    callbacks: Dict[str, Callable] = {}
 
-    def execute(self, command: str) -> (bool, str):
+    def execute(self, command: str, referee_id: int) -> (bool, str):
         if re.match(r'^/[0-9a-zA-Z+\- :]+$', command):
             cmd = list(filter(lambda s: s != '', command.split(' ')))
             cmd[0] = cmd[0][1:]  # remove the '/' character
@@ -16,7 +15,7 @@ class CommandParser:
 
             if cmd[0] == "info":
                 if len(cmd) == 2:
-                    return self.callbacks[cmd[0]](cmd[1])
+                    return self.callbacks[cmd[0]](cmd[1], referee_id)
                 else:
                     return False, 'use /info {<name>|world|map|scene|adventure}'
             elif cmd[0] == "set":
@@ -25,53 +24,53 @@ class CommandParser:
                     last = cmd[-1]
                     if re.match(r'^[+\-]?\d+$', last):
                         value = int(last)
-                        return self.callbacks[cmd[0]](name, cmd[2:-1], value)
+                        return self.callbacks[cmd[0]](name, cmd[2:-1], value, referee_id)
                     elif re.match('^(true|yes|no|false)$', last):
                         value = 1 if re.match('^(true|yes)$', last) else 0
-                        return self.callbacks[cmd[0]](name, cmd[2:-1], value)
-                    return self.callbacks[cmd[0]](name, cmd[2:], 1)
+                        return self.callbacks[cmd[0]](name, cmd[2:-1], value, referee_id)
+                    return self.callbacks[cmd[0]](name, cmd[2:], 1, referee_id)
                 else:
                     return False, 'use /set <name> <... fieldName> [{+|-}][<value>]'
             elif cmd[0] == "shop":
                 if len(cmd) >= 2:
-                    return self.callbacks[cmd[0]](cmd[1:])
+                    return self.callbacks[cmd[0]](cmd[1:], referee_id)
                 else:
                     return False, 'use /shop {[... <type>]|close}'
             elif cmd[0] == "rest":
                 if len(cmd) == 2:
-                    return self.callbacks[cmd[0]](cmd[1])
+                    return self.callbacks[cmd[0]](cmd[1], referee_id)
                 else:
                     return False, 'use /rest {short|long}'
             elif cmd[0] == "combat":
                 if len(cmd) == 2:
-                    return self.callbacks[cmd[0]](cmd[1], None)
+                    return self.callbacks[cmd[0]](cmd[1], None, referee_id)
                 elif len(cmd) == 3 and cmd[2] == 'end':
-                    return self.callbacks[cmd[0]](cmd[1], cmd[2])
+                    return self.callbacks[cmd[0]](cmd[1], cmd[2], referee_id)
                 else:
                     return False, 'use /combat <sceneName> [end]'
             elif cmd[0] == "travel":
                 if len(cmd) == 2:
-                    return self.callbacks[cmd[0]](cmd[1])
+                    return self.callbacks[cmd[0]](cmd[1], referee_id)
                 else:
                     return False, 'use /travel <destination>'
             elif cmd[0] == "age":
                 try:
                     i = cmd.index('roll')
-                    return self.callbacks[cmd[0]](cmd[1:i], cmd[i + 1:])
+                    return self.callbacks[cmd[0]](cmd[1:i], cmd[i + 1:], referee_id)
                 except ValueError:
-                    return self.callbacks[cmd[0]]([], [])
+                    return self.callbacks[cmd[0]]([], [], referee_id)
             elif cmd[0] == "scene":
                 if len(cmd) == 3:
-                    return self.callbacks[cmd[0]](cmd[1], cmd[2])
+                    return self.callbacks[cmd[0]](cmd[1], cmd[2], referee_id)
                 else:
                     return False, 'use /scene new <name>'
             elif cmd[0] == "exit":
                 if len(cmd) == 1:
-                    return self.callbacks[cmd[0]]()
+                    return self.callbacks[cmd[0]](referee_id)
                 else:
                     return False, 'use /exit'
             else:
-                return self.callbacks[cmd[0]](cmd[1:])
+                return self.callbacks[cmd[0]](cmd[1:], referee_id)
         else:
             return False, 'Invalid command format.'
 

@@ -5,7 +5,7 @@ from typing import Dict
 from traveller.adventure import Adventure
 from traveller.character import Character
 from traveller.world import Attribute, AttrFilter
-from scene_creation.scene_creation import Npc
+from traveller.npc import Npc
 
 
 class UserData:

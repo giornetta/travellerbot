@@ -1,10 +1,7 @@
 import json
 import random
-from re import finditer
 
 from psycopg2.extensions import connection
-from PIL import Image
-import requests
 from typing import List, Dict, Tuple
 import traveller.equipment as eq
 
@@ -57,12 +54,10 @@ def calculate_age_damage(stats: Tuple, age) -> (Tuple, int):
 
 class RefereeCommands:
     db: connection
-    referee_id: int
     cp: CommandParser
 
-    def __init__(self, db: connection, referee_id: int):
+    def __init__(self, db: connection):
         self.db = db
-        self.referee_id = referee_id
         self.cp = CommandParser()
         self.cp['info'] = self.info
         self.cp['set'] = self.set
@@ -76,10 +71,10 @@ class RefereeCommands:
 
     # TODO this needs to be integrated with telegram
 
-    def info(self, info: str) -> (bool, str):
+    def info(self, info: str, referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (self.referee_id,))
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
                 if info == 'world':
                     cur.execute('SELECT planet, sector FROM adventures WHERE id = %s;', (adv_id,))
@@ -92,21 +87,21 @@ class RefereeCommands:
                                 break
                     return True, \
                            'The Starport level is: ' + uwp[0] + \
-                           'The World Size level is: ' + uwp[1] + \
-                           'The Atmosphere level is: ' + uwp[2] + \
-                           'The Hydrographics level is: ' + uwp[3] + \
-                           'The Population level is: ' + uwp[4] + \
-                           'The Government level is: ' + uwp[5] + \
-                           'The Law Level is: ' + uwp[6] + \
-                           'The Technology level is: ' + uwp[8]
+                           '\nThe World Size level is: ' + uwp[1] + \
+                           '\nThe Atmosphere level is: ' + uwp[2] + \
+                           '\nThe Hydrographics level is: ' + uwp[3] + \
+                           '\nThe Population level is: ' + uwp[4] + \
+                           '\nThe Government level is: ' + uwp[5] + \
+                           '\nThe Law Level is: ' + uwp[6] + \
+                           '\nThe Technology level is: ' + uwp[8]
 
                 elif info == 'map':
                     cur.execute('SELECT sector FROM adventures WHERE id = %s;', (adv_id,))
                     sector = cur.fetchone()[0]
-                    url = 'https://travellermap.com/api/poster?sector=' + sector
+                    url = 'https://travellermap.com/api/jumpmap?sector=' + sector.replace(' ', '%20') + '&'  # TODO
                     return True, url
                 elif info == 'scene':
-                    pass  # TODO
+                    return True, 'TODO'  # TODO
                 elif info == 'adventure':
                     cur.execute(
                         'SELECT title,sector,planet,max_terms,survival_fail_kills FROM adventures WHERE id = %s;'
@@ -149,10 +144,10 @@ class RefereeCommands:
                            ('\nThe player is fatigued' if fatigued else '') + \
                            ('\nThe player has taken' + str(stims_taken) + 'stims' if stims_taken > 0 else '')
 
-    def set(self, name: str, cmd: List[str], value: str) -> (bool, str):
+    def set(self, name: str, cmd: List[str], value: str, referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (self.referee_id,))
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
                 cur.execute('SELECT id FROM characters WHERE char_name = %s AND adventure_id = %s and alive = TRUE;',
                             (name, adv_id))
@@ -162,16 +157,16 @@ class RefereeCommands:
                 char_id = char_id_tuple[0]
             if cmd[0] == 'stat':
                 cur.execute('UPDATE characters SET %s = %s WHERE id = %s;', (cmd[1], value, char_id))
-                return True, None
+                return True, 'Updated with success'
             if cmd[0] == 'status':
                 if cmd[1] == 'wounded' or cmd[1] == 'fatigued':
                     cur.execute('UPDATE characters SET %s = %s WHERE id = %s;',
                                 (cmd[1], value == 1, char_id))  # If status is non-existent it does nothing
-                    return True, None
+                    return True, 'Updated with success'
                 return False, 'No such status exists'
             if cmd[0] == 'cr' or cmd[0] == 'credits':
                 cur.execute('UPDATE characters SET credits = %s WHERE id = %s;', (value, char_id))
-                return True, None
+                return True, 'Updated with success'
             if cmd[0] == 'inv' or cmd[0] == 'inventory' or cmd[0] == 'equipment':
                 if cmd[1] == 'rm' or cmd[1] == 'remove':
                     # From now on it will be Eqtype.Eqname.EventualLevel and it will be case-insensitive
@@ -193,7 +188,7 @@ class RefereeCommands:
                                 if eq_name.upper() == eq.equipments[i].name:
                                     cur.execute('DELETE FROM inventories WHERE character_id = %s '
                                                 'AND equipment_id = %s;', (e, char_id))
-                    return True, None
+                    return True, 'Updated with success'
                 if cmd[1] == 'add':
                     for i in range(2, len(cmd) - 1):
                         command = cmd[i]
@@ -221,65 +216,66 @@ class RefereeCommands:
                     else:
                         cur.execute('INSERT INTO inventories(character_id, equipment_id, amount, damage) '
                                     'VALUES(%s, %s, %s, %s);', (char_id, e, value, 0))
+                    return True, 'Updated with success'
 
-    def shop(self, cmd: List[str]) -> (bool, str):  # TODO add closing shop
+    def shop(self, cmd: List[str], referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (self.referee_id,))
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
                 if cmd[-1] == 'close':
                     cur.execute('DELETE FROM shop WHERE adventure_id = %s;', (adv_id,))
-                    return True, None
+                    return True, 'Shop closed successfully'
                 for c in cmd:  # Check to see if existing shop?
                     for e in eq.equipments:
                         if self.is_coherent(c, e):
                             cur.execute(
                                 'INSERT INTO shop(adventure_id, equipment_id) VALUES(%s,%s) ON CONFLICT DO NOTHING;',
                                 (adv_id, e))
-                    return True, None
+                    return True, 'Shop opened successfully'
 
-    def rest(self, cmd: str) -> (bool, str):
+    def rest(self, cmd: str, referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (self.referee_id,))
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
                 if cmd == 'short':
                     cur.execute('UPDATE characters SET fatigued = FALSE WHERE adventure_id = %s AND alive = TRUE;',
                                 (adv_id,))
-                    return True, None
+                    return True, 'The party rested shorty'
                 if cmd == 'long':
                     cur.execute('UPDATE characters SET fatigued = FALSE WHERE adventure_id = %s AND alive = TRUE;',
                                 (adv_id,))
                     cur.execute('UPDATE characters SET str_mod = 0, dex_mod = 0, end_mod = 0, '
                                 'int_mod = 0, edu_mod = 0, soc_mod = 0')
-                    return True, None
-            return False, None
+                    return True, 'The party rested for a long time'
+            return False, 'insert either "short" or "long"'
 
-    def combat(self, combat: str, end: str) -> (bool, str):
+    def combat(self, combat: str, end: str, referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (self.referee_id,))
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
             if end:
                 cur.execute('UPDATE adventures SET scene_id = NULL WHERE id = %s;', (adv_id,))
-                return True, None
+                return True, 'Scene set with success'
             else:
                 cur.execute('UPDATE adventures SET scene_id = %s WHERE id = %s;',
                             (combat, adv_id))  # check if it doesn't exist?
-                return True, None
+                return True, 'Scene set with success'
 
-    def travel(self, world: str) -> (bool, str):
+    def travel(self, world: str, referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (self.referee_id,))
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
                 cur.execute('UPDATE adventures SET planet = %s WHERE id = %s;', (world, adv_id))
-                return True, None
+                return True, 'The adventurers traveled successfully'
 
-    def age(self, drug_users: List[str], drug_droppers: List[str]) -> (bool, str):
+    def age(self, drug_users: List[str], drug_droppers: List[str], referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (self.referee_id,))
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
                 cur.execute('SELECT char_name FROM characters WHERE adventure_id = %s', (adv_id,))
                 characters = cur.fetchall()
@@ -295,21 +291,24 @@ class RefereeCommands:
                             self.age_damage(age, cur, name, adv_id)
                 for name in drug_droppers:
                     self.age_damage(age, cur, name, adv_id)
+                    return True, 'The party aged'
+        return False, 'Something went wrong'
 
-    def scene(self, new: str, name: str) -> (bool, str):
+    def scene(self, new: str, name: str, referee_id: int) -> (bool, str):
         if new != 'new':
-            return False, None
+            return False, 'You have to say "new"'
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (self.referee_id,))
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
-        # discuss about scenes in database
+                # discuss about scenes in database
+                return True, 'TODO'  # TODO
 
-    def exit(self) -> (bool, str):
+    def exit(self, referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('UPDATE users SET active_adventure = NULL WHERE id = %s', (self.referee_id,))
-                return True, None
+                cur.execute('UPDATE users SET active_adventure = NULL WHERE id = %s', (referee_id,))
+                return True, 'Exit with success'
 
     def is_coherent(self, c: str, i: int) -> bool:
         e = eq.equipments[i]

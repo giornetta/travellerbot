@@ -43,7 +43,8 @@ class AdventureSetupService:
                     try:
                         cur.execute('INSERT INTO users(id) VALUES(%s) ON CONFLICT DO NOTHING;', (referee_id, ))
                         cur.execute('INSERT INTO adventures VALUES(%s, %s, %s, %s, %s, %s, %s);',
-                                    (adventure_id, adv.title, adv.sector, adv.world, adv.terms, adv.survival_kills, referee_id))
+                                    (adventure_id, adv.title, adv.sector, adv.world,
+                                     adv.terms, adv.survival_kills, referee_id))
                         cur.execute('UPDATE users SET active_adventure = %s WHERE id = %s;', (adventure_id, referee_id))
                         created = True
                     except psycopg2.errors.UniqueViolation:
