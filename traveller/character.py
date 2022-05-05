@@ -56,7 +56,7 @@ class Character:
     # Statuses
     stance: Stance = 2
     rads: int = 0
-    is_fatigued: bool = False
+    fatigued: bool = False
     stims_taken: int = 0
 
     # Skills
@@ -76,6 +76,17 @@ class Character:
     @property
     def skill_names(self):
         return [s.name for s in self.skills]
+
+    @property
+    def stats_tuple(self) -> Tuple[int, int, int, int, int, int]:
+        return (
+            self.stats[Characteristic.STR],
+            self.stats[Characteristic.END],
+            self.stats[Characteristic.DEX],
+            self.stats[Characteristic.INT],
+            self.stats[Characteristic.EDU],
+            self.stats[Characteristic.SOC]
+        )
 
     def acquire_skill(self, skill_name: str):
         if skill_name in skills:
@@ -105,7 +116,7 @@ class Character:
                                 self.modifiers[Characteristic.EDU],
                                 self.modifiers[Characteristic.SOC],
                                 self.credits, None, None, None, self.stance, self.rads,
-                                self.is_fatigued, self.stims_taken
+                                self.fatigued, self.stims_taken
                             ))
                 cur.execute('SELECT id FROM characters WHERE alive=TRUE AND user_id = %s AND adventure_id = %s;',
                             (user_id, adventure_id))
