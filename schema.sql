@@ -42,14 +42,14 @@ CREATE TABLE characters (
     soc_mod INT NOT NULL DEFAULT 0,
     credits BIGINT NOT NULL,
 
-    equipped_armor INT,
-    equipped_reflec INT,
-    drawn_weapon INT,
-    stance SMALLINT NOT NULL CHECK (stance BETWEEN 0 AND 2),
-    rads INT NOT NULL,
-    wounded BOOLEAN NOT NULL,
-    fatigued BOOLEAN NOT NULL,
-    stims_taken INT NOT NULL
+    equipped_armor INT DEFAULT NULL,
+    equipped_reflec INT DEFAULT NULL,
+    drawn_weapon INT DEFAULT NULL,
+    stance SMALLINT DEFAULT 0 CHECK (stance BETWEEN 0 AND 2),
+    rads INT NOT NULL DEFAULT 0,
+    wounded BOOLEAN NOT NULL DEFAULT FALSE,
+    fatigued BOOLEAN NOT NULL DEFAULT FALSE,
+    stims_taken INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE inventories (

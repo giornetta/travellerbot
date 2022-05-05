@@ -86,14 +86,14 @@ class RefereeCommands:
                                 uwp = planet[1]
                                 break
                     return True, \
-                           'The Starport level is: ' + uwp[0] + \
-                           '\nThe World Size level is: ' + uwp[1] + \
-                           '\nThe Atmosphere level is: ' + uwp[2] + \
-                           '\nThe Hydrographics level is: ' + uwp[3] + \
-                           '\nThe Population level is: ' + uwp[4] + \
-                           '\nThe Government level is: ' + uwp[5] + \
-                           '\nThe Law Level is: ' + uwp[6] + \
-                           '\nThe Technology level is: ' + uwp[8]
+                           'Starport: ' + uwp[0] + \
+                           '\nWorld Size: ' + uwp[1] + \
+                           '\nAtmosphere: ' + uwp[2] + \
+                           '\nHydrographics: ' + uwp[3] + \
+                           '\nPopulation: ' + uwp[4] + \
+                           '\nGovernment: ' + uwp[5] + \
+                           '\nLaw level: ' + uwp[6] + \
+                           '\nTechnology level: ' + uwp[8]
 
                 elif info == 'map':
                     cur.execute('SELECT sector FROM adventures WHERE id = %s;', (adv_id,))
@@ -104,18 +104,19 @@ class RefereeCommands:
                     return True, 'TODO'  # TODO
                 elif info == 'adventure':
                     cur.execute(
-                        'SELECT title,sector,planet,max_terms,survival_fail_kills FROM adventures WHERE id = %s;'
+                        'SELECT id,title,sector,planet,max_terms,survival_fail_kills FROM adventures WHERE id = %s;'
                         , (adv_id,))
-                    title, sector, world, max_terms, survival_fail_kills = cur.fetchone()
+                    id, title, sector, world, max_terms, survival_fail_kills = cur.fetchone()
                     return True, \
-                           'The title of the adventure is: ' + title + \
-                           '\nThe current sector is: ' + sector + \
-                           '\nThe current world is: ' + world + \
-                           '\nThe max terms an adventurer can do is: ' + str(max_terms) + \
-                           '\nIn this adventure failing a survival roll ' + \
-                           'kills' if survival_fail_kills else 'Doesn\'t kill'
+                           'Code: ' + id + \
+                           '\nTitle: ' + title + \
+                           '\nSector: ' + sector + \
+                           '\nWorld: ' + world + \
+                           '\nMax terms: ' + str(max_terms) + \
+                           '\nFailing a survival roll ' + \
+                           'kills' if survival_fail_kills else 'doesn\'t kill'
                 else:
-                    cur.execute('SELECT sex, age, strength, dexterity, endurance, '
+                    cur.execute('SELECT id,sex, age, strength, dexterity, endurance, '
                                 'intelligence, education, social_standing, '
                                 'str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits, '
                                 'equipped_armor, drawn_weapon, stance, rads, wounded, fatigued, stims_taken '
@@ -123,26 +124,33 @@ class RefereeCommands:
                     player_info = cur.fetchone()
                     if not player_info:
                         return False, 'No one has this name'
-                    sex, age, strength, dexterity, endurance, intelligence, education, social_standing, \
+                    character_id, sex, age, strength, dexterity, endurance, intelligence, education, social_standing, \
                     str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits_holded, \
                     equipped_armor, drawn_weapon, stance, rads, wounded, fatigued, stims_taken = player_info
                     stance_mod = ['prone', 'crouched', 'standing']
-                    return True, \
-                           info + 'is ' + ('Male, he is ' if sex == 'M' else 'Female, she is ') + age + \
-                           '\nCharacteristics: ' + str(strength) + ',' + str(dexterity) + ',' + \
-                           str(endurance) + ',' + str(intelligence) + ',' + \
-                           str(education) + ',' + str(social_standing) + \
-                           '\nModifiers: ' + str(str_mod) + ',' + str(dex_mod) + ',' + \
-                           str(end_mod) + ',' + str(int_mod) + ',' + \
-                           str(edu_mod) + ',' + str(soc_mod) + \
-                           '\n Credits remaining: ' + str(credits_holded) + \
-                           ('\n Equipped armor is:' + eq.equipments[equipped_armor].name if equipped_armor else '') + \
-                           ('\n Drawn weapon is:' + eq.equipments[drawn_weapon].name if drawn_weapon else '') + \
-                           '\nThe actual stance is: ' + stance_mod[stance] + \
-                           '\nThe rads count is: ' + str(rads) + \
-                           ('\nThe player is wounded' if wounded else '') + \
-                           ('\nThe player is fatigued' if fatigued else '') + \
-                           ('\nThe player has taken' + str(stims_taken) + 'stims' if stims_taken > 0 else '')
+                    cur.execute('SELECT equipment_id, amount FROM inventories '
+                                'WHERE character_id = %s;', (character_id,))
+                    inventory = cur.fetchall()
+                    text = f'Name: {info}\nSex: {sex}\nAge:{age}' \
+                           f'\nCharacteristics:{strength},{dexterity},{endurance},' \
+                           f'{intelligence},{education},{social_standing}' \
+                           f'\nModifiers: {str_mod},{dex_mod},{end_mod},{int_mod},{edu_mod},{soc_mod}' \
+                           f'\nCredits: {credits_holded}' \
+                           f'\nStance: {stance_mod[stance]}' \
+                           f'\nRads: {rads}' \
+                           f'\nWounded: {wounded}' \
+                           f'\nFatigued {fatigued}'
+                    if equipped_armor:
+                        text = text + f'\nEquipped armor: {eq.equipments[equipped_armor].name}'
+                    if drawn_weapon:
+                        text = text + f'\nDrawn weapon: {eq.equipments[drawn_weapon].name}'
+                    text = text + f'\nInventory:'
+                    for eq_id in inventory:
+                        text = text + '\n'
+                        text = text + eq.equipments[eq_id[0]].name
+                        text = text + ': '
+                        text = text + str(eq_id[1])
+                    return True, text
 
     def set(self, name: str, cmd: List[str], value: str, referee_id: int) -> (bool, str):
         with self.db:
@@ -155,68 +163,96 @@ class RefereeCommands:
                 if not char_id_tuple:
                     return False, 'No one has this name'
                 char_id = char_id_tuple[0]
-            if cmd[0] == 'stat':
-                cur.execute('UPDATE characters SET %s = %s WHERE id = %s;', (cmd[1], value, char_id))
-                return True, 'Updated with success'
-            if cmd[0] == 'status':
-                if cmd[1] == 'wounded' or cmd[1] == 'fatigued':
-                    cur.execute('UPDATE characters SET %s = %s WHERE id = %s;',
-                                (cmd[1], value == 1, char_id))  # If status is non-existent it does nothing
+                if cmd[0] == 'strength' or cmd[0] == 'str':
+                    cur.execute('UPDATE characters SET strength = %s WHERE id = %s;', (value, char_id))
                     return True, 'Updated with success'
-                return False, 'No such status exists'
-            if cmd[0] == 'cr' or cmd[0] == 'credits':
-                cur.execute('UPDATE characters SET credits = %s WHERE id = %s;', (value, char_id))
-                return True, 'Updated with success'
-            if cmd[0] == 'inv' or cmd[0] == 'inventory' or cmd[0] == 'equipment':
-                if cmd[1] == 'rm' or cmd[1] == 'remove':
-                    # From now on it will be Eqtype.Eqname.EventualLevel and it will be case-insensitive
-                    for i in range(2, len(cmd)):
-                        command = cmd[i]
-                        splitted = command.split('.', 3)
-                        c = splitted[0]
-                        eq_name = splitted[1]
-                        if eq_name == 'Computer':
-                            level = int(splitted[2])
-                            for e in eq.equipments:
-                                if eq.equipments[e].technology_level == 7:
-                                    break
-                            e = e + level - 7
-                            cur.execute('DELETE FROM inventories WHERE character_id = %s '
-                                        'AND equipment_id = %s;', (e, char_id))
-                        for e in eq.equipments:
-                            if self.is_coherent(c, e):
-                                if eq_name.upper() == eq.equipments[i].name:
-                                    cur.execute('DELETE FROM inventories WHERE character_id = %s '
-                                                'AND equipment_id = %s;', (e, char_id))
+                if cmd[0] == 'dexterity' or cmd[0] == 'dex':
+                    cur.execute('UPDATE characters SET dexterity = %s WHERE id = %s;', (value, char_id))
                     return True, 'Updated with success'
-                if cmd[1] == 'add':
-                    for i in range(2, len(cmd) - 1):
-                        command = cmd[i]
-                        splitted = command.split('.', 3)
-                        c = splitted[0]
-                        eq_name = splitted[1]
-                        if eq_name == 'Computer':
-                            level = int(splitted[2])
-                            for e in eq.equipments:
-                                if eq.equipments[e].technology_level == 7:
-                                    break
-                            e = e + level - 7
-                        else:
-                            for e in eq.equipments:
-                                if self.is_coherent(c, e):
-                                    if eq_name.upper() == eq.equipments[i].name:
+                if cmd[0] == 'endurance' or cmd[0] == 'end':
+                    cur.execute('UPDATE characters SET endurance = %s WHERE id = %s;', (value, char_id))
+                    return True, 'Updated with success'
+                if cmd[0] == 'intelligence' or cmd[0] == 'int':
+                    cur.execute('UPDATE characters SET intelligence = %s WHERE id = %s;', (value, char_id))
+                    return True, 'Updated with success'
+                if cmd[0] == 'education' or cmd[0] == 'edu':
+                    cur.execute('UPDATE characters SET education = %s WHERE id = %s;', (value, char_id))
+                    return True, 'Updated with success'
+                if cmd[0] == 'social_standing' or cmd[0] == 'soc':
+                    cur.execute('UPDATE characters SET social_standing = %s WHERE id = %s;', (value, char_id))
+                    return True, 'Updated with success'
+                if cmd[0] == 'status':
+                    if cmd[1] == 'wounded':
+                        cur.execute('UPDATE characters SET wounded = %s WHERE id = %s;',
+                                    (value == 1, char_id))
+                    if cmd[1] == 'fatigued':
+                        cur.execute('UPDATE characters SET fatigued = %s WHERE id = %s;',
+                                    (value == 1, char_id))
+                        return True, 'Updated with success'
+                    return False, 'No such status exists'
+                if cmd[0] == 'cr' or cmd[0] == 'credits':
+                    cur.execute('UPDATE characters SET credits = %s WHERE id = %s;', (value, char_id))
+                    return True, 'Updated with success'
+                if cmd[0] == 'inv' or cmd[0] == 'inventory' or cmd[0] == 'equipment':
+                    if cmd[1] == 'rm' or cmd[1] == 'remove':
+                        # From now on it will be Eqtype:Eqname:EventualLevel and it will be case-insensitive
+                        for i in range(2, len(cmd)):
+                            command = cmd[i]
+                            splitted = command.split(':', 3)
+                            c = splitted[0]
+                            eq_name = splitted[1]
+                            if c == 'Computer' or c == 'Software':
+                                level = int(splitted[2])
+                                for e in eq.equipments:
+                                    if eq.equipments[e].name.replace(" ", "").upper() == eq_name.upper() \
+                                            and eq.equipments[e].technology_level == level:
                                         break
-                    cur.execute('SELECT amount FROM inventories WHERE equipment_id = %s and character_id = %s;',
-                                (e, char_id))
-                    amount = cur.fetchone()
-                    if amount:
-                        cur.execute('UPDATE inventories '
-                                    'SET character_id = %s,equipment_id = %s,amount = %s,damage = 0;',
-                                    (char_id, e, amount[0] + value))
-                    else:
-                        cur.execute('INSERT INTO inventories(character_id, equipment_id, amount, damage) '
-                                    'VALUES(%s, %s, %s, %s);', (char_id, e, value, 0))
-                    return True, 'Updated with success'
+                            else:
+                                for e in eq.equipments:
+                                    if self.is_coherent(c, e):
+                                        if eq_name.upper() == eq.equipments[e].name.replace(" ", "").upper():
+                                            break
+                            cur.execute('UPDATE inventories '
+                                        'SET amount = amount - %s '
+                                        'WHERE character_id=%s AND equipment_id =%s '
+                                        'RETURNING amount',
+                                        (value, char_id, e))
+                            amount = cur.fetchone()
+                            if amount[0] == 0:
+                                cur.execute('DELETE FROM inventories WHERE character_id=%s AND equipment_id =%s',
+                                            (char_id, e))
+
+                        return True, 'Updated with success'
+                    if cmd[1] == 'add':
+                        for i in range(2, len(cmd)):
+                            command = cmd[i]
+                            splitted = command.split(':', 3)
+                            c = splitted[0]
+                            eq_name = splitted[1]
+                            if c.upper() == 'Computer'.upper() or c.upper() == 'Software'.upper():
+                                level = int(splitted[2])
+                                for e in eq.equipments:
+                                    print(eq.equipments[e].technology_level)
+                                    if eq.equipments[e].name.replace(" ", "").upper() == eq_name.upper() \
+                                            and eq.equipments[e].technology_level == level:
+                                        break
+                            else:
+                                for e in eq.equipments:
+                                    if self.is_coherent(c, e):
+                                        if eq_name.upper() == eq.equipments[e].name.replace(" ", "").upper():
+                                            break
+                            cur.execute('SELECT amount FROM inventories WHERE equipment_id = %s and character_id = %s;',
+                                        (e, char_id))
+                            amount = cur.fetchone()
+                            if amount:
+                                cur.execute('UPDATE inventories '
+                                            'SET amount = %s '
+                                            'WHERE character_id = %s AND equipment_id = %s',
+                                            (amount[0] + value, char_id, e))
+                            else:
+                                cur.execute('INSERT INTO inventories(character_id, equipment_id, amount, damage) '
+                                            'VALUES(%s, %s, %s, %s);', (char_id, e, value, 0))
+                        return True, 'Updated with success'
 
     def shop(self, cmd: List[str], referee_id: int) -> (bool, str):
         with self.db:

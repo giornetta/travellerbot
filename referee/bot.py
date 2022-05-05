@@ -1,19 +1,9 @@
-from typing import Callable
-from urllib.request import urlopen
 
-from PIL import Image
 from telegram import Update
-from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackContext, CommandHandler
+from telegram.ext import ConversationHandler, CallbackContext, CommandHandler
 
-from cache.userdata import user_data
-from character_creation import kb
-from character_creation.service import CharacterCreator
 from referee.referee_commands import RefereeCommands
-from traveller.characteristic import Characteristic
-from traveller.skill import education_skills
 from traveller.world import *
-from traveller.world import Attribute, starport_values
-from travellermap import api
 
 
 class RefereeCommandsConversation:

@@ -25,6 +25,9 @@ if __name__ == '__main__':
         port=5432
     )
 
+#    with open('schema.sql') as s:
+#        conn.cursor().execute(s.read())
+
     updater = Updater(
         token=config['TELEGRAM_TOKEN'],
         persistence=PicklePersistence(filename=config['CONV_PATH']),

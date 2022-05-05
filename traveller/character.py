@@ -99,24 +99,19 @@ class Character:
     def write(self, user_id, adventure_id, db: connection):
         with db:
             with db.cursor() as cur:
-                cur.execute('INSERT INTO characters '
-                            'VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+                cur.execute('INSERT INTO characters(char_name, sex, age, user_id, adventure_id, '
+                            'strength, dexterity, endurance, intelligence, education, social_standing, '
+                            'credits, stance) '
+                            'VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0)'
                             'ON CONFLICT DO NOTHING;', (
-                                self.name, self.sex.value, True, user_id, adventure_id,
+                                self.name, self.sex.value, self.age, user_id, adventure_id,
                                 self.stats[Characteristic.STR],
                                 self.stats[Characteristic.DEX],
                                 self.stats[Characteristic.END],
                                 self.stats[Characteristic.INT],
                                 self.stats[Characteristic.EDU],
                                 self.stats[Characteristic.SOC],
-                                self.modifiers[Characteristic.STR],
-                                self.modifiers[Characteristic.DEX],
-                                self.modifiers[Characteristic.END],
-                                self.modifiers[Characteristic.INT],
-                                self.modifiers[Characteristic.EDU],
-                                self.modifiers[Characteristic.SOC],
-                                self.credits, None, None, None, self.stance, self.rads,
-                                self.fatigued, self.stims_taken
+                                self.credits
                             ))
                 cur.execute('SELECT id FROM characters WHERE alive=TRUE AND user_id = %s AND adventure_id = %s;',
                             (user_id, adventure_id))

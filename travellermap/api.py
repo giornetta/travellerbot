@@ -20,7 +20,7 @@ def load_map(path: str):
             for sec in d:
                 data[sec] = []
                 for w in d[sec]:
-                    data[sec].append(World(w[0], w[1]))
+                    data[sec].append(World(w[0], w[1], '0000'))
 
 
 def random_sector() -> str:
