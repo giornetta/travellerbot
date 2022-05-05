@@ -15,20 +15,20 @@ class AdventureSetupService:
     def __init__(self, db: connection):
         self.db = db
 
-    def join_adventure(self, user_id: int, code: str) -> Optional[Tuple[str, bool]]:
-        res: Optional[Tuple[str, bool]] = None
+    def join_adventure(self, user_id: int, code: str) -> Optional[Adventure]:
+        adv: Optional[Adventure] = None
         with self.db:
             with self.db.cursor() as cur:
                 try:
                     cur.execute('INSERT INTO users(id, active_adventure) VALUES(%s, %s)'
                                 'ON CONFLICT(id) DO UPDATE SET active_adventure = %s;', (user_id, code, code))
-                    cur.execute('SELECT title, referee_id FROM adventures WHERE id = %s;', (code, ))
-                    title, referee_id = cur.fetchone()
-                    res = title, referee_id == user_id
+                    cur.execute('SELECT * FROM adventures WHERE id = %s;', (code, ))
+                    adv_id, title, sector, world, terms, survival_kills, referee_id = cur.fetchone()
+                    adv = Adventure.from_db((adv_id, title, sector, world, terms, survival_kills, referee_id))
                 except (psycopg2.errors.ForeignKeyViolation, psycopg2.errors.InFailedSqlTransaction) as e:
                     self.db.rollback()
 
-        return res
+        return adv
 
     def create_adventure(self, referee_id: int, adv: Adventure) -> Optional[str]:
         adventure_id = ''.join(random.choices(string.ascii_letters + string.digits, k=6)).upper()
