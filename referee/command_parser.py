@@ -60,6 +60,8 @@ class CommandParser:
                 except ValueError:
                     return self.callbacks[cmd[0]]([], [], referee_id)
             elif cmd[0] == "scene":
+                if len(cmd) == 2:
+                    return self.callbacks[cmd[0]](cmd[1], None, referee_id)
                 if len(cmd) == 3:
                     return self.callbacks[cmd[0]](cmd[1], cmd[2], referee_id)
                 else:

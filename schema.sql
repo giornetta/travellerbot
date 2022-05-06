@@ -69,7 +69,7 @@ CREATE TABLE skill_sets (
     PRIMARY KEY (character_id, skill_name)
 );
 
-CREATE TABLE scene(
+CREATE TABLE scenes(
     id SERIAL PRIMARY KEY,
     scene_name VARCHAR(32)
 );
@@ -90,7 +90,7 @@ CREATE TABLE npcs(
     weapon INT NOT NULL,
     ally BOOLEAN NOT NULL DEFAULT FALSE,
 
-    scene INT REFERENCES scene(id),
+    scene VARCHAR(32) references scenes(scene_name),
     pos INT NOT NULL DEFAULT 0 --scene position
 );
 

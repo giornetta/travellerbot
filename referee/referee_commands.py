@@ -103,18 +103,24 @@ class RefereeCommands:
                 elif info == 'scene':
                     return True, 'TODO'  # TODO
                 elif info == 'adventure':
-                    cur.execute(
-                        'SELECT id,title,sector,planet,max_terms,survival_fail_kills FROM adventures WHERE id = %s;'
-                        , (adv_id,))
+                    cur.execute('SELECT id,title,sector,planet,max_terms,survival_fail_kills '
+                                'FROM adventures WHERE id = %s;'
+                                , (adv_id,))
                     id, title, sector, world, max_terms, survival_fail_kills = cur.fetchone()
-                    return True, \
-                           'Code: ' + id + \
+                    text = 'Code: ' + id + \
                            '\nTitle: ' + title + \
                            '\nSector: ' + sector + \
                            '\nWorld: ' + world + \
                            '\nMax terms: ' + str(max_terms) + \
                            '\nFailing a survival roll ' + \
-                           'kills' if survival_fail_kills else 'doesn\'t kill'
+                           ('kills' if survival_fail_kills else 'doesn\'t kill') + \
+                           '\nAdventurers:'
+                    cur.execute('SELECT char_name FROM characters WHERE adventure_id=%s AND alive = TRUE;',
+                                (adv_id,))
+                    names = cur.fetchall()
+                    for name in names:
+                        text = text + '\n' + name[0]
+                    return True, text
                 else:
                     cur.execute('SELECT id,sex, age, strength, dexterity, endurance, '
                                 'intelligence, education, social_standing, '
@@ -139,7 +145,7 @@ class RefereeCommands:
                            f'\nStance: {stance_mod[stance]}' \
                            f'\nRads: {rads}' \
                            f'\nWounded: {wounded}' \
-                           f'\nFatigued {fatigued}'
+                           f'\nFatigued: {fatigued}'
                     if equipped_armor:
                         text = text + f'\nEquipped armor: {eq.equipments[equipped_armor].name}'
                     if drawn_weapon:
@@ -148,6 +154,9 @@ class RefereeCommands:
                     for eq_id in inventory:
                         text = text + '\n'
                         text = text + eq.equipments[eq_id[0]].name
+                        if self.is_coherent('Computer', eq_id[0]) or self.is_coherent('Software', eq_id[0]):
+                            level = eq.equipments[eq_id[0]].technology_level
+                            text = text + f'LVL{level}'
                         text = text + ': '
                         text = text + str(eq_id[1])
                     return True, text
@@ -181,6 +190,49 @@ class RefereeCommands:
                 if cmd[0] == 'social_standing' or cmd[0] == 'soc':
                     cur.execute('UPDATE characters SET social_standing = %s WHERE id = %s;', (value, char_id))
                     return True, 'Updated with success'
+                if cmd[0] == 'mod_str' or cmd[0] == 'modifier_str' \
+                        or cmd[0] == 'mod_strength' or cmd[0] == 'modifier_strength':
+                    cur.execute('UPDATE characters SET str_mod = %s WHERE id = %s;', (value, char_id))
+                    return True, 'Updated with success'
+                if cmd[0] == 'mod_dex' or cmd[0] == 'modifier_dex' \
+                        or cmd[0] == 'mod_dexterity' or cmd[0] == 'modifier_dexterity':
+                    cur.execute('UPDATE characters SET dex_mod = %s WHERE id = %s;', (value, char_id))
+                    return True, 'Updated with success'
+                if cmd[0] == 'mod_end' or cmd[0] == 'modifier_end' \
+                        or cmd[0] == 'mod_endurance' or cmd[0] == 'modifier_endurance':
+                    cur.execute('UPDATE characters SET end_mod = %s WHERE id = %s;', (value, char_id))
+                    return True, 'Updated with success'
+                if cmd[0] == 'mod_int' or cmd[0] == 'modifier_int' \
+                        or cmd[0] == 'mod_intelligence' or cmd[0] == 'modifier_intelligence':
+                    cur.execute('UPDATE characters SET int_mod = %s WHERE id = %s;', (value, char_id))
+                    return True, 'Updated with success'
+                if cmd[0] == 'mod_edu' or cmd[0] == 'modifier_edu' \
+                        or cmd[0] == 'mod_education' or cmd[0] == 'modifier_education':
+                    cur.execute('UPDATE characters SET edu_mod = %s WHERE id = %s;', (value, char_id))
+                    return True, 'Updated with success'
+                if cmd[0] == 'mod_soc' or cmd[0] == 'modifier_soc' \
+                        or cmd[0] == 'mod_social_standing' or cmd[0] == 'modifier_social_standing':
+                    cur.execute('UPDATE characters SET soc_mod = %s WHERE id = %s;', (value, char_id))
+                    return True, 'Updated with success'
+                if cmd[0] == 'mod' or cmd[0] == 'modifier':
+                    if cmd[1] == 'str' or cmd[1] == 'strength':
+                        cur.execute('UPDATE characters SET str_mod = %s WHERE id = %s;', (value, char_id))
+                        return True, 'Updated with success'
+                    if cmd[1] == 'dex' or cmd[1] == 'dexterity':
+                        cur.execute('UPDATE characters SET dex_mod = %s WHERE id = %s;', (value, char_id))
+                        return True, 'Updated with success'
+                    if cmd[1] == 'end' or cmd[1] == 'endurance':
+                        cur.execute('UPDATE characters SET end_mod = %s WHERE id = %s;', (value, char_id))
+                        return True, 'Updated with success'
+                    if cmd[1] == 'int' or cmd[1] == 'intelligence':
+                        cur.execute('UPDATE characters SET int_mod = %s WHERE id = %s;', (value, char_id))
+                        return True, 'Updated with success'
+                    if cmd[1] == 'edu' or cmd[1] == 'education':
+                        cur.execute('UPDATE characters SET edu_mod = %s WHERE id = %s;', (value, char_id))
+                        return True, 'Updated with success'
+                    if cmd[1] == 'soc' or cmd[1] == 'social_standing':
+                        cur.execute('UPDATE characters SET soc_mod = %s WHERE id = %s;', (value, char_id))
+                        return True, 'Updated with success'
                 if cmd[0] == 'status':
                     if cmd[1] == 'wounded':
                         cur.execute('UPDATE characters SET wounded = %s WHERE id = %s;',
@@ -218,7 +270,7 @@ class RefereeCommands:
                                         'RETURNING amount',
                                         (value, char_id, e))
                             amount = cur.fetchone()
-                            if amount[0] == 0:
+                            if amount and amount[0] == 0:
                                 cur.execute('DELETE FROM inventories WHERE character_id=%s AND equipment_id =%s',
                                             (char_id, e))
 
@@ -253,6 +305,7 @@ class RefereeCommands:
                                 cur.execute('INSERT INTO inventories(character_id, equipment_id, amount, damage) '
                                             'VALUES(%s, %s, %s, %s);', (char_id, e, value, 0))
                         return True, 'Updated with success'
+                return False, 'Cannot set'
 
     def shop(self, cmd: List[str], referee_id: int) -> (bool, str):
         with self.db:
@@ -337,8 +390,7 @@ class RefereeCommands:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
-                # discuss about scenes in database
-                return True, 'TODO'  # TODO
+                return True, 'What\'s the name of the scene?'
 
     def exit(self, referee_id: int) -> (bool, str):
         with self.db:

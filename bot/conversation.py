@@ -11,6 +11,7 @@ from bot.state import ConversationState
 from keyboards import keyboards
 from referee.bot import RefereeCommandsConversation
 from referee.referee_commands import RefereeCommands
+from scene_creation.scene_creation import SceneCreationConversation
 
 
 def handler(conn: connection):
@@ -24,7 +25,8 @@ def handler(conn: connection):
         states={
             ConversationState.ADVENTURE_SETUP: SetupConversation(setup_controller, character_creator).handlers(),
             ConversationState.REFEREE_IDLE: RefereeCommandsConversation(referee_commands).handlers(),
-            ConversationState.CHARACTER_CREATION: CharacterCreationConversation(character_creator).handlers()
+            ConversationState.CHARACTER_CREATION: CharacterCreationConversation(character_creator).handlers(),
+            ConversationState.SCENE_CREATION: SceneCreationConversation(conn).handlers()
         },
         fallbacks=[],
         name='conversation',

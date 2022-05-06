@@ -11,9 +11,9 @@ class Npc:
     INT: int = 2
     EDU: int = 2
     SOC: int = 2
-    career: Career = None
+    career: str = ""
     rank: int = 0
-    armor: Armor = None
-    weapon: Weapon = None
+    armor: int = 0
+    weapon: int = 0
     name: str = ""
     ally: bool = False

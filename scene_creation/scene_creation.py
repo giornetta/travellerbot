@@ -12,10 +12,11 @@ from psycopg2.extensions import connection
 from bot.state import ConversationState
 from scene_creation import kb
 
-from cache.userdata import user_data
+from cache.userdata import user_data, UserData
 
 import traveller.equipment as eq
 import traveller.career as career
+from traveller.npc import Npc
 
 
 class State(Enum):
@@ -30,6 +31,7 @@ class State(Enum):
     NEXT = auto(),
     NPC_END = auto()
 
+
 class SceneCreationConversation:
     def __init__(self, db: connection):
         self.db = db
@@ -37,7 +39,8 @@ class SceneCreationConversation:
     def handlers(self) -> List[ConversationHandler]:
         return [
             ConversationHandler(
-                entry_points=[MessageHandler(Filters.regex(r'^/scene +new +[\w]+$'), self._ask_first_npc)],
+                entry_points=[MessageHandler(Filters.text, self._ask_first_npc),
+                              ],
                 states={
                     State.NPC: [MessageHandler(Filters.text('Add'), self._ask_characteristics_generation),
                                 MessageHandler(Filters.text('End'), self._handle_end)
@@ -64,11 +67,12 @@ class SceneCreationConversation:
         ]
 
     def _ask_first_npc(self, update: Update, context: CallbackContext) -> State:
-        scene_name = update.message.text.split(' ')[2]
+        user_data[update.message.from_user.id] = UserData()
+        scene_name = update.message.text
         user_data[update.message.from_user.id].scene_name = scene_name
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('INSERT INTO scene(scene_name) VALUES(%s) ON CONFLICT DO NOTHING;', (scene_name,))
+                cur.execute('INSERT INTO scenes(scene_name) VALUES(%s) ON CONFLICT DO NOTHING;', (scene_name,))
         kb.next_npc.reply_text(update)
         return State.NPC
 
@@ -90,12 +94,12 @@ class SceneCreationConversation:
 
     def _handle_random_gen(self, update: Update, context: CallbackContext) -> State:
         npc = user_data[update.message.from_user.id].npc
-        npc.STR = randint(1, 6)
-        npc.DEX = randint(1, 6)
-        npc.END = randint(1, 6)
-        npc.INT = randint(1, 6)
-        npc.EDU = randint(1, 6)
-        npc.SOC = randint(1, 6)
+        npc.STR = randint(1, 6) + randint(1, 6)
+        npc.DEX = randint(1, 6) + randint(1, 6)
+        npc.END = randint(1, 6) + randint(1, 6)
+        npc.INT = randint(1, 6) + randint(1, 6)
+        npc.EDU = randint(1, 6) + randint(1, 6)
+        npc.SOC = randint(1, 6) + randint(1, 6)
         kb.ch_random_gen.reply_text(update, params=(npc.STR, npc.DEX, npc.END,
                                                     npc.INT, npc.EDU, npc.SOC))
         return State.CH_GEN
@@ -122,7 +126,7 @@ class SceneCreationConversation:
         npc = user_data[update.message.from_user.id].npc
         for c in career.careers:
             if c.name == update.message.text:
-                npc.career = c
+                npc.career = c.name
                 break
         kb.rank.reply_text(update, keys=[[1, 2, 3], [4, 5, 6], [0]])
         return State.ARMOR
@@ -145,7 +149,7 @@ class SceneCreationConversation:
 
     def _ask_weapon(self, update: Update, context: CallbackContext) -> State:
         npc = user_data[update.message.from_user.id].npc
-        npc.armor = eq.get_equipment_by_name(update.message.text)
+        npc.armor = eq.get_equipment_by_name(update.message.text).id
         if not npc.armor:
             return State.ARMOR
         keys = []
@@ -159,8 +163,8 @@ class SceneCreationConversation:
 
     def _ask_name(self, update: Update, context: CallbackContext) -> State:
         npc = user_data[update.message.from_user.id].npc
-        npc.armor = eq.get_equipment_by_name(update.message.text)
-        if not npc.armor:
+        npc.weapon = eq.get_equipment_by_name(update.message.text).id
+        if not npc.weapon:
             return State.WEAPON
         kb.name.reply_text(update)
         return State.ALLY
@@ -177,7 +181,6 @@ class SceneCreationConversation:
         npc = user_data[update.message.from_user.id].npc
         scene_name = user_data[update.message.from_user.id].scene_name
         npc.ally = update.message.text == 'Ally'
-        # TODO register npc to self.db
         with self.db:
             with self.db.cursor() as cur:
                 cur.execute('INSERT INTO npcs(npc_name, strength, dexterity, endurance, intelligence, education,'
