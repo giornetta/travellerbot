@@ -3,12 +3,15 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from keyboards.keyboards import Keyboard
 
 characteristics = Keyboard(
+    'These are your characteristics:\n'
     'STR: %s\n'
     'END: %s\n'
     'DEX: %s\n'
     'INT: %s\n'
     'EDU: %s\n'
     'SOC: %s', reply_markup=ReplyKeyboardRemove())
+
+# Homeworld
 
 world = Keyboard('Choose your homeworld from %s.')
 
@@ -42,11 +45,12 @@ ask_education_skill = Keyboard('Choose an Education skill',
                                    ['Skill1', 'Skill2', '...']
                                ], one_time_keyboard=False))
 
+# Career
 
-choose_skill = Keyboard('Choose your next skill (skill left to choose: "%s")',
-                        reply_markup=ReplyKeyboardMarkup([
-                            ['Skill1', 'Skill2', '...']
-                        ], one_time_keyboard=True))
+# choose_skill = Keyboard('Choose your next skill (skill left to choose: "%s")',
+#                        reply_markup=ReplyKeyboardMarkup([
+#                            ['Skill1', 'Skill2', '...']
+#                        ], one_time_keyboard=True))
 
 career = Keyboard('Choose the career you want to qualify for',
                   reply_markup=ReplyKeyboardMarkup([
@@ -58,32 +62,44 @@ draft_or_drifter = Keyboard('You failed to qualify. Choose to become a Drifter o
                                 ['Drifter', 'Draft']
                             ], one_time_keyboard=True))
 
-drafted = Keyboard('You were drafted into "%s"', )
+drafted = Keyboard('You were drafted into %s', )
 
 qualified = Keyboard('You qualified to rank 0 and got the sequent skills: "%s"')
-
-promotion = Keyboard('You got promoted to rank "%s"')
 
 qualified_sequent_career = Keyboard('You qualified, choose a skill to gain',
                                     reply_markup=ReplyKeyboardMarkup([
                                         ['Skill1', 'Skill2', '...']
                                     ], one_time_keyboard=False))
 
+promotion = Keyboard('You got promoted to rank %s')
+
+skill_acquired = Keyboard('You acquired %s!')
+
 ask_drugs = Keyboard('Do you want to use anagathic drugs this term?', reply_markup=ReplyKeyboardMarkup([['Yes', 'No']]))
+
+stop_drugs = Keyboard('The shock hits you!')
 
 aging = Keyboard('You are now %s')
 
-roll_age = Keyboard('You are now "%s" and the age "%s"')
+aging_fail = Keyboard('Effects of aging show up...')
+
+aging_crisis = Keyboard('You suffered from an aging crisis, you\'ll die if you won\'t be able to pay %sCr!')
 
 reenlistment_retire = Keyboard('You are now too old to keep working, you must retire.')
 
 reenlistment_12 = Keyboard('You are too good and must continue in this career')
 
-reenlistment_fail = Keyboard('You failed to reenlist')
+reenlistment_fail = Keyboard('You failed to reenlist!')
+
+survival_success = Keyboard('You passed your survival roll!')
+
+survival_drugs = Keyboard('You used drugs last term, rolling for a second survival check...')
 
 survival_death = Keyboard('You died during this term. Start over.')
 
 survival_fail = Keyboard('You failed your survival roll!')
+
+injury_crisis = Keyboard('You suffered from an injury crisis, you\'ll die if you won\'t be able to pay %sCr!')
 
 commission_success = Keyboard('You succeeded in your commission roll! You are now Rank 1!')
 
@@ -95,16 +111,13 @@ debt = Keyboard('During your career you got in debt and now you paid "%s"')
 
 negative_number = Keyboard('You are in debt of "%s" credits')
 
-table_choice = Keyboard('You got promoted to Rank %s! On which Table do you want to roll?',
-                        reply_markup=ReplyKeyboardMarkup([
-                            ['Personal Development', 'Service Skills', 'Specialist Skills', 'Advanced Education']
-                        ], one_time_keyboard=False))
+promoted = Keyboard('You got promoted to Rank %s!')
 
-table_choice_no_promo = Keyboard('On which Table do you want to roll?',
-                                 reply_markup=ReplyKeyboardMarkup([
-                                     ['Personal Development', 'Service Skills', 'Specialist Skills',
-                                      'Advanced Education']
-                                 ], one_time_keyboard=False))
+table_choice = Keyboard('On which Table do you want to roll?',
+                        reply_markup=ReplyKeyboardMarkup([
+                            ['Personal Development', 'Service Skills', 'Specialist Skills',
+                             'Advanced Education']
+                        ], one_time_keyboard=False))
 
 retire = Keyboard('Do you want to retire?',
                   reply_markup=ReplyKeyboardMarkup([
@@ -112,9 +125,9 @@ retire = Keyboard('Do you want to retire?',
                   ], one_time_keyboard=True))
 
 continue_career = Keyboard('Do you want continue with this career?',
-                         reply_markup=ReplyKeyboardMarkup([
-                             ['Yes', 'No']
-                         ], one_time_keyboard=False))
+                           reply_markup=ReplyKeyboardMarkup([
+                               ['Yes', 'No']
+                           ], one_time_keyboard=False))
 
 muster_choice = Keyboard('Do you want to roll on Cash or Material Benefits?',
                          reply_markup=ReplyKeyboardMarkup([

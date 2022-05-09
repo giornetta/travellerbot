@@ -1,15 +1,7 @@
-from typing import Dict
-
 from psycopg2.extensions import  connection
-
-from traveller.character import Character
 
 
 class CharacterCreator:
-
-    # This stores the characters being created
-    # before they're actually saved into the db.
-    characters: Dict[int, Character]  # TODO Could also use CallbackContext?
 
     db: connection
 
