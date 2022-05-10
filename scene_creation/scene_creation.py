@@ -54,8 +54,7 @@ class SceneCreationConversation:
                     State.WEAPON: [MessageHandler(Filters.text, self._ask_weapon)],
                     State.NAME: [MessageHandler(Filters.text, self._ask_name)],
                     State.ALLY: [MessageHandler(Filters.text, self._ask_ally)],
-                    State.NPC_END: [MessageHandler(Filters.regex('^(Ally|Enemy)$'), self._handle_npc_registration)],
-                    State.NEXT: [MessageHandler(Filters.text, self._ask_next_npc)],
+                    State.NPC_END: [MessageHandler(Filters.regex('^(Ally|Enemy)$'), self._handle_npc_registration)]
                 },
                 fallbacks=[],
                 map_to_parent={
@@ -72,15 +71,15 @@ class SceneCreationConversation:
         user_data[update.message.from_user.id].scene_name = scene_name
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('INSERT INTO scenes(scene_name) VALUES(%s) ON CONFLICT DO NOTHING;', (scene_name,))
-        kb.next_npc.reply_text(update)
-        return State.NPC
-
-    def _ask_next_npc(self, update: Update, context: CallbackContext) -> State:
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (update.message.from_user.id,))
+                adv_id = cur.fetchone()[0]
+                cur.execute('INSERT INTO scenes(scene_name,adventure_id) VALUES(%s,%s) ON CONFLICT DO NOTHING;',
+                            (scene_name, adv_id))
         kb.next_npc.reply_text(update)
         return State.NPC
 
     def _handle_end(self, update: Update, context: CallbackContext) -> State:
+        kb.end.reply_text(update)
         return State.END
 
     def _ask_characteristics_generation(self, update: Update, context: CallbackContext) -> State:
@@ -183,10 +182,13 @@ class SceneCreationConversation:
         npc.ally = update.message.text == 'Ally'
         with self.db:
             with self.db.cursor() as cur:
+                cur.execute('SELECT id FROM scenes WHERE scene_name = %s', (scene_name,))
+                scene_id = cur.fetchone()[0]
                 cur.execute('INSERT INTO npcs(npc_name, strength, dexterity, endurance, intelligence, education,'
                             ' social_standing, career, rank, armor, weapon, ally, scene) '
                             'VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) '
                             'ON CONFLICT(id) DO NOTHING;', (npc.name, npc.STR, npc.DEX, npc.END, npc.INT,
                                                             npc.EDU, npc.SOC, npc.career, npc.rank, npc.armor,
-                                                            npc.weapon, npc.ally, scene_name))
-        return State.NEXT
+                                                            npc.weapon, npc.ally, scene_id))
+        kb.next_npc.reply_text(update)
+        return State.NPC

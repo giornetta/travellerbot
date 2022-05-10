@@ -76,7 +76,21 @@ class RefereeCommands:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
-                if info == 'world':
+                if info == 'scene':
+                    cur.execute('SELECT scene_id FROM adventures WHERE id=%s;', (adv_id,))
+                    scene_id = cur.fetchone()
+                    if scene_id:
+                        scene_id = scene_id[0]
+                        cur.execute('SELECT scene_name FROM scenes WHERE id=%s;', (scene_id,))
+                        scene_name = cur.fetchone()
+                        if scene_name:
+                            scene_name = scene_name[0]
+                            return True, 'The active scene is ' + scene_name
+                        else:
+                            return False, 'No active scene'
+                    else:
+                        return False, 'No active scene'
+                elif info == 'world':
                     cur.execute('SELECT planet, sector FROM adventures WHERE id = %s;', (adv_id,))
                     world, sector = cur.fetchone()
                     with open('data/map.json') as d:
@@ -100,8 +114,6 @@ class RefereeCommands:
                     sector = cur.fetchone()[0]
                     url = 'https://travellermap.com/api/jumpmap?sector=' + sector.replace(' ', '%20') + '&'  # TODO
                     return True, url
-                elif info == 'scene':
-                    return True, 'TODO'  # TODO
                 elif info == 'adventure':
                     cur.execute('SELECT id,title,sector,planet,max_terms,survival_fail_kills '
                                 'FROM adventures WHERE id = %s;'
@@ -383,20 +395,56 @@ class RefereeCommands:
                     return True, 'The party aged'
         return False, 'Something went wrong'
 
-    def scene(self, new: str, name: str, referee_id: int) -> (bool, str):
-        if new != 'new':
-            return False, 'You have to say "new"'
-        with self.db:
-            with self.db.cursor() as cur:
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
-                adv_id = cur.fetchone()[0]
-                return True, 'What\'s the name of the scene?'
+    def scene(self, cmd: str, name: str, referee_id: int) -> (bool, str):
+        if cmd == 'new':
+            return True, 'What\'s the name of the scene?'
+        elif cmd == 'start':
+            if name:
+                with self.db:
+                    with self.db.cursor() as cur:
+                        cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
+                        adv_id = cur.fetchone()[0]
+                        cur.execute('SELECT id FROM scenes WHERE scene_name=%s;', (name,))
+                        scene_id = cur.fetchone()
+                        if scene_id:
+                            scene_id = scene_id[0]
+                            cur.execute('UPDATE adventures SET scene_id = %s WHERE id=%s;', (scene_id, adv_id))
+                            return True, 'Combat started'
+                        return False, 'No scene with this name'
+            else:
+                return False, 'Start combat with /scene start scene_name'
+        elif cmd == 'end' or cmd == 'finish':
+            with self.db:
+                with self.db.cursor() as cur:
+                    cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
+                    adv_id = cur.fetchone()[0]
+                    cur.execute('UPDATE adventures SET scene_id = NULL WHERE id=%s;', (adv_id,))
+                    return True, 'Combat finished'
+        elif cmd == 'remove' or cmd == 'rmv':
+            if name:
+                with self.db:
+                    with self.db.cursor() as cur:
+                        cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
+                        adv_id = cur.fetchone()[0]
+                        cur.execute('SELECT id FROM scenes WHERE scene_name=%s;', (name,))
+                        scene_id = cur.fetchone()
+                        if scene_id:
+                            scene_id = scene_id[0]
+                            cur.execute('DELETE FROM scenes WHERE scene_name=%s AND adventure_id=%s;',
+                                        (scene_id, adv_id))
+                            return True, 'Scene removed'
+                        return False, 'No scene with this name'
+            else:
+                return False, 'Remove scene with /scene remove scene_name'
+        else:
+            return False, 'Use /scene {new|start|end|remove} [name]'
 
     def exit(self, referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
                 cur.execute('UPDATE users SET active_adventure = NULL WHERE id = %s', (referee_id,))
                 return True, 'Exit with success'
+
 
     def is_coherent(self, c: str, i: int) -> bool:
         e = eq.equipments[i]

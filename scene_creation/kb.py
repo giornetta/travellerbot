@@ -4,6 +4,8 @@ from keyboards.keyboards import Keyboard
 
 scene_name = Keyboard('What\'s the name of the scene')
 
+end = Keyboard('Scene created correctly')
+
 next_npc = Keyboard('Do you want to add an NPC?',
                     reply_markup=ReplyKeyboardMarkup([
                         ['Add', 'End']

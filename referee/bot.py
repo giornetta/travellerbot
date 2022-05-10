@@ -54,6 +54,11 @@ class RefereeCommandsConversation:
         return State.COMMANDS
 
     def _handle_scene(self, update: Update, context: CallbackContext) -> State:
+        is_new = update.message.text.split(' ', 2)[1]
+        if is_new == 'new':
+            check, text = self.service.cp.execute(update.message.text, update.message.from_user.id)
+            update.message.reply_text(text)
+            return State.SCENE
         check, text = self.service.cp.execute(update.message.text, update.message.from_user.id)
         update.message.reply_text(text)
-        return State.SCENE
+        return State.COMMANDS
