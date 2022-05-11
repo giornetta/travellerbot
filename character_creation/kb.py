@@ -134,7 +134,14 @@ muster_choice = Keyboard('Do you want to roll on Cash or Material Benefits?',
                              ['Cash', 'Material']
                          ], one_time_keyboard=True))
 
+undo_damage = Keyboard('Do you want to restore a point of damage in the following characteristics?',
+                       reply_markup=ReplyKeyboardMarkup([
+                           ['Strength - 2000Cr'], ['Dexterity - 1000Cr']
+                       ]))
+
 character_name = Keyboard('What\'s your name?')
+
+character_sex = Keyboard('What\'s your sex?', reply_markup=ReplyKeyboardMarkup([['M', 'F']]))
 
 buy_equip = Keyboard('You have "%s" credits, do you want to buy something?',
                      reply_markup=ReplyKeyboardMarkup([

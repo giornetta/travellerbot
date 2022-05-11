@@ -18,12 +18,16 @@ class Career:
     rank: int
     terms: int
     drafted: bool
+    injury_crisis_debt: int
+    aging_crisis_debt: int
 
     def __init__(self, career_type: CareerType, drafted=False):
         self.career_type = career_type
         self.rank = 0
         self.terms = 1
         self.drafted = drafted
+        self.injury_crisis_debt = 0
+        self.aging_crisis_debt = 0
 
 @dataclass
 class CareerType:
@@ -37,6 +41,7 @@ class CareerType:
     skill_and_training: List[Dict[int, Union[Ch, str]]]
     material_benefits: Dict[int, Union[Ch, str, int]]  # str for 'Weapon' or 'Society', int for Ship Shares
     cash: Dict[int, int]
+    patron_rates: List[float, float, float]
 
 
 athlete = CareerType(
@@ -55,7 +60,8 @@ athlete = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Liaison',
                          4: 'Linguistics', 5: 'Medicine', 6: 'Sciences'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'LightWeapon', 4: 3, 5: 'Society', 6: 3},
-    cash={1: 200, 2: 10000, 3: 20000, 4: 20000, 5: 50000, 6: 100000, 7: 100000}
+    cash={1: 200, 2: 10000, 3: 20000, 4: 20000, 5: 50000, 6: 100000, 7: 100000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 maritime_defense = CareerType(
@@ -74,7 +80,8 @@ maritime_defense = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Jack-of-All-Trades',
                          4: 'Medicine', 5: 'Leadership', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: 'Rifle', 4: 2, 5: 'Rifle', 6: 3, 7: Ch.SOC},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
+    patron_rates=[0.75, 1, 1]
 )
 
 mercenary = CareerType(
@@ -93,7 +100,8 @@ mercenary = CareerType(
                         {1: 'Advocate', 2: 'Engineering', 3: 'Medicine',
                          4: 'Medicine', 5: 'Sciences', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'AssaultWeapon', 4: 3, 5: Ch.SOC, 6: 3, 7: -1},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 20000, 5: 20000, 6: 50000, 7: 100000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 20000, 5: 20000, 6: 50000, 7: 100000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 merchant = CareerType(
@@ -112,7 +120,8 @@ merchant = CareerType(
                         {1: 'Advocate', 2: 'Engineering', 3: 'Medicine',
                          4: 'Medicine', 5: 'Sciences', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: 'Shotgun', 4: 3, 5: -1, 6: 3, 7: 'Society'},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 20000, 5: 20000, 6: 50000, 7: 100000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 20000, 5: 20000, 6: 50000, 7: 100000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 navy = CareerType(
@@ -131,7 +140,8 @@ navy = CareerType(
                         {1: 'Advocate', 2: 'Piloting', 3: 'Engineering',
                          4: 'Medicine', 5: 'Navigation', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: 'Rifle', 4: 2, 5: Ch.SOC, 6: 3, 7: 'Society'},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
+    patron_rates=[0.75, 1, 1]
 )
 
 noble = CareerType(
@@ -150,7 +160,8 @@ noble = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Liaison',
                          4: 'Liaison', 5: 'Liaison', 6: 'Sciences'}],
     material_benefits={1: 3, 2: Ch.EDU, 3: Ch.INT, 4: 3, 5: 'Society', 6: 3, 7: -1},
-    cash={1: 2000, 2: 10000, 3: 20000, 4: 20000, 5: 50000, 6: 100000, 7: 100000}
+    cash={1: 2000, 2: 10000, 3: 20000, 4: 20000, 5: 50000, 6: 100000, 7: 100000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 physician = CareerType(
@@ -169,7 +180,8 @@ physician = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Jack-of-All-Trades',
                          4: 'Linguistics', 5: 'Medicine', 6: 'Sciences'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: Ch.INT, 4: 3, 5: 'Society', 6: 3, 7: Ch.SOC},
-    cash={1: 2000, 2: 10000, 3: 20000, 4: 20000, 5: 50000, 6: 100000, 7: 100000}
+    cash={1: 2000, 2: 10000, 3: 20000, 4: 20000, 5: 50000, 6: 100000, 7: 100000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 
@@ -189,7 +201,8 @@ pirate = CareerType(
                         {1: 'Computer', 2: 'Gravitics', 3: 'Jack-of-All-Trades',
                          4: 'Medicine', 5: 'Advocate', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'Sword', 4: 2, 5: Ch.SOC, 6: 3, 7: Ch.SOC},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 20000, 5: 20000, 6: 50000, 7: 100000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 20000, 5: 20000, 6: 50000, 7: 100000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 rogue = CareerType(
@@ -208,7 +221,8 @@ rogue = CareerType(
                         {1: 'Computer', 2: 'Gravitics', 3: 'Jack-of-All-Trades',
                          4: 'Medicine', 5: 'Advocate', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'LightWeapon', 4: 2, 5: 'LightWeapon', 6: 3, 7: Ch.SOC},
-    cash={1: 1000, 2: 5000, 3: 5000, 4: 5000, 5: 10000, 6: 20000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 5000, 4: 5000, 5: 10000, 6: 20000, 7: 50000},
+    patron_rates=[0, 0.5, 0.75]
 )
 
 scientist = CareerType(
@@ -224,7 +238,8 @@ scientist = CareerType(
                         {1: 'Sciences', 2: 'Admin', 3: 'Sciences', 4: 'Sciences', 5: 'Animals', 6: 'Vehicle'},
                         {1: 'Advocate', 2: 'Computer', 3: 'Jack-of-All-Trades', 4: 'Linguistics', 5: 'Medicine', 6: 'Sciences'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: Ch.INT, 4: 2, 5: Ch.SOC, 6: 3, 7: 5},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 scout = CareerType(
@@ -240,7 +255,8 @@ scout = CareerType(
                         {1: 'Engineering', 2: 'Gunnery', 3: 'Demolitions', 4: 'Navigation', 5: 'Medicine', 6: 'Vehicle'},
                         {1: 'Advocate', 2: 'Computer', 3: 'Linguistics', 4: 'Medicine', 5: 'Navigation', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: 'Pistol', 4: 2, 5: 'Society', 6: 4},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
+    patron_rates=[0.75, 1, 1]
 )
 
 aerospace_defense = CareerType(
@@ -259,7 +275,8 @@ aerospace_defense = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Jack-of-All-Trades',
                          4: 'Medicine', 5: 'Leadership', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: 'Rifle', 4: 2, 5: 3, 6: 3, 7: Ch.SOC},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
+    patron_rates=[0.75, 1, 1]
 )
 
 agent = CareerType(
@@ -278,7 +295,8 @@ agent = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Liaison',
                          4: 'Linguistics', 5: 'Medicine', 6: 'Leadership'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'Pistol', 4: 2, 5: Ch.SOC, 6: 3, 7: 'Society'},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 barbarian = CareerType(
@@ -297,7 +315,8 @@ barbarian = CareerType(
                         {1: 'Advocate', 2: 'Linguistics', 3: 'Medicine',
                          4: 'Leadership', 5: 'Tactics', 6: 'Broker'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'HeavyWeapon', 4: 'HeavyWeapon', 5: Ch.END, 6: 2},
-    cash={1: 0, 2: 1000, 3: 2000, 4: 5000, 5: 5000, 6: 10000, 7: 10000}
+    cash={1: 0, 2: 1000, 3: 2000, 4: 5000, 5: 5000, 6: 10000, 7: 10000},
+    patron_rates=[0, 0.5, 0.75]
 )
 
 belter = CareerType(
@@ -316,7 +335,8 @@ belter = CareerType(
                         {1: 'Advocate', 2: 'Engineering', 3: 'Medicine',
                          4: 'Navigation', 5: 'Comms', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'HeavyWeapon', 4: 2, 5: -1, 6: 3},
-    cash={1: 1000, 2: 5000, 3: 5000, 4: 5000, 5: 10000, 6: 20000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 5000, 4: 5000, 5: 10000, 6: 20000, 7: 50000},
+    patron_rates=[0, 0.5, 0.75]
 )
 
 bureaucrat = CareerType(
@@ -335,7 +355,8 @@ bureaucrat = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Liaison',
                          4: 'Linguistics', 5: 'Medicine', 6: 'Admin'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: Ch.INT, 4: 2, 5: 2, 6: 3, 7: Ch.SOC},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 colonist = CareerType(
@@ -354,7 +375,8 @@ colonist = CareerType(
                         {1: 'Advocate', 2: 'Linguistics', 3: 'Medicine',
                          4: 'Liaison', 5: 'Admin', 6: 'Animals'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'Sword', 4: 2, 5: 2, 6: 3, 7: Ch.SOC},
-    cash={1: 1000, 2: 5000, 3: 5000, 4: 5000, 5: 10000, 6: 20000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 5000, 4: 5000, 5: 10000, 6: 20000, 7: 50000},
+    patron_rates=[0, 0.5, 0.75]
 )
 
 diplomat = CareerType(
@@ -373,7 +395,8 @@ diplomat = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Liaison',
                          4: 'Linguistics', 5: 'Medicine', 6: 'Leadership'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: 2, 4: 3, 5: Ch.SOC, 6: 3, 7: 'Society'},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 20000, 5: 20000, 6: 50000, 7: 100000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 20000, 5: 20000, 6: 50000, 7: 100000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 drifter = CareerType(
@@ -392,7 +415,8 @@ drifter = CareerType(
                         {1: 'Computer', 2: 'Engineering', 3: 'Jack-of-All-Trades',
                          4: 'Medicine', 5: 'Liaison', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'Pistol', 4: 'Pistol', 5: 2, 6: 2},
-    cash={1: 0, 2: 1000, 3: 2000, 4: 5000, 5: 5000, 6: 10000, 7: 10000}
+    cash={1: 0, 2: 1000, 3: 2000, 4: 5000, 5: 5000, 6: 10000, 7: 10000},
+    patron_rates=[0, 0.5, 0.75]
 )
 
 entertainer = CareerType(
@@ -411,7 +435,8 @@ entertainer = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Carousing',
                          4: 'Linguistics', 5: 'Medicine', 6: 'Sciences'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: Ch.SOC, 4: 3, 5: 'Society', 6: 3},
-    cash={1: 2000, 2: 10000, 3: 20000, 4: 20000, 5: 50000, 6: 100000, 7: 100000}
+    cash={1: 2000, 2: 10000, 3: 20000, 4: 20000, 5: 50000, 6: 100000, 7: 100000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 hunter = CareerType(
@@ -430,7 +455,8 @@ hunter = CareerType(
                         {1: 'Advocate', 2: 'Linguistics', 3: 'Medicine',
                          4: 'Liaison', 5: 'Tactics', 6: 'Animals'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'Bow', 4: 3, 5: -1, 6: 3},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 20000, 5: 20000, 6: 50000, 7: 100000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 20000, 5: 20000, 6: 50000, 7: 100000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 marine = CareerType(
@@ -449,7 +475,8 @@ marine = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Gravitics',
                          4: 'Medicine', 5: 'Navigation', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: 'Rifle', 4: 2, 5: Ch.SOC, 6: 3, 7: 'Society'},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
+    patron_rates=[0.75, 1, 1]
 )
 
 technician = CareerType(
@@ -468,7 +495,8 @@ technician = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Jack-of-All-Trades',
                          4: 'Linguistics', 5: 'Medicine', 6: 'Sciences'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: Ch.INT, 4: 2, 5: 2, 6: 3, 7: Ch.SOC},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
+    patron_rates=[0.5, 0.75, 1]
 )
 
 surface_defense = CareerType(
@@ -487,7 +515,8 @@ surface_defense = CareerType(
                         {1: 'Advocate', 2: 'Computer', 3: 'Jack-of-All-Trades',
                          4: 'Medicine', 5: 'Leadership', 6: 'Tactics'}],
     material_benefits={1: 1, 2: Ch.INT, 3: 'Rifle', 4: 2, 5: 'Rifle', 6: 3, 7: Ch.SOC},
-    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000}
+    cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
+    patron_rates=[0.75, 1, 1]
 )
 
 

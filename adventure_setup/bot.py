@@ -10,10 +10,7 @@ from character_creation.bot import start_character_creation
 from character_creation.service import CharacterCreator
 from bot.state import ConversationState
 from adventure_setup import kb
-from character_creation import kb as ckb
 from traveller.adventure import Adventure
-from traveller.character import Character
-from traveller.characteristic import Characteristic
 from travellermap import api
 
 
@@ -40,21 +37,21 @@ class SetupConversation:
     def handlers(self) -> List[ConversationHandler]:
         return [
             ConversationHandler(
-                entry_points=[MessageHandler(Filters.text('Create'), self._ask_adventure_title)],
+                entry_points=[MessageHandler(Filters.regex('^(Create)$'), self._ask_adventure_title)],
                 states={
                     State.TITLE: [MessageHandler(Filters.text, self._handle_adventure_title)],
                     State.SECTOR: [
                         MessageHandler(Filters.regex('^(Let me choose|Choose another)$'), self._ask_sector),
                         MessageHandler(Filters.regex('^(Generate Random|Generate another)$'),
                                        self._handle_random_sector),
-                        MessageHandler(Filters.text('Accept'), self._handle_accept_random_sector),
+                        MessageHandler(Filters.regex('^(Accept)$'), self._handle_accept_random_sector),
                         MessageHandler(Filters.text, self._handle_sector)
                     ],
                     State.WORLD: [
                         MessageHandler(Filters.regex('^(Let me choose|Choose another)$'), self._ask_world),
                         MessageHandler(Filters.regex('^(Generate Random|Generate another)$'),
                                        self._handle_random_world),
-                        MessageHandler(Filters.text('Accept'), self._handle_accept_random_world),
+                        MessageHandler(Filters.regex('^(Accept)$'), self._handle_accept_random_world),
                         MessageHandler(Filters.text, self._handle_world)
                     ],
                     State.TERMS: [MessageHandler(Filters.text, self._handle_terms)],
@@ -68,7 +65,7 @@ class SetupConversation:
                 persistent=True
             ),
             ConversationHandler(
-                entry_points=[MessageHandler(Filters.text('Join'), self._ask_adventure_code)],
+                entry_points=[MessageHandler(Filters.regex('^(Join)$'), self._ask_adventure_code)],
                 states={
                     State.CODE: [MessageHandler(Filters.text, self._handle_adventure_code)]
                 },

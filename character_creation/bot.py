@@ -1,8 +1,9 @@
 from typing import Callable, Optional
 
-from telegram import Update
+from telegram import ReplyKeyboardRemove, Update
 from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackContext
 
+from bot.state import ConversationState
 from cache.userdata import user_data
 from character_creation import kb
 from character_creation.service import CharacterCreator
@@ -47,6 +48,9 @@ class State(Enum):
     DRUGS = auto()
     CONTINUE = auto()
     BENEFITS = auto()
+    UNDO_DAMAGE = auto()
+    NAME = auto()
+    SEX = auto()
     END = auto()
 
 
@@ -97,9 +101,17 @@ class CharacterCreationConversation:
                 State.SECOND_SKILLS_AND_TRAINING: [MessageHandler(filter_skills_and_training, self._handle_second_skills_and_training)],
                 State.DRUGS: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_drugs)],
                 State.CONTINUE: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_continue)],
-                State.BENEFITS: [MessageHandler(Filters.regex('(Cash|Material)$'), self._handle_benefits)]
+                State.BENEFITS: [MessageHandler(Filters.regex('(Cash|Material)$'), self._handle_benefits)],
+                State.NAME: [MessageHandler(Filters.regex("^[A-Za-z ,.'-]+$"), self._handle_name)],
+                State.SEX: [MessageHandler(Filters.regex("^(M|F)$"), self._handle_sex)],
+                State.UNDO_DAMAGE: [MessageHandler(Filters.text, self._handle_undo_damage)]
             },
-            fallbacks=[]
+            fallbacks=[],
+            map_to_parent={
+                State.END: ConversationState.PLAYER_IDLE,
+            },
+            name='create_character',
+            persistent=True,
         )]
 
     def _handle_min_starport(self, update: Update, context: CallbackContext) -> State:
@@ -213,7 +225,12 @@ class CharacterCreationConversation:
 
         skill = update.message.text
         if skill not in user.character.homeworld.homeworld_skills or skill in user.character.skill_names:
+            print(user.character.homeworld.homeworld_skills)
+            print(user.character.skill_names)
+            print(f'Skill {skill} is in those...')  # TODO remove
             return State.HOMEWORLD_SKILL
+
+        print(f'Skill {skill} is not in those...')  # TODO remove
 
         user.character.acquire_skill(Skill(skill, 0))
         user.homeworld_skills_left -= 1
@@ -221,6 +238,7 @@ class CharacterCreationConversation:
         if user.homeworld_skills_left > 0:
             skills_left = user.character.homeworld.homeworld_skills
             skills_left.remove(skill)
+            print(user.character.homeworld.homeworld_skills)
             kb.ask_homeworld_skill.reply_text(update, keys=single_keys(skills_left))
             return State.HOMEWORLD_SKILL
         elif user.education_skills_left > 0:
@@ -515,9 +533,64 @@ class CharacterCreationConversation:
         return self._benefit_roll(update)
 
     def _debts(self, update: Update) -> State:
-        update.message.reply_text('DEBITI')
-        return State.END  # TODO ADD PROPER
+        user = user_data[update.message.from_user.id]
 
+        alive, message = user.character.pay_debts()
+        update.message.reply_text(message, reply_markup=ReplyKeyboardRemove())
+
+        if not alive:
+            start_character_creation(update)
+            return State.MIN_STARPORT
+
+        return self._undo_damage(update)
+
+    def _undo_damage(self, update: Update) -> State:
+        user = user_data[update.message.from_user.id]
+
+        to_restore = user.character.to_restore
+        if len(to_restore) > 0:
+            kb.undo_damage.reply_text(update, keys=single_keys(to_restore))
+            return State.UNDO_DAMAGE
+        else:
+            kb.character_name.reply_text(update)
+            return State.NAME
+
+    def _handle_undo_damage(self, update: Update, context: CallbackContext) -> State:
+        user = user_data[update.message.from_user.id]
+
+        if update.message.text not in user.character.to_restore:
+            return State.UNDO_DAMAGE
+
+        l = update.message.text.replace(' ', '').split('-')
+        char = Characteristic[l[0]]
+        price = int(l[1][:-2])
+
+        user.character.restore_damage(char, price)
+
+        return self._undo_damage(update)
+
+    def _handle_sex(self, update: Update, context: CallbackContext) -> State:
+        user = user_data[update.message.from_user.id]
+
+        user.character.sex = update.message.text
+
+        # TODO Write DB
+        self.service.create_character(update.message.from_user.id, user.adventure.id, user.character)
+
+        update.message.reply_text('Created!')
+        return State.END
+
+    def _handle_name(self, update: Update, context: CallbackContext) -> State:
+        user = user_data[update.message.from_user.id]
+
+        if len(update.message.text) > 32:
+            update.message.reply_text("That name is too long, try again!")
+            return State.NAME
+
+        user.character.name = update.message.text
+
+        kb.character_sex.reply_text(update)
+        return State.SEX
 
 def start_character_creation(update: Update):
     user = user_data[update.message.from_user.id]
