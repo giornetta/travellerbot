@@ -1,3 +1,6 @@
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
 CREATE TABLE users (
     id BIGINT PRIMARY KEY,
     active_adventure CHAR(6)
@@ -5,7 +8,7 @@ CREATE TABLE users (
 
 CREATE TABLE adventures (
     id CHAR(6) PRIMARY KEY,
-    title VARCHAR(16) NOT NULL,
+    title VARCHAR(64) NOT NULL,
     sector VARCHAR(64) NOT NULL,
     planet VARCHAR(64) NOT NULL,
     max_terms INT NOT NULL,
@@ -24,9 +27,6 @@ CREATE TABLE characters (
     alive BOOLEAN NOT NULL DEFAULT TRUE,
     age INT NOT NULL,
 
-    user_id BIGINT NOT NULL REFERENCES users(id),
-    adventure_id CHAR(6) NOT NULL REFERENCES adventures(id),
-
     strength INT NOT NULL,
     dexterity INT NOT NULL,
     endurance INT NOT NULL,
@@ -42,21 +42,25 @@ CREATE TABLE characters (
     soc_mod INT NOT NULL DEFAULT 0,
     credits BIGINT NOT NULL,
 
-    equipped_armor INT DEFAULT NULL,
-    equipped_reflec INT DEFAULT NULL,
-    drawn_weapon INT DEFAULT NULL,
-    stance SMALLINT DEFAULT 0 CHECK (stance BETWEEN 0 AND 2),
+    equipped_armor INT,
+    equipped_reflec INT,
+    drawn_weapon INT,
+
+    stance SMALLINT NOT NULL CHECK (stance BETWEEN 0 AND 2) DEFAULT 2,
     rads INT NOT NULL DEFAULT 0,
     wounded BOOLEAN NOT NULL DEFAULT FALSE,
-    fatigued BOOLEAN NOT NULL DEFAULT FALSE,
-    stims_taken INT NOT NULL DEFAULT 0
+    fatigued BOOLEAN NOT NULL DEFAULT  FALSE,
+    stims_taken INT NOT NULL DEFAULT 0,
+
+    user_id BIGINT NOT NULL REFERENCES users(id),
+    adventure_id CHAR(6) NOT NULL REFERENCES adventures(id)
 );
 
 CREATE TABLE inventories (
     character_id INT NOT NULL,
     equipment_id INT NOT NULL,
     amount INT NOT NULL,
-    damage INT,
+    damage INT DEFAULT 0,
     PRIMARY KEY(character_id, equipment_id)
 );
 

@@ -5,13 +5,14 @@ if __name__ == '__main__':
     with open('data/sectors_dump.json') as f:
         orig = json.load(f)
 
-    data: Dict[str, List[Tuple[str, str]]] = {}
+    data: Dict[str, List[Tuple[str, str, str]]] = {}
 
     for sec in orig:
         worlds = sec['Worlds']['Results']['Items']
         sec_name = worlds[0]['World']['Sector']
         data[sec_name] = []
         for w in worlds:
+            hexc: str = str(w['World']['HexX']).zfill(2) + str(w['World']['HexY']).zfill(2)
             uwp: str = w['World']['Uwp']
             hexc: str = w['World']['HexX'] + w['World']['HexY']
             if len(w['World']['Name']) > 0 and '?' not in uwp:

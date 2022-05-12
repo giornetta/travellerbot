@@ -54,11 +54,12 @@ starport_values = {'X': 0, 'E': 1, 'D': 2, 'C': 3, 'B': 4, 'A': 5}
 class World:
     name: str
     attr: Dict[Attribute, int]
-    hex: str
+    hexc: str
 
-    def __init__(self, name: str, uwp: str, hex: str):
+    def __init__(self, name: str, uwp: str, hexc: str):
         self.name = name
-        self.hex = hex
+        self.hex = hexc
+
         self.attr = {Attribute.STARPORT: starport_values[uwp[0]]}
 
         v = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7,

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, List
 
 skills: Dict[str, bool] = {  # Name, is_passive
     "Battle Dress": True,
@@ -48,13 +47,14 @@ skills: Dict[str, bool] = {  # Name, is_passive
     "Leadership": False
 }
 
-education_skills = [
-    'Admin', 'Advocate', 'Animals', 'Carousing', 'Comms', 'Computer', 'Electronics', 'Engineering',
-    'Life Sciences', 'Linguistics', 'Mechanics', 'Medicine', 'Physical Sciences', 'Social Sciences', 'Space Sciences'
-]
 
-
-@dataclass
 class Skill:
     name: str
     level: int
+
+    def __init__(self, name: str, level: int):
+        self.name = name
+        self.level = level
+
+    def __str__(self) -> str:
+        return f'{self.name}-{self.level}'
