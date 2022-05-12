@@ -1,6 +1,7 @@
 import json
 import random
 
+import psycopg2
 from psycopg2.extensions import connection
 from typing import List, Dict, Tuple
 import traveller.equipment as eq
@@ -12,14 +13,15 @@ from travellermap import api
 
 def calculate_age_damage(stats: Tuple, age) -> (Tuple, int):
     roll = max(random.randint(1, 6) + random.randint(1, 6) - ((age - 18) // 4), -6)
-    dmg: Dict[Ch, int]
-    dmg[Ch.STR] = dmg[Ch.DEX] = dmg[Ch.END] = dmg[Ch.INT] = dmg[Ch.EDU] = dmg[Ch.SOC] = 0
+    dmg: Dict[Ch, int] = dict.fromkeys(Ch, 0)
+
     stre = stats[0]
     dext = stats[1]
     endu = stats[2]
     inte = stats[3]
     educ = stats[4]
     soci = stats[5]
+
     if roll == -6:
         dmg[Ch.STR] = dmg[Ch.DEX] = dmg[Ch.END] = 2
         dmg[random.choice([Ch.INT, Ch.EDU, Ch.SOC])] = 1
@@ -101,8 +103,8 @@ class RefereeCommands:
                                 uwp = planet[1]
                                 break
                     return True, \
-                           'Name:' + world + \
-                           'Starport: ' + uwp[0] + \
+                           'Name: ' + world + \
+                           '\nStarport: ' + uwp[0] + \
                            '\nWorld Size: ' + uwp[1] + \
                            '\nAtmosphere: ' + uwp[2] + \
                            '\nHydrographics: ' + uwp[3] + \
@@ -148,7 +150,8 @@ class RefereeCommands:
                     character_id, sex, age, strength, dexterity, endurance, intelligence, education, social_standing, \
                     str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits_holded, \
                     equipped_armor, drawn_weapon, stance, rads, wounded, fatigued, stims_taken = player_info
-                    stance_mod = ['prone', 'crouched', 'standing']
+                    stance_mod = ['Prone', 'Crouched', 'Standing']
+
                     cur.execute('SELECT equipment_id, amount FROM inventories '
                                 'WHERE character_id = %s;', (character_id,))
                     inventory = cur.fetchall()
@@ -377,26 +380,28 @@ class RefereeCommands:
                 return True, 'The adventurers traveled successfully'
 
     def age(self, drug_users: List[str], drug_droppers: List[str], referee_id: int) -> (bool, str):
-        with self.db:
-            with self.db.cursor() as cur:
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
-                adv_id = cur.fetchone()[0]
-                cur.execute('SELECT char_name FROM characters WHERE adventure_id = %s', (adv_id,))
-                characters = cur.fetchall()
-                for t in characters:
-                    name = t[0]
-                    if name not in drug_users:
-                        cur.execute('UPDATE characters SET age = age + 4 '
-                                    'WHERE char_name = %s AND adventure_id = %s AND alive = TRUE '
-                                    'RETURNING age;',
-                                    (name, adv_id))
-                        age = cur.fetchone()[0]
-                        if age > 34:
-                            self.age_damage(age, cur, name, adv_id)
-                for name in drug_droppers:
-                    self.age_damage(age, cur, name, adv_id)
+        try:
+            with self.db:
+                with self.db.cursor() as cur:
+                    cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
+                    adv_id = cur.fetchone()[0]
+                    cur.execute('SELECT char_name FROM characters WHERE adventure_id = %s AND alive = TRUE', (adv_id,))
+                    characters = cur.fetchall()
+                    for t in characters:
+                        name = t[0]
+                        if name not in drug_users:
+                            cur.execute('UPDATE characters SET age = age + 4 '
+                                        'WHERE char_name = %s AND adventure_id = %s AND alive = TRUE '
+                                        'RETURNING age;',
+                                        (name, adv_id))
+                            age = cur.fetchone()[0]
+                            if age > 34:
+                                self.age_damage(age, cur, name, adv_id)
+                    for name in drug_droppers:
+                        self.age_damage(age, cur, name, adv_id)
                     return True, 'The party aged'
-        return False, 'Something went wrong'
+        except psycopg2.Error:
+            return False, 'Something went wrong'
 
     def scene(self, cmd: str, name: str, referee_id: int) -> (bool, str):
         if cmd == 'new':
