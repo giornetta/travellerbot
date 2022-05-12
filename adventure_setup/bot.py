@@ -6,13 +6,11 @@ from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackC
 
 from adventure_setup.service import AdventureSetupService
 from cache.userdata import user_data
+from character_creation.bot import start_character_creation
 from character_creation.service import CharacterCreator
 from bot.state import ConversationState
 from adventure_setup import kb
-from character_creation import kb as ckb
 from traveller.adventure import Adventure
-from traveller.character import Character
-from traveller.characteristic import Characteristic
 from travellermap import api
 
 
@@ -39,21 +37,21 @@ class SetupConversation:
     def handlers(self) -> List[ConversationHandler]:
         return [
             ConversationHandler(
-                entry_points=[MessageHandler(Filters.text('Create'), self._ask_adventure_title)],
+                entry_points=[MessageHandler(Filters.regex('^(Create)$'), self._ask_adventure_title)],
                 states={
                     State.TITLE: [MessageHandler(Filters.text, self._handle_adventure_title)],
                     State.SECTOR: [
                         MessageHandler(Filters.regex('^(Let me choose|Choose another)$'), self._ask_sector),
                         MessageHandler(Filters.regex('^(Generate Random|Generate another)$'),
                                        self._handle_random_sector),
-                        MessageHandler(Filters.text('Accept'), self._handle_accept_random_sector),
+                        MessageHandler(Filters.regex('^(Accept)$'), self._handle_accept_random_sector),
                         MessageHandler(Filters.text, self._handle_sector)
                     ],
                     State.WORLD: [
                         MessageHandler(Filters.regex('^(Let me choose|Choose another)$'), self._ask_world),
                         MessageHandler(Filters.regex('^(Generate Random|Generate another)$'),
                                        self._handle_random_world),
-                        MessageHandler(Filters.text('Accept'), self._handle_accept_random_world),
+                        MessageHandler(Filters.regex('^(Accept)$'), self._handle_accept_random_world),
                         MessageHandler(Filters.text, self._handle_world)
                     ],
                     State.TERMS: [MessageHandler(Filters.text, self._handle_terms)],
@@ -67,7 +65,7 @@ class SetupConversation:
                 persistent=True
             ),
             ConversationHandler(
-                entry_points=[MessageHandler(Filters.text('Join'), self._ask_adventure_code)],
+                entry_points=[MessageHandler(Filters.regex('^(Join)$'), self._ask_adventure_code)],
                 states={
                     State.CODE: [MessageHandler(Filters.text, self._handle_adventure_code)]
                 },
@@ -90,45 +88,21 @@ class SetupConversation:
         user_id = update.message.from_user.id
         adventure_id = update.message.text
 
-        res = self.service.join_adventure(user_id, adventure_id)  # TODO This could return an adventure
-        if res:
+        adventure = self.service.join_adventure(user_id, adventure_id)
+        if adventure:
             # Create a new adventure to store the information
-            user_data[user_id].adventure = Adventure()
-            user_data[user_id].adventure.id = adventure_id
+            user_data[user_id].adventure = adventure
 
-            adventure_name, is_ref = res
-            kb.join_adventure.reply_text(update, adventure_name)
+            kb.join_adventure.reply_text(update, adventure.title)
 
-            if is_ref:
+            if user_id == adventure.referee_id:
                 return State.END_REF
             else:
-                if self.character_creator.alive_character_exists(user_id, adventure_id):
+                if self.character_creator.alive_character_exists(user_id, adventure.id):
                     return State.END_IDLE
                 else:
                     kb.create_char.reply_text(update)
-
-                    # Create character
-                    user_data[user_id].character = Character()
-                    user_data[user_id].character.roll_stats()
-
-                    ckb.characteristics.reply_text(update, params=(
-                        user_data[user_id].character.stats[Characteristic.STR],
-                        user_data[user_id].character.stats[Characteristic.END],
-                        user_data[user_id].character.stats[Characteristic.DEX],
-                        user_data[user_id].character.stats[Characteristic.INT],
-                        user_data[user_id].character.stats[Characteristic.EDU],
-                        user_data[user_id].character.stats[Characteristic.SOC]
-                    ))
-
-                    sector = self.character_creator.sector(adventure_id)  # TODO this can be moved in join_adventure
-                    user_data[user_id].adventure.sector = sector
-
-                    ckb.world.reply_text(update, params=sector)
-
-                    ckb.ask_min.reply_text(
-                        update, params='Starport',
-                        keys=[['X', 'E', 'D'], ['C', 'B', 'A'], ['Ignore']]
-                    )
+                    start_character_creation(update)
                     return State.END
         else:
             update.message.reply_text('The provided code isn\'t valid, try again.')
@@ -140,7 +114,7 @@ class SetupConversation:
 
     def _handle_adventure_title(self, update: Update, context: CallbackContext) -> State:
         user_id = update.message.from_user.id
-        if len(update.message.text) > 32:  # TODO better validation
+        if len(update.message.text) > 64:  # TODO better validation
             kb.invalid_title.reply_text(update)
             return State.TITLE
 

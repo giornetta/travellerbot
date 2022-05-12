@@ -16,7 +16,8 @@ def handler(setup_controller: AdventureSetupService, character_creator: Characte
         states={
             ConversationState.ADVENTURE_SETUP: SetupConversation(setup_controller, character_creator).handlers(),
             ConversationState.REFEREE_IDLE: [MessageHandler(Filters.text, _handle_ref)],
-            ConversationState.CHARACTER_CREATION: CharacterCreationConversation(character_creator).handlers()
+            ConversationState.CHARACTER_CREATION: CharacterCreationConversation(character_creator).handlers(),
+            ConversationState.PLAYER_IDLE: [MessageHandler(Filters.text, _handle_player)],
         },
         fallbacks=[],
         name='conversation',
@@ -37,3 +38,8 @@ def _handle_start(update: Update, context: CallbackContext) -> ConversationState
 def _handle_ref(update: Update, context: CallbackContext) -> ConversationState:
     update.message.reply_text(text='Executing command...')
     return ConversationState.REFEREE_IDLE
+
+
+def _handle_player(update: Update, context: CallbackContext) -> ConversationState:
+    update.message.reply_text(text='Hello!')
+    return ConversationState.PLAYER_IDLE
