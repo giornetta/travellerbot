@@ -119,7 +119,7 @@ table_choice = Keyboard('On which Table do you want to roll?',
                              'Advanced Education']
                         ], one_time_keyboard=False))
 
-retire = Keyboard('Do you want to retire?',
+ask_retire = Keyboard('Do you want to retire?',
                   reply_markup=ReplyKeyboardMarkup([
                       ['Yes', 'No']
                   ], one_time_keyboard=True))

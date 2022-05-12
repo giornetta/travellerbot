@@ -46,6 +46,7 @@ class State(Enum):
     SKILLS_AND_TRAINING = auto()
     SECOND_SKILLS_AND_TRAINING = auto()
     DRUGS = auto()
+    RETIRE = auto()
     CONTINUE = auto()
     BENEFITS = auto()
     UNDO_DAMAGE = auto()
@@ -100,6 +101,7 @@ class CharacterCreationConversation:
                 State.SKILLS_AND_TRAINING: [MessageHandler(filter_skills_and_training,self._handle_skills_and_training)],
                 State.SECOND_SKILLS_AND_TRAINING: [MessageHandler(filter_skills_and_training, self._handle_second_skills_and_training)],
                 State.DRUGS: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_drugs)],
+                State.RETIRE: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_retire)],
                 State.CONTINUE: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_continue)],
                 State.BENEFITS: [MessageHandler(Filters.regex('(Cash|Material)$'), self._handle_benefits)],
                 State.NAME: [MessageHandler(Filters.regex("^[A-Za-z ,.'-]+$"), self._handle_name)],
@@ -225,12 +227,8 @@ class CharacterCreationConversation:
 
         skill = update.message.text
         if skill not in user.character.homeworld.homeworld_skills or skill in user.character.skill_names:
-            print(user.character.homeworld.homeworld_skills)
-            print(user.character.skill_names)
-            print(f'Skill {skill} is in those...')  # TODO remove
             return State.HOMEWORLD_SKILL
 
-        print(f'Skill {skill} is not in those...')  # TODO remove
 
         user.character.acquire_skill(Skill(skill, 0))
         user.homeworld_skills_left -= 1
@@ -238,7 +236,6 @@ class CharacterCreationConversation:
         if user.homeworld_skills_left > 0:
             skills_left = user.character.homeworld.homeworld_skills
             skills_left.remove(skill)
-            print(user.character.homeworld.homeworld_skills)
             kb.ask_homeworld_skill.reply_text(update, keys=single_keys(skills_left))
             return State.HOMEWORLD_SKILL
         elif user.education_skills_left > 0:
@@ -465,11 +462,21 @@ class CharacterCreationConversation:
             kb.reenlistment_12.reply_text(update)
             return self._survival(update)
         elif outcome == ReEnlistmentOutcome.SUCCESS:
-            kb.continue_career.reply_text(update)
-            return State.CONTINUE
+            kb.ask_retire.reply_text(update)
+            return State.RETIRE
         else:
             kb.reenlistment_fail.reply_text(update)
             return self._benefits(update)
+
+    def _handle_retire(self, update: Update, context: CallbackContext) -> State:
+        user = user_data[update.message.from_user.id]
+
+        if update.message.text == 'Yes':
+            user.character.retire()
+            return self._benefits(update)
+        else:
+            kb.continue_career.reply_text(update)
+            return State.CONTINUE
 
     def _handle_continue(self, update: Update, context: CallbackContext) -> State:
         user = user_data[update.message.from_user.id]
@@ -549,7 +556,7 @@ class CharacterCreationConversation:
 
         to_restore = user.character.to_restore
         if len(to_restore) > 0:
-            kb.undo_damage.reply_text(update, keys=single_keys(to_restore))
+            kb.undo_damage.reply_text(update, keys=single_keys(to_restore + ['Skip']))
             return State.UNDO_DAMAGE
         else:
             kb.character_name.reply_text(update)
@@ -557,6 +564,10 @@ class CharacterCreationConversation:
 
     def _handle_undo_damage(self, update: Update, context: CallbackContext) -> State:
         user = user_data[update.message.from_user.id]
+
+        if update.message.text == 'Skip':
+            kb.character_name.reply_text(update)
+            return State.NAME
 
         if update.message.text not in user.character.to_restore:
             return State.UNDO_DAMAGE
@@ -574,10 +585,9 @@ class CharacterCreationConversation:
 
         user.character.sex = update.message.text
 
-        # TODO Write DB
         self.service.create_character(update.message.from_user.id, user.adventure.id, user.character)
 
-        update.message.reply_text('Created!')
+        update.message.reply_text('Created!', reply_markup=ReplyKeyboardRemove())
         return State.END
 
     def _handle_name(self, update: Update, context: CallbackContext) -> State:

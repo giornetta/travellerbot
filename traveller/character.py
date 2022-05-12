@@ -102,7 +102,7 @@ class Character:
         self.skills = []
 
     def damage(self, char: Characteristic, dmg: int):
-        self.damages[char] += max(self.stats[char], dmg)
+        self.damages[char] += min(self.stats[char], dmg)
         self.stats[char] = max(0, self.stats[char] - dmg)
 
         cp = self.patrons.get(char)
@@ -533,7 +533,7 @@ class Character:
             if d > 0:
                 rate = self.patron_rates.get(c)
                 if rate:
-                    price = 5000 * (1 - rate)
+                    price = int(5000 * (1 - rate))
                     if self.credits >= price:
                         cp.append(f'{c.name} - {price}Cr')
 

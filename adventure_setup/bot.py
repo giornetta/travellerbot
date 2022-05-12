@@ -114,7 +114,7 @@ class SetupConversation:
 
     def _handle_adventure_title(self, update: Update, context: CallbackContext) -> State:
         user_id = update.message.from_user.id
-        if len(update.message.text) > 32:  # TODO better validation
+        if len(update.message.text) > 64:  # TODO better validation
             kb.invalid_title.reply_text(update)
             return State.TITLE
 
