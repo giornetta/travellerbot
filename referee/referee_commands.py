@@ -7,6 +7,7 @@ import traveller.equipment as eq
 
 from referee.command_parser import CommandParser
 from traveller.characteristic import Characteristic as Ch
+from travellermap import api
 
 
 def calculate_age_damage(stats: Tuple, age) -> (Tuple, int):
@@ -100,6 +101,7 @@ class RefereeCommands:
                                 uwp = planet[1]
                                 break
                     return True, \
+                           'Name:' + world + \
                            'Starport: ' + uwp[0] + \
                            '\nWorld Size: ' + uwp[1] + \
                            '\nAtmosphere: ' + uwp[2] + \
@@ -110,9 +112,10 @@ class RefereeCommands:
                            '\nTechnology level: ' + uwp[8]
 
                 elif info == 'map':
-                    cur.execute('SELECT sector FROM adventures WHERE id = %s;', (adv_id,))
-                    sector = cur.fetchone()[0]
-                    url = 'https://travellermap.com/api/jumpmap?sector=' + sector.replace(' ', '%20') + '&'  # TODO
+                    cur.execute('SELECT sector,planet FROM adventures WHERE id = %s;', (adv_id,))
+                    sector, world_name = cur.fetchone()
+                    world = api.world(sector, world_name)
+                    url = f'https://travellermap.com/api/jumpmap?sector={sector.replace(" ", "%20")}&hex={world.hexc}'
                     return True, url
                 elif info == 'adventure':
                     cur.execute('SELECT id,title,sector,planet,max_terms,survival_fail_kills '
@@ -444,7 +447,6 @@ class RefereeCommands:
             with self.db.cursor() as cur:
                 cur.execute('UPDATE users SET active_adventure = NULL WHERE id = %s', (referee_id,))
                 return True, 'Exit with success'
-
 
     def is_coherent(self, c: str, i: int) -> bool:
         e = eq.equipments[i]
