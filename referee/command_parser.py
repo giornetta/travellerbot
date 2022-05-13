@@ -23,8 +23,8 @@ class CommandParser:
                     name = cmd[1]
                     last = cmd[-1]
                     if re.match(r'^[+\-]?\d+$', last):
-                        value = int(last)
-                        return self.callbacks[cmd[0]](name, cmd[2:-1], value, referee_id)
+                        #value = int(last)
+                        return self.callbacks[cmd[0]](name, cmd[2:-1], last, referee_id)
                     elif re.match('^(true|yes|no|false)$', last):
                         value = 1 if re.match('^(true|yes)$', last) else 0
                         return self.callbacks[cmd[0]](name, cmd[2:-1], value, referee_id)
