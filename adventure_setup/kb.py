@@ -11,7 +11,7 @@ adv_code = Keyboard('✨️ Perfect! What\'s the *code* of the Adventure you\'d 
 
 join_adventure = Keyboard('✅ Successfully joined Adventure _"%s"_!', parse_mode=telegram.ParseMode.MARKDOWN)
 
-create_char = Keyboard('Let\'s create a Character for this Adventure!')  # TODO add emoji?
+create_char = Keyboard('🧑‍🚀 You don\'t have any alive characters in this adventure, let\'s create one!')
 
 invalid_code = Keyboard('❌ That code isn\'t valid, please try again.')
 

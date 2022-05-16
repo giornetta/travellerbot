@@ -133,24 +133,24 @@ class World:
         skills: List[str] = []
 
         if 0 <= self.attr[Attribute.LAW] <= 6:
-            skills.append('Gun Combat')
+            skills.append('Gun Combat-0')
         elif 7 <= self.attr[Attribute.LAW] <= 9:
-            skills.append('Melee Combat')
+            skills.append('Melee Combat-0')
 
         tc_skills = {
-            TradeCode.AGRICULTURAL: 'Animals',
-            TradeCode.ASTEROID: 'Zero-G',
-            TradeCode.DESERT: 'Survival',
-            TradeCode.FLUID_OCEANS: 'Vehicle',
-            TradeCode.GARDEN: 'Animals',
-            TradeCode.HIGH_TECHNOLOGY: 'Streetwise',
-            TradeCode.ICE_CAPPED: 'Zero-G',
-            TradeCode.INDUSTRIAL: 'Broker',
-            TradeCode.LOW_TECHNOLOGY: 'Survival',
-            TradeCode.POOR: 'Animals',
-            TradeCode.RICH: 'Carousing',
-            TradeCode.WATER_WORLD: 'Vehicle',
-            TradeCode.VACUUM: 'Zero-G'
+            TradeCode.AGRICULTURAL: 'Animals-0',
+            TradeCode.ASTEROID: 'Zero-G-0',
+            TradeCode.DESERT: 'Survival-0',
+            TradeCode.FLUID_OCEANS: 'Vehicle-0',
+            TradeCode.GARDEN: 'Animals-0',
+            TradeCode.HIGH_TECHNOLOGY: 'Streetwise-0',
+            TradeCode.ICE_CAPPED: 'Zero-G-0',
+            TradeCode.INDUSTRIAL: 'Broker-0',
+            TradeCode.LOW_TECHNOLOGY: 'Survival-0',
+            TradeCode.POOR: 'Animals-0',
+            TradeCode.RICH: 'Carousing-0',
+            TradeCode.WATER_WORLD: 'Vehicle-0',
+            TradeCode.VACUUM: 'Zero-G-0'
         }
 
         for c in self.trade_codes:

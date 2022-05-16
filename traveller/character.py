@@ -41,6 +41,8 @@ class Character:
 
     # Homeworld
     homeworld: World
+    homeworld_skills_left: int
+    education_skills_left: int
 
     # Possessions
     credits: int
@@ -143,16 +145,23 @@ class Character:
     def career_names(self) -> List[str]:
         return [c.career_type.name for c in self.careers]
 
+    def set_homeworld(self, homeworld: World):
+        self.homeworld = homeworld
+
+        skills_left = 3 + self.modifier(Characteristic.EDU)
+        self.homeworld_skills_left = min(skills_left, min(2, len(homeworld.homeworld_skills)))
+        self.education_skills_left = max(0, skills_left - self.homeworld_skills_left)
+
     @property
     def available_education_skills(self) -> List[str]:
         education_skills = [
-            'Admin', 'Advocate', 'Animals', 'Carousing', 'Comms', 'Computer', 'Electronics', 'Engineering',
-            'Life Sciences', 'Linguistics', 'Mechanics', 'Medicine', 'Physical Sciences', 'Social Sciences', 'Space Sciences'
+            'Admin-0', 'Advocate-0', 'Animals-0', 'Carousing-0', 'Comms-0', 'Computer-0', 'Electronics-0', 'Engineering-0',
+            'Life Sciences-0', 'Linguistics-0', 'Mechanics-0', 'Medicine-0', 'Physical Sciences-0', 'Social Sciences-0', 'Space Sciences-0'
         ]
 
         for s in self.skills:
             try:
-                education_skills.remove(s.name)
+                education_skills.remove(s.name + '-0')
             except ValueError:
                 pass
 
@@ -177,7 +186,7 @@ class Character:
 
         return acquired
 
-    def qualify(self, ct: CareerType, drafted=False) -> (bool, Optional[List[str]]):
+    def qualify(self, ct: CareerType, drafted=False) -> (bool, Optional[List[Skill]]):
         acquired_skills: Optional[List[Skill]] = None
         qualified: bool
 
@@ -211,30 +220,32 @@ class Character:
         v = dice.roll(2) + self.modifier(c.career_type.survival[0])
         return v >= c.career_type.survival[1]
 
-    def mishaps_roll(self) -> Tuple[str, int]:
+    def mishaps_roll(self) -> Tuple[str, bool, int]:
         char: Characteristic
         message: str
+        damaged: bool = False
 
         mishaps = dice.roll()
         if mishaps == 1:
             char = Random().choice(Characteristic.physical())
             d = dice.roll()
             self.damage(char, d)
-            message = 'You were severely injured during service and thus have been medically discharged.'
+            message = '🦴 You were severely injured during service and thus have been medically discharged.'
+            damaged = True
         elif mishaps == 2:
-            message = 'You were honorably discharged from the service.'
+            message = '❌ You were honorably discharged from the service.'
         elif mishaps == 3:
             self.debt += 10_000
-            message = 'You were honorably discharged from the service after a long legal battle. Legal issues create a debt of Cr10,000.'
+            message = '⚖️ You were honorably discharged from the service after a long legal battle. Legal issues create a debt of 10,000Cr.'
         elif mishaps == 4:
-            # TODO Lose career benefits
             self.lose_benefits = True
-            message = 'You were dishonorably discharged from the service, you lost all benefits.'
+            message = '❌ You were dishonorably discharged from the service, you lost all benefits.'
         elif mishaps == 5:
             char = Random().choice(Characteristic.physical())
             d = dice.roll()
             self.damage(char, 1)
-            message = 'You were dishonorably discharged from the service after serving 4 years in prison for a crime. You lose all benefits.'
+            message = '⚖ You were dishonorably discharged from the service after serving 4 years in prison for a crime. You lost all benefits.'
+            self.lose_benefits = True
             # TODO AGE PRISON
         else:  # mishaps == 6
             injury = dice.roll()
@@ -246,26 +257,31 @@ class Character:
                 for c in Characteristic.physical():
                     if c != char:
                         self.damage(c, 2)
-                message = 'You were nearly killed during service and thus have been medically discharged.'
+                message = '🦴 You were nearly killed during service and thus have been medically discharged.'
+                damaged = True
             elif injury == 2:
                 char = Random().choice(Characteristic.physical())
                 d = dice.roll()
                 self.damage(char, d)
-                message = 'You were severely injured during service and thus have been medically discharged.'
+                message = '🦴 You were severely injured during service and thus have been medically discharged.'
+                damaged = True
             elif injury == 3:
                 char = Random().choice([Characteristic.STR, Characteristic.DEX])
                 self.damage(char, 2)
-                message = 'You were nearly killed during service and thus have been medically discharged.'
+                message = '🦴 You were nearly killed during service and thus have been medically discharged.'
+                damaged = True
             elif injury == 4:
                 char = Random().choice(Characteristic.physical())
                 self.damage(char, 2)
-                message = 'You were scarred and injured during service and thus have been medically discharged.'
+                message = '🦴 You were scarred and injured during service and thus have been medically discharged.'
+                damaged = True
             elif injury == 5:
                 char = Random().choice(Characteristic.physical())
                 self.damage(char, 1)
-                message = 'You were injured during service and thus have been medically discharged.'
+                message = '🦴 You were injured during service and thus have been medically discharged.'
+                damaged = True
             else:
-                message = 'You were lightly injured during service and thus have been medically discharged.'
+                message = '🦴 You were lightly injured during service and thus have been medically discharged.'
 
         crisis_debt: int = 0
         for c in Characteristic:
@@ -277,7 +293,7 @@ class Character:
                 self.stats[c] += 1
                 self.damages[c] -= 1
 
-        return message, crisis_debt
+        return message, damaged, crisis_debt
 
     def draft(self) -> CareerType:
         draft_careers: List[str] = ['Aerospace Defense', 'Marine', 'Maritime Defense', 'Navy', 'Scout', 'Surface Defense']
