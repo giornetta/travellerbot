@@ -1,5 +1,6 @@
 from typing import Callable, Optional
 
+import telegram
 from telegram import ReplyKeyboardRemove, Update
 from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackContext
 
@@ -214,32 +215,32 @@ class CharacterCreationConversation:
         if not homeworld:
             return State.WORLD
 
-        user.character.homeworld = homeworld
-        skills = 3 + user.character.modifier(Characteristic.EDU)
-        user.homeworld_skills_left = min(skills, min(2, len(homeworld.homeworld_skills)))
-        user.education_skills_left = max(0, skills - user.homeworld_skills_left)
+        user.character.set_homeworld(homeworld)
 
-        kb.ask_homeworld_skill.reply_text(update, keys=single_keys(homeworld.homeworld_skills))
+        kb.ask_homeworld_skill.reply_text(update, params=user.character.homeworld_skills_left, keys=single_keys(homeworld.homeworld_skills))
         return State.HOMEWORLD_SKILL
 
     def _handle_homeworld_skill(self, update: Update, context: CallbackContext):
         user = user_data[update.message.from_user.id]
 
-        skill = update.message.text
-        if skill not in user.character.homeworld.homeworld_skills or skill in user.character.skill_names:
+        skill = update.message.text[:-2]
+        if update.message.text not in user.character.homeworld.homeworld_skills or skill in user.character.skill_names:
             return State.HOMEWORLD_SKILL
-
 
         user.character.acquire_skill(Skill(skill, 0))
-        user.homeworld_skills_left -= 1
+        user.character.homeworld_skills_left -= 1
 
-        if user.homeworld_skills_left > 0:
+        if user.character.homeworld_skills_left > 0:
             skills_left = user.character.homeworld.homeworld_skills
-            skills_left.remove(skill)
-            kb.ask_homeworld_skill.reply_text(update, keys=single_keys(skills_left))
+            skills_left.remove(update.message.text)
+            kb.ask_homeworld_skill.reply_text(update, params=user.character.homeworld_skills_left, keys=single_keys(skills_left))
             return State.HOMEWORLD_SKILL
-        elif user.education_skills_left > 0:
-            kb.ask_education_skill.reply_text(update, keys=single_keys(user.character.available_education_skills))
+        elif user.character.education_skills_left > 0:
+            kb.ask_education_skill.reply_text(
+                update,
+                params=user.character.education_skills_left,
+                keys=single_keys(user.character.available_education_skills)
+            )
             return State.EDUCATION_SKILL
         elif user.adventure.terms != 0:
             kb.career.reply_text(update, keys=single_keys(list(careers.keys())))
@@ -250,15 +251,19 @@ class CharacterCreationConversation:
     def _handle_education_skill(self, update: Update, context: CallbackContext) -> State:
         user = user_data[update.message.from_user.id]
 
-        skill = update.message.text
-        if skill not in user.character.available_education_skills:
+        skill_name = update.message.text[:-2]
+        if update.message.text not in user.character.available_education_skills:
             return State.EDUCATION_SKILL
 
-        user.character.acquire_skill(Skill(skill, 0))
-        user.education_skills_left -= 1
+        user.character.acquire_skill(Skill(skill_name, 0))
+        user.character.education_skills_left -= 1
 
-        if user.education_skills_left > 0:
-            kb.ask_education_skill.reply_text(update, keys=single_keys(user.character.available_education_skills))
+        if user.character.education_skills_left > 0:
+            kb.ask_education_skill.reply_text(
+                update,
+                params=user.character.education_skills_left,
+                keys=single_keys(user.character.available_education_skills)
+            )
             return State.EDUCATION_SKILL
         elif user.adventure.terms != 0:
             kb.career.reply_text(update, keys=single_keys(list(careers.keys())))
@@ -273,8 +278,11 @@ class CharacterCreationConversation:
         if not c:
             return State.CAREER
 
+        kb.rolling_qualification.reply_text(update)
+
         qualified, skills = user.character.qualify(c)
         if qualified:
+            kb.qualified.reply_text(update)
             return self._basic_training(update, c, skills)
         else:
             kb.draft_or_drifter.reply_text(update)
@@ -291,11 +299,12 @@ class CharacterCreationConversation:
         _, skills = user.character.qualify(c, drafted=True)
         return self._basic_training(update, c, skills)
 
-    def _basic_training(self, update: Update, c: CareerType, skills: Optional[List[str]]) -> State:
+    def _basic_training(self, update: Update, c: CareerType, skills: Optional[List[Skill]]) -> State:
         user = user_data[update.message.from_user.id]
 
         if skills is not None:
-            kb.qualified.reply_text(update, params=', '.join([str(s) for s in skills]))
+            for s in skills:
+                kb.skill_acquired.reply_text(update, params=s)
             return self._survival(update)
         else:
             kb.qualified_sequent_career.reply_text(update, keys=single_keys(list(c.skill_and_training[1].values())))
@@ -311,6 +320,8 @@ class CharacterCreationConversation:
 
     def _survival(self, update: Update) -> State:
         user = user_data[update.message.from_user.id]
+
+        kb.rolling_survival.reply_text(update)
 
         # Survival ROLL
         survived = user.character.survival_roll()
@@ -335,13 +346,15 @@ class CharacterCreationConversation:
 
         # Commission and advancement
         if not user.character.drafted:
+            kb.rolling_commission.reply_text(update)
+
             success, skill = user.character.commission_roll()
             if success is not None:
                 if success:
                     kb.promoted.reply_text(update, params='1')
                     if skill:
                         kb.skill_acquired.reply_text(update, params=skill)
-                    kb.table_choice.reply_text(update)  # TODO Better keyboard
+                    kb.table_choice.reply_text(update)
                     return State.COMMISSION
                 else:
                     kb.commission_failed.reply_text(update)
@@ -351,10 +364,14 @@ class CharacterCreationConversation:
     def _mishaps_roll(self, update: Update) -> State:
         user = user_data[update.message.from_user.id]
 
-        message, crisis = user.character.mishaps_roll()
+        kb.survival_fail.reply_text(update)
+
+        message, dmg, crisis = user.character.mishaps_roll()
+
         update.message.reply_text(message)
-        if 'legal' not in message:
-            kb.characteristics.reply_text(update, params=user.character.stats_tuple)
+        if dmg:
+            kb.characteristics_dmg.reply_text(update, params=user.character.stats_tuple)
+
         if crisis > 0:
             kb.injury_crisis.reply_text(update, params=crisis)
 
@@ -362,11 +379,12 @@ class CharacterCreationConversation:
 
     def _skills_and_training(self, update: Update):
         user = user_data[update.message.from_user.id]
+
         upgrade = user.character.skills_and_training(update.message.text)
         if isinstance(upgrade, Characteristic):
-            update.message.reply_text(f'Your {upgrade.value} increased!')
+            kb.char_increased.reply_text(update, params=upgrade.value)
         elif isinstance(upgrade, Skill):
-            update.message.reply_text(f'You acquired {upgrade}!')
+            kb.skill_acquired.reply_text(update, params=upgrade)
 
     def _handle_commission_table(self, update: Update, context: CallbackContext) -> State:
         self._skills_and_training(update)
@@ -374,6 +392,9 @@ class CharacterCreationConversation:
 
     def _advancement(self, update: Update) -> State:
         user = user_data[update.message.from_user.id]
+
+        kb.rolling_advancement.reply_text(update)
+
         # Advancement roll
         success, skill = user.character.advancement_roll()
         if success is not None:
@@ -381,6 +402,7 @@ class CharacterCreationConversation:
                 kb.promoted.reply_text(update, params=str(user.character.career.rank))
                 if skill:
                     kb.skill_acquired.reply_text(update, params=skill)
+
                 kb.table_choice.reply_text(update)
                 return State.ADVANCEMENT
             else:
@@ -428,7 +450,7 @@ class CharacterCreationConversation:
             success, crisis = result
             if not success:
                 kb.stop_drugs.reply_text(update)
-                kb.characteristics.reply_text(update, params=user.character.stats_tuple)
+                kb.characteristics_dmg.reply_text(update, params=user.character.stats_tuple)
 
                 if crisis > 0:
                     kb.aging_crisis.reply_text(update, params=crisis)
@@ -440,9 +462,10 @@ class CharacterCreationConversation:
 
         success, crisis = user.character.increase_age()
         kb.aging.reply_text(update, params=user.character.age)
+
         if not success:
             kb.aging_fail.reply_text(update)
-            kb.characteristics.reply_text(update, params=user.character.stats_tuple)
+            kb.characteristics_dmg.reply_text(update, params=user.character.stats_tuple)
 
             if crisis > 0:
                 kb.aging_crisis.reply_text(update, params=crisis)
@@ -452,6 +475,8 @@ class CharacterCreationConversation:
 
     def _reenlistment(self, update: Update) -> State:
         user = user_data[update.message.from_user.id]
+
+        kb.rolling_reenlinstment.reply_text(update)
 
         outcome = user.character.reenlistment_roll(user.adventure.terms)
         if outcome == ReEnlistmentOutcome.MUST_RETIRE:
@@ -513,18 +538,18 @@ class CharacterCreationConversation:
 
         benefit = user.character.roll_benefit(cash)
         if cash:
-            update.message.reply_text(f'You obtained {benefit}Cr!')
+            kb.credits_gained.reply_text(update, params=benefit)
         else:
             if isinstance(benefit, int):
-                update.message.reply_text(f'You obtained {benefit} ship shares!')
+                kb.ship_shares.reply_text(update, params=benefit)
             elif isinstance(benefit, Weapon):
-                update.message.reply_text(f'You obtained a {benefit.name}!')
+                kb.weapon_benefit.reply_text(update, params=benefit.name)
             elif isinstance(benefit, str) and benefit == 'Society':
-                update.message.reply_text('You joined the Adventurer\'s Society!')
+                kb.adv_society.reply_text(update)
             elif isinstance(benefit, Skill):
-                update.message.reply_text(f'You acquired {benefit}!')
+                kb.skill_acquired.reply_text(update, params=benefit)
             elif isinstance(benefit, Characteristic):
-                update.message.reply_text(f'Your {benefit.value} increased!')
+                kb.char_increased.reply_text(update, params=benefit.value)
 
         if user.character.benefit_rolls <= 0:
             if not user.character.retired:
@@ -543,7 +568,7 @@ class CharacterCreationConversation:
         user = user_data[update.message.from_user.id]
 
         alive, message = user.character.pay_debts()
-        update.message.reply_text(message, reply_markup=ReplyKeyboardRemove())
+        update.message.reply_text(message, reply_markup=ReplyKeyboardRemove(), parse_mode=telegram.ParseMode.MARKDOWN)
 
         if not alive:
             start_character_creation(update)
@@ -556,7 +581,7 @@ class CharacterCreationConversation:
 
         to_restore = user.character.to_restore
         if len(to_restore) > 0:
-            kb.undo_damage.reply_text(update, keys=single_keys(to_restore + ['Skip']))
+            kb.undo_damage.reply_text(update, params=user.character.credits, keys=single_keys(to_restore + ['Skip']))
             return State.UNDO_DAMAGE
         else:
             kb.character_name.reply_text(update)
@@ -572,7 +597,7 @@ class CharacterCreationConversation:
         if update.message.text not in user.character.to_restore:
             return State.UNDO_DAMAGE
 
-        l = update.message.text.replace(' ', '').split('-')
+        l = update.message.text.split('(')[0].replace(' ', '').split('-')
         char = Characteristic[l[0]]
         price = int(l[1][:-2])
 
@@ -605,6 +630,7 @@ class CharacterCreationConversation:
 def start_character_creation(update: Update):
     user = user_data[update.message.from_user.id]
 
+    kb.rolling_stats.reply_text(update)
     # Create character
     user.character = Character()
     user.character.roll_stats()
