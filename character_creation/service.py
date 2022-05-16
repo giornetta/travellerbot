@@ -28,14 +28,14 @@ class CharacterCreator:
         with self.db:
             with self.db.cursor() as cur:
                 cur.execute('INSERT INTO characters(user_id, adventure_id, char_name, sex, age, '
-                            'strength, dexterity, endurance, intelligence, education, social_standing, credits) '
+                            'strength, dexterity, endurance, intelligence, education, social_standing, credits, society) '
                             'VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) '
                             'ON CONFLICT DO NOTHING RETURNING id;', (
                                 user_id, adventure_id,
                                 c.name, c.sex, c.age,
                                 c.stats[Characteristic.STR], c.stats[Characteristic.DEX], c.stats[Characteristic.END],
                                 c.stats[Characteristic.INT], c.stats[Characteristic.EDU], c.stats[Characteristic.SOC],
-                                c.credits
+                                c.credits, c.society
                             ))
                 char_id = cur.fetchone()[0]
                 for eq, qt in c.inventory:
