@@ -1,68 +1,82 @@
+import telegram
 from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup
 
 from keyboards.keyboards import Keyboard
 
-adv_code = Keyboard('What\'s the code of the Adventure you\'d like to join?',
-                    reply_markup=ReplyKeyboardRemove())
+# Join adventure
 
-join_adventure = Keyboard('Joined Adventure "%s"')
+adv_code = Keyboard('✨️ Perfect! What\'s the *code* of the Adventure you\'d like to join?',
+                    reply_markup=ReplyKeyboardRemove(),
+                    parse_mode=telegram.ParseMode.MARKDOWN)
 
-create_char = Keyboard('Let\'s create a Character for this Adventure!')
+join_adventure = Keyboard('✅ Successfully joined Adventure _"%s"_!', parse_mode=telegram.ParseMode.MARKDOWN)
 
-invalid_code = Keyboard('The provided code isn\'t valid, try again.')
+create_char = Keyboard('Let\'s create a Character for this Adventure!')  # TODO add emoji?
 
-title = Keyboard('Choose a title for the adventure you want to create:',
+invalid_code = Keyboard('❌ That code isn\'t valid, please try again.')
+
+# Create adventure
+
+title = Keyboard('📖 Choose a title for the adventure you want to create:',
                  reply_markup=ReplyKeyboardRemove())
 
-invalid_title = Keyboard('The provided title isn\'t valid, try again.')
+invalid_title = Keyboard('❌ That title isn\'t valid, please try again.')
 
 sector = Keyboard(
-    'Do you want to choose a starting Sector for the Adventurers or do you want to generate one randomly?',
+    '🌌 Do you want to choose a starting *Sector* or generate one randomly?',
     reply_markup=ReplyKeyboardMarkup([
         ['Let me choose', 'Generate Random']
-    ], one_time_keyboard=True))
+    ], one_time_keyboard=True), parse_mode=telegram.ParseMode.MARKDOWN)
 
-sector_name = Keyboard('What\'s the name of the Sector?',
-                       reply_markup=ReplyKeyboardRemove())
+sector_name = Keyboard('🌌 What\'s the name of the *Sector*?',
+                       reply_markup=ReplyKeyboardRemove(),
+                       parse_mode=telegram.ParseMode.MARKDOWN)
 
-world = Keyboard('Do you want to choose a starting World for the Adventurers or do you want to generate one '
-                 'randomly?',
-                 reply_markup=ReplyKeyboardMarkup([
-                     ['Let me choose', 'Generate Random']
-                 ], one_time_keyboard=True))
+confirm_sector = Keyboard('🌌 Will the starting *Sector* be _%s_?',
+                          reply_markup=ReplyKeyboardMarkup([
+                              ['Accept', 'Generate another', 'Let me choose']
+                          ], one_time_keyboard=True),
+                          parse_mode=telegram.ParseMode.MARKDOWN)
 
-no_sector = Keyboard('No such sector exists in this universe.',
+no_sector = Keyboard('❌ That sector doesn\'t exist in this universe!',
                      reply_markup=ReplyKeyboardMarkup([
                          ['Choose another', 'Generate Random']
                      ], one_time_keyboard=True))
 
-confirm_sector = Keyboard('Will the adventure be set in %s?',
-                          reply_markup=ReplyKeyboardMarkup([
-                              ['Accept', 'Generate another', 'Let me choose']
-                          ], one_time_keyboard=True))
+world = Keyboard('🪐 Do you want to choose a starting *World* or generate one randomly?',
+                 reply_markup=ReplyKeyboardMarkup([
+                     ['Let me choose', 'Generate Random']
+                 ], one_time_keyboard=True),
+                 parse_mode=telegram.ParseMode.MARKDOWN)
 
-world_name = Keyboard('What\'s the name of the World?',
-                      reply_markup=ReplyKeyboardRemove())
+world_name = Keyboard('🪐 What\'s the name of the *World*?',
+                      reply_markup=ReplyKeyboardRemove(),
+                      parse_mode=telegram.ParseMode.MARKDOWN)
 
-terms = Keyboard('How many terms will the adventurers spend working before having to retire? '
-                 '(Default is 7, Infinite is any negative number)',
-                 reply_markup=ReplyKeyboardRemove())
+confirm_world = Keyboard('🪐 Will the starting *World* be _%s_?',
+                         reply_markup=ReplyKeyboardMarkup([
+                             ['Accept', 'Generate another', 'Let me choose']
+                         ], one_time_keyboard=True),
+                         parse_mode=telegram.ParseMode.MARKDOWN)
 
-no_world = Keyboard('No such world exists in this universe.',
+no_world = Keyboard('❌ There\'s no such world in this sector!',
                     reply_markup=ReplyKeyboardMarkup([
                         ['Choose another', 'Generate Random']
                     ], one_time_keyboard=True))
 
-confirm_world = Keyboard('Will the adventure begin in %s?',
-                         reply_markup=ReplyKeyboardMarkup([
-                             ['Accept', 'Generate another', 'Let me choose']
-                         ], one_time_keyboard=True))
+terms = Keyboard('🔨 How many *terms* will the adventurers spend working before having to retire? '
+                 '_(Default is 7, Infinite is any negative number)_',
+                 reply_markup=ReplyKeyboardRemove(),
+                 parse_mode=telegram.ParseMode.MARKDOWN)
 
-survival_roll = Keyboard('When a Survival Check is failed, will the Adventurer die?',
+invalid_choice = Keyboard('❌ That\'s not a valid number, retry!')
+
+survival_roll = Keyboard('💀 When a *Survival Check* is failed, will the adventurers instantly die?',
                          reply_markup=ReplyKeyboardMarkup([
                              ['Yes', 'No']
-                         ], one_time_keyboard=True))
+                         ], one_time_keyboard=True),
+                         parse_mode=telegram.ParseMode.MARKDOWN)
 
-invalid_choice = Keyboard('Invalid choice, retry.')
-
-adventure_created = Keyboard('Created Adventure #<code>%s</code>!', reply_markup=ReplyKeyboardRemove(), parse_mode='html')
+adventure_created = Keyboard('✅ Successfully created Adventure <b><code>%s</code></b>! '
+                             'Share this code with your friends to let them join! ',
+                             reply_markup=ReplyKeyboardRemove(), parse_mode=telegram.ParseMode.HTML)

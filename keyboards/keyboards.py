@@ -1,4 +1,6 @@
 from typing import Optional, Tuple, List
+
+import telegram
 from telegram import ReplyKeyboardMarkup, ReplyMarkup, Update
 
 
@@ -19,8 +21,9 @@ class Keyboard:
 
 
 welcome = Keyboard(
-    'Welcome to Traveller, do you want to create or join an Adventure?',
+    '🚀 Welcome to Traveller! Do you want to *create* or *join* an Adventure?',
     reply_markup=ReplyKeyboardMarkup([
         ['Create', 'Join']
-    ], one_time_keyboard=True)
+    ], one_time_keyboard=True),
+    parse_mode=telegram.ParseMode.MARKDOWN
 )
