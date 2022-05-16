@@ -9,6 +9,10 @@ from traveller.npc import Npc
 
 
 class UserData:
+    # Used for idle player
+    item: str
+    item_id: int
+
     # Used for adventure creation
     adventure: Adventure
     npc: Npc

@@ -2,6 +2,7 @@ import json
 import random
 
 import psycopg2
+from psycopg2 import cursor
 from psycopg2.extensions import connection
 from typing import List, Dict, Tuple
 import traveller.equipment as eq
@@ -9,6 +10,7 @@ import traveller.equipment as eq
 from referee.command_parser import CommandParser
 from traveller.characteristic import Characteristic as Ch
 from travellermap import api
+import traveller.queries as q
 
 
 def calculate_age_damage(stats: Tuple, age) -> (Tuple, int):
@@ -101,90 +103,13 @@ class RefereeCommands:
                     else:
                         return False, 'No active scene'
                 elif info == 'world':
-                    cur.execute('SELECT planet, sector FROM adventures WHERE id = %s;', (adv_id,))
-                    world, sector = cur.fetchone()
-                    with open('data/map.json') as d:
-                        data = json.load(d)
-                        for planet in data[sector]:
-                            if planet[0] == world:
-                                uwp = planet[1]
-                                break
-                    return True, \
-                           'Name: ' + world + \
-                           '\nStarport: ' + uwp[0] + \
-                           '\nWorld Size: ' + uwp[1] + \
-                           '\nAtmosphere: ' + uwp[2] + \
-                           '\nHydrographics: ' + uwp[3] + \
-                           '\nPopulation: ' + uwp[4] + \
-                           '\nGovernment: ' + uwp[5] + \
-                           '\nLaw level: ' + uwp[6] + \
-                           '\nTechnology level: ' + uwp[8]
-
+                    return True, q.info_world(cur, adv_id)
                 elif info == 'map':
-                    cur.execute('SELECT sector,planet FROM adventures WHERE id = %s;', (adv_id,))
-                    sector, world_name = cur.fetchone()
-                    world = api.world(sector, world_name)
-                    url = f'https://travellermap.com/api/jumpmap?sector={sector.replace(" ", "%20")}&hex={world.hexc}'
-                    return True, url
+                    return True, q.info_map(cur, adv_id)
                 elif info == 'adventure':
-                    cur.execute('SELECT id,title,sector,planet,max_terms,survival_fail_kills '
-                                'FROM adventures WHERE id = %s;'
-                                , (adv_id,))
-                    id, title, sector, world, max_terms, survival_fail_kills = cur.fetchone()
-                    text = 'Code: ' + id + \
-                           '\nTitle: ' + title + \
-                           '\nSector: ' + sector + \
-                           '\nWorld: ' + world + \
-                           '\nMax terms: ' + str(max_terms) + \
-                           '\nFailing a survival roll ' + \
-                           ('kills' if survival_fail_kills else 'doesn\'t kill') + \
-                           '\nAdventurers:'
-                    cur.execute('SELECT char_name FROM characters WHERE adventure_id=%s AND alive = TRUE;',
-                                (adv_id,))
-                    names = cur.fetchall()
-                    for name in names:
-                        text = text + '\n' + name[0]
-                    return True, text
+                    return True, q.info_adventure(cur, adv_id)
                 else:
-                    cur.execute('SELECT id,sex, age, strength, dexterity, endurance, '
-                                'intelligence, education, social_standing, '
-                                'str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits, '
-                                'equipped_armor, drawn_weapon, stance, rads, wounded, fatigued, stims_taken '
-                                'FROM characters WHERE char_name = %s AND adventure_id = %s;', (info, adv_id))
-                    player_info = cur.fetchone()
-                    if not player_info:
-                        return False, 'No one has this name'
-                    character_id, sex, age, strength, dexterity, endurance, intelligence, education, social_standing, \
-                    str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits_holded, \
-                    equipped_armor, drawn_weapon, stance, rads, wounded, fatigued, stims_taken = player_info
-                    stance_mod = ['Prone', 'Crouched', 'Standing']
-
-                    cur.execute('SELECT equipment_id, amount FROM inventories '
-                                'WHERE character_id = %s;', (character_id,))
-                    inventory = cur.fetchall()
-                    text = f'Name: {info}\nSex: {sex}\nAge:{age}' \
-                           f'\nCharacteristics:{strength},{dexterity},{endurance},' \
-                           f'{intelligence},{education},{social_standing}' \
-                           f'\nModifiers: {str_mod},{dex_mod},{end_mod},{int_mod},{edu_mod},{soc_mod}' \
-                           f'\nCredits: {credits_holded}' \
-                           f'\nStance: {stance_mod[stance]}' \
-                           f'\nRads: {rads}' \
-                           f'\nWounded: {wounded}' \
-                           f'\nFatigued: {fatigued}'
-                    if equipped_armor:
-                        text = text + f'\nEquipped armor: {eq.equipments[equipped_armor].name}'
-                    if drawn_weapon:
-                        text = text + f'\nDrawn weapon: {eq.equipments[drawn_weapon].name}'
-                    text = text + f'\nInventory:'
-                    for eq_id in inventory:
-                        text = text + '\n'
-                        text = text + eq.equipments[eq_id[0]].name
-                        if self.is_coherent('Computer', eq_id[0]) or self.is_coherent('Software', eq_id[0]):
-                            level = eq.equipments[eq_id[0]].technology_level
-                            text = text + f'LVL{level}'
-                        text = text + ': '
-                        text = text + str(eq_id[1])
-                    return True, text
+                    return True, q.info_character(cur, adv_id, info)
 
     def set(self, name: str, cmd: List[str], value: str, referee_id: int) -> (bool, str):
         with self.db:
@@ -287,39 +212,12 @@ class RefereeCommands:
                 if cmd[0] == 'INV' or cmd[0] == 'INVENTORY' or cmd[0] == 'EQUIPMENT':
                     if cmd[1] == 'RM' or cmd[1] == 'REMOVE':
                         # From now on it will be Eqtype:Eqname:EventualLevel and it will be case-insensitive
-                        flag = False
                         for i in range(2, len(cmd)):
                             command = cmd[i]
-                            splitted = command.split(':', 3)
-                            c = splitted[0].upper()
-                            eq_name = splitted[1].upper()
-                            if c == 'COMPUTER' or c == 'SOFTWARE':
-                                level = int(splitted[2])
-                                for e in eq.equipments:
-                                    if eq.equipments[e].name.replace(" ", "").upper() == eq_name \
-                                            and eq.equipments[e].technology_level == level:
-                                        flag = True
-                                        break
-                                if not flag:
-                                    return False, 'No such item in desired equipment type'
-                            else:
-                                for e in eq.equipments:
-                                    if self.is_coherent(c, e):
-                                        if eq_name.upper() == eq.equipments[e].name.replace(" ", "").upper():
-                                            flag = True
-                                            break
-                                if not flag:
-                                    return False, 'No such item in desired equipment type'
-                            cur.execute('UPDATE inventories '
-                                        'SET amount = amount - %s '
-                                        'WHERE character_id=%s AND equipment_id =%s '
-                                        'RETURNING amount',
-                                        (value, char_id, e))
-                            amount = cur.fetchone()
-                            if amount and amount[0] == 0:
-                                cur.execute('DELETE FROM inventories WHERE character_id=%s AND equipment_id =%s',
-                                            (char_id, e))
-
+                            is_item, e = is_item(command)
+                            if not is_item:
+                                return False, 'No such item exists'
+                            q.remove_item(cur, value, char_id, e)
                         return True, 'Updated with success'
                     if cmd[1] == 'ADD':
                         for i in range(2, len(cmd)):
@@ -336,7 +234,7 @@ class RefereeCommands:
                                         break
                             else:
                                 for e in eq.equipments:
-                                    if self.is_coherent(c, e):
+                                    if q.is_coherent(c, e):
                                         if eq_name.upper() == eq.equipments[e].name.replace(" ", "").upper():
                                             break
                             cur.execute('SELECT amount FROM inventories WHERE equipment_id = %s and character_id = %s;',
@@ -363,7 +261,7 @@ class RefereeCommands:
                     return True, 'Shop closed successfully'
                 for c in cmd:  # Check to see if existing shop?
                     for e in eq.equipments:
-                        if self.is_coherent(c, e):
+                        if q.is_coherent(c, e):
                             cur.execute(
                                 'INSERT INTO shop(adventure_id, equipment_id) VALUES(%s,%s) ON CONFLICT DO NOTHING;',
                                 (adv_id, e))
@@ -481,27 +379,6 @@ class RefereeCommands:
                 cur.execute('UPDATE users SET active_adventure = NULL WHERE id = %s', (referee_id,))
                 return True, 'Exit with success'
 
-    def is_coherent(self, c: str, i: int) -> bool:
-        e = eq.equipments[i]
-        return c.upper() == 'Armor'.upper() and isinstance(e, eq.Armor) or \
-               c.upper() == "Communicator".upper() and isinstance(e, eq.Communicator) or \
-               c.upper() == "Computer".upper() and isinstance(e, eq.Computer) or \
-               c.upper() == "Software".upper() and isinstance(e, eq.Software) or \
-               c.upper() == "Drug".upper() and isinstance(e, eq.Drug) or \
-               c.upper() == "Explosive".upper() and isinstance(e, eq.Explosive) or \
-               c.upper() == "PersonalDevice".upper() and isinstance(e, eq.PersonalDevice) or \
-               c.upper() == "SensoryAid".upper() and isinstance(e, eq.SensoryAid) or \
-               c.upper() == "Shelter".upper() and isinstance(e, eq.Shelter) or \
-               c.upper() == "SurvivalEquipment".upper() and isinstance(e, eq.SurvivalEquipment) or \
-               c.upper() == "Tool".upper() and isinstance(e, eq.Tool) or \
-               c.upper() == "MeleeWeapon".upper() and isinstance(e, eq.MeleeWeapon) or \
-               c.upper() == "RangedWeapon".upper() and isinstance(e, eq.RangedWeapon) or \
-               c.upper() == "RangedAmmunition".upper() and isinstance(e, eq.RangedAmmunition) or \
-               c.upper() == "WeaponAccessory".upper() and isinstance(e, eq.WeaponAccessory) or \
-               c.upper() == "Grenade".upper() and isinstance(e, eq.Grenade) or \
-               c.upper() == "HeavyWeapon".upper() and isinstance(e, eq.HeavyWeapon) or \
-               c.upper() == "HeavyWeaponAmmunition".upper() and isinstance(e, eq.HeavyWeaponAmmunition)
-
     def age_damage(self, age, cur, name, adv_id):
         cur.execute('SELECT strength,dexterity,endurance,intelligence,education,social_standing FROM characters '
                     'WHERE char_name = %s AND adventure_id = %s AND alive = TRUE; ',
@@ -518,5 +395,4 @@ class RefereeCommands:
                     (name, adv_id))
         credits_remaining = cur.fetchone()[0]
         if credits_remaining < 0:
-            pass  # DIES
-
+            pass  # TODO death
