@@ -1,5 +1,6 @@
 from typing import Callable, Optional
 
+import telegram
 from telegram import ReplyKeyboardRemove, Update
 from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackContext
 
@@ -449,7 +450,7 @@ class CharacterCreationConversation:
             success, crisis = result
             if not success:
                 kb.stop_drugs.reply_text(update)
-                kb.characteristics.reply_text(update, params=user.character.stats_tuple)
+                kb.characteristics_dmg.reply_text(update, params=user.character.stats_tuple)
 
                 if crisis > 0:
                     kb.aging_crisis.reply_text(update, params=crisis)
@@ -461,9 +462,10 @@ class CharacterCreationConversation:
 
         success, crisis = user.character.increase_age()
         kb.aging.reply_text(update, params=user.character.age)
+
         if not success:
             kb.aging_fail.reply_text(update)
-            kb.characteristics.reply_text(update, params=user.character.stats_tuple)
+            kb.characteristics_dmg.reply_text(update, params=user.character.stats_tuple)
 
             if crisis > 0:
                 kb.aging_crisis.reply_text(update, params=crisis)
@@ -473,6 +475,8 @@ class CharacterCreationConversation:
 
     def _reenlistment(self, update: Update) -> State:
         user = user_data[update.message.from_user.id]
+
+        kb.rolling_reenlinstment.reply_text(update)
 
         outcome = user.character.reenlistment_roll(user.adventure.terms)
         if outcome == ReEnlistmentOutcome.MUST_RETIRE:
@@ -534,18 +538,18 @@ class CharacterCreationConversation:
 
         benefit = user.character.roll_benefit(cash)
         if cash:
-            update.message.reply_text(f'You obtained {benefit}Cr!')
+            kb.credits_gained.reply_text(update, params=benefit)
         else:
             if isinstance(benefit, int):
-                update.message.reply_text(f'You obtained {benefit} ship shares!')
+                kb.ship_shares.reply_text(update, params=benefit)
             elif isinstance(benefit, Weapon):
-                update.message.reply_text(f'You obtained a {benefit.name}!')
+                kb.weapon_benefit.reply_text(update, params=benefit.name)
             elif isinstance(benefit, str) and benefit == 'Society':
-                update.message.reply_text('You joined the Adventurer\'s Society!')
+                kb.adv_society.reply_text(update)
             elif isinstance(benefit, Skill):
-                update.message.reply_text(f'You acquired {benefit}!')
+                kb.skill_acquired.reply_text(update, params=benefit)
             elif isinstance(benefit, Characteristic):
-                update.message.reply_text(f'Your {benefit.value} increased!')
+                kb.char_increased.reply_text(update, params=benefit.value)
 
         if user.character.benefit_rolls <= 0:
             if not user.character.retired:
@@ -564,7 +568,7 @@ class CharacterCreationConversation:
         user = user_data[update.message.from_user.id]
 
         alive, message = user.character.pay_debts()
-        update.message.reply_text(message, reply_markup=ReplyKeyboardRemove())
+        update.message.reply_text(message, reply_markup=ReplyKeyboardRemove(), parse_mode=telegram.ParseMode.MARKDOWN)
 
         if not alive:
             start_character_creation(update)
@@ -577,7 +581,7 @@ class CharacterCreationConversation:
 
         to_restore = user.character.to_restore
         if len(to_restore) > 0:
-            kb.undo_damage.reply_text(update, keys=single_keys(to_restore + ['Skip']))
+            kb.undo_damage.reply_text(update, params=user.character.credits, keys=single_keys(to_restore + ['Skip']))
             return State.UNDO_DAMAGE
         else:
             kb.character_name.reply_text(update)
@@ -593,7 +597,7 @@ class CharacterCreationConversation:
         if update.message.text not in user.character.to_restore:
             return State.UNDO_DAMAGE
 
-        l = update.message.text.replace(' ', '').split('-')
+        l = update.message.text.split('(')[0].replace(' ', '').split('-')
         char = Characteristic[l[0]]
         price = int(l[1][:-2])
 

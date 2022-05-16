@@ -523,20 +523,20 @@ class Character:
                 self.credits -= c.injury_crisis_debt*(1-discount)
 
                 if self.credits < 0:
-                    return False, 'You couldn\'t afford to pay for your injury crisis! You died, start over.'
+                    return False, '💀 You couldn\'t afford to pay for your injury crisis! You died, start over.'
 
             if c.aging_crisis_debt > 0:
                 self.credits -= c.injury_crisis_debt*(1-discount)
 
                 if self.credits < 0:
-                    return False, 'You couldn\'t afford to pay for your aging crisis! You died, start over.'
+                    return False, '💀 You couldn\'t afford to pay for your aging crisis! You died, start over.'
 
         self.credits -= self.debt
         message: str
-        if self.credits > 0:
-            message = f'You paid all your debts! Your new balance is {self.credits}Cr!'
+        if self.credits >= 0:
+            message = f'✅ You paid all your debts! Your balance is {self.credits}Cr!'
         else:
-            message = f'You couldn\'t afford to pay for all your debts, your current balance is {self.credits}Cr.'
+            message = f'❌ You couldn\'t afford to pay for all your debts, your balance is {self.credits}Cr.'
 
         return True, message
 
@@ -545,13 +545,12 @@ class Character:
         cp: List[str] = []
 
         for c, d in self.damages.items():
-
             if d > 0:
                 rate = self.patron_rates.get(c)
                 if rate:
                     price = int(5000 * (1 - rate))
                     if self.credits >= price:
-                        cp.append(f'{c.name} - {price}Cr')
+                        cp.append(f'{c.name} - {price}Cr ({d} left)')
 
         return cp
 

@@ -9,7 +9,7 @@ class Keyboard:
     reply_markup: Optional[ReplyMarkup]
     parse_mode: Optional[str]
 
-    def __init__(self, text: str, reply_markup: Optional[ReplyMarkup] = None, parse_mode: Optional[str] = None):
+    def __init__(self, text: str, reply_markup: Optional[ReplyMarkup] = None, parse_mode: Optional[str] = telegram.ParseMode.MARKDOWN):
         self.text = text
         self.reply_markup = reply_markup
         self.parse_mode = parse_mode
