@@ -6,7 +6,7 @@ from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackC
 
 from player_idle import kb
 from player_idle.service import PlayerIdle
-from cache.userdata import user_data
+from cache.userdata import user_data, UserData
 
 
 class State(Enum):
@@ -24,7 +24,7 @@ class PlayerIdleConversation:
 
     def handlers(self) -> List[ConversationHandler]:
         return [ConversationHandler(
-            entry_points=[MessageHandler(Filters.text), self._handle_created],
+            entry_points=[MessageHandler(Filters.text, self._handle_created)],
             states={
                 State.IDLE: [MessageHandler(Filters.regex('^(Info|Inventory|Map)$'), self._handle_idle)],
                 State.INFO: [MessageHandler(Filters.regex('^(World|Adventure|Myself)$'), self._handle_info)],
@@ -72,9 +72,11 @@ class PlayerIdleConversation:
 
     def _handle_inventory(self, update: Update, context: CallbackContext) -> State:
         if update.message.text == 'Nothing':
+            kb.idle.reply_text(update)
             return State.IDLE
         item, e = self.service.is_item(update.message.text)
         if item:
+            user_data[update.message.from_user.id] = UserData()
             user_data[update.message.from_user.id].item = update.message.text
             user_data[update.message.from_user.id].item_id = e
             kb.item.reply_text(update)

@@ -1,6 +1,6 @@
 from typing import List, Tuple
 
-from psycopg2 import cursor
+from psycopg2.extensions import cursor
 from psycopg2.extensions import connection
 import json
 
@@ -42,8 +42,7 @@ class PlayerIdle:
         with self.db:
             with self.db.cursor() as cur:
                 adv_id = self.get_adv_id(cur, user_id)
-                name = self.get_name(cur, user_id, adv_id)
-                return q.get_items(cur, adv_id, name)
+                return q.get_items(cur, adv_id, user_id)
 
     def get_adv_id(self, cur: cursor, user_id: int) -> str:
         cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (user_id,))

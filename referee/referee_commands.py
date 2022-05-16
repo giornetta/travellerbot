@@ -2,7 +2,7 @@ import json
 import random
 
 import psycopg2
-from psycopg2 import cursor
+from psycopg2.extensions import cursor
 from psycopg2.extensions import connection
 from typing import List, Dict, Tuple
 import traveller.equipment as eq

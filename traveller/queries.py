@@ -1,7 +1,7 @@
 import json
 from typing import List, Tuple
 
-from psycopg2 import cursor
+from psycopg2.extensions import cursor
 
 from travellermap import api
 import traveller.equipment as eq
@@ -80,7 +80,6 @@ def info_character(cur: cursor, adv_id: str, name: str) -> str:
     str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits_holded, \
     equipped_armor, drawn_weapon, stance, rads, wounded, fatigued, stims_taken = player_info
     stance_mod = ['Prone', 'Crouched', 'Standing']
-
     cur.execute('SELECT equipment_id, amount FROM inventories '
                 'WHERE character_id = %s;', (character_id,))
     inventory = cur.fetchall()
@@ -106,6 +105,7 @@ def info_character(cur: cursor, adv_id: str, name: str) -> str:
             text = text + f'LVL{level}'
         text = text + ': '
         text = text + str(eq_id[1])
+    return text
 
 
 def get_items(cur: cursor, adv_id, user_id) -> List[str]:
@@ -156,14 +156,16 @@ def get_items(cur: cursor, adv_id, user_id) -> List[str]:
         elif is_coherent('Software', eq_id[0]):
             level = eq.equipments[eq_id[0]].technology_level
             item_name = f'Software:{item_name}:{level}'
-        items.append(item_name)
-    items.append('Nothing')
+        items.append([item_name])
+    items.append(['Nothing'])
     return items
 
 
 def is_item(name: str) -> Tuple[bool, int]:
     flag = False
     splitted = name.split(':', 3)
+    if len(splitted) == 1:
+        return False, -1
     c = splitted[0].upper()
     eq_name = splitted[1].upper()
     if c == 'COMPUTER' or c == 'SOFTWARE':
