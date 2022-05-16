@@ -52,6 +52,8 @@ CREATE TABLE characters (
     fatigued BOOLEAN NOT NULL DEFAULT  FALSE,
     stims_taken INT NOT NULL DEFAULT 0,
 
+    society BOOLEAN DEFAULT FALSE,
+
     user_id BIGINT NOT NULL REFERENCES users(id),
     adventure_id CHAR(6) NOT NULL REFERENCES adventures(id)
 );
