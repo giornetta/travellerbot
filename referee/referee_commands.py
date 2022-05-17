@@ -2,6 +2,7 @@ import json
 import random
 
 import psycopg2
+from psycopg2 import IntegrityError
 from psycopg2.extensions import cursor
 from psycopg2.extensions import connection
 from typing import List, Dict, Optional, Tuple
@@ -122,61 +123,63 @@ class RefereeCommands:
                 if not char_id_tuple:
                     return False, 'No one has this name'
                 char_id = char_id_tuple[0]
-
                 cmd = [s.upper() for s in cmd]
                 if len(cmd) < 2:
                     cmd.extend([''] * (2 - len(cmd)))
-
                 add = False
                 if value[0] == '+' or value[0] == '-':
                     add = True
                 if cmd[0] == 'STANCE':
                     stance = ['PRONE', 'CROUCHED', 'STANDING']
                     value = stance.index(value.upper()) if value.upper() in stance else value
+                    if value not in range(3):
+                        return False, 'Cannot set stance'
                     cur.execute('UPDATE characters SET stance = %s WHERE id = %s', (value, char_id))
-                    return True, 'Updated with success'
-
-                value = int(value) # TODO TRYCATCH
+                    return True, 'Updated stance with success'
+                try:
+                    value = int(value)
+                except ValueError:
+                    return False, 'Value is not valid'
                 if cmd[0] == 'RADS' or cmd[0] == 'RADIATIONS':
                     modify(cur, value, char_id, add, 'rads')
-                    return True, 'Updated with success'
-
+                    return True, 'Updated radiations with success'
                 if cmd[0] == 'STAT' or cmd[0] == 'MOD':
                     try:
                         char = Characteristic[cmd[1]]
                     except KeyError:
                         return False, 'No such characteristic'
-
                     stat = char.value.lower() if cmd[0] == 'STAT' else char.name.lower() + '_mod'
                     modify(cur, value, char_id, add, stat)
-                    return True, 'Updated with success'
-
+                    return True, 'Updated characteristic with success'
                 if cmd[0] == 'STATUS':
                     if cmd[1] in ['WOUNDED', 'FATIGUED']:
                         cur.execute(f'UPDATE characters SET {cmd[1].lower()} = %s WHERE id = %s;',
                                     (value == 1, char_id))
-                        return True, 'Updated with success'
+                        return True, 'Updated status with success'
                     return False, 'No such status exists'
                 if cmd[0] == 'CR' or cmd[0] == 'CREDITS':
                     modify(cur, value, char_id, add, 'credits')
-                    return True, 'Updated with success'
+                    return True, 'Updated credits with success'
                 if cmd[0] == 'INV' or cmd[0] == 'INVENTORY' or cmd[0] == 'EQUIPMENT':
                     if cmd[1] == 'RM' or cmd[1] == 'REMOVE':
+                        if value <= 0:
+                            return False, 'Insert positive number'
                         # From now on it will be Eqtype:Eqname:EventualLevel and it will be case-insensitive
                         for i in range(2, len(cmd)):
                             command = cmd[i]
-                            is_item, e = is_item(command)
+                            is_item, e = q.is_item(command)
                             if not is_item:
                                 return False, 'No such item exists'
                             q.remove_item(cur, value, char_id, e)
-                        return True, 'Updated with success'
+                        return True, 'Item removed with success'
                     if cmd[1] == 'ADD':
+                        if value <= 0:
+                            return False, 'Insert positive number'
                         for i in range(2, len(cmd)):
                             command = cmd[i]
                             found, e = q.is_item(command)
                             if not found:
-                                return False, 'No such item'
-
+                                return False, 'No such item exists'
                             cur.execute('SELECT amount FROM inventories WHERE equipment_id = %s and character_id = %s;', (e, char_id))
                             amount = cur.fetchone()
                             if amount:
@@ -187,15 +190,15 @@ class RefereeCommands:
                             else:
                                 cur.execute('INSERT INTO inventories(character_id, equipment_id, amount, damage) '
                                             'VALUES(%s, %s, %s, %s);', (char_id, e, value, 0))
-                        return True, 'Updated with success'
-                return False, 'Cannot set'
+                        return True, 'Item added with success'
+                return False, 'Invalid command format'
 
     def shop(self, cmd: List[str], referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
-                if cmd[-1] == 'close':
+                if cmd[-1].upper() == 'CLOSE':
                     cur.execute('DELETE FROM shop WHERE adventure_id = %s;', (adv_id,))
                     return True, 'Shop closed successfully'
                 for c in cmd:  # Check to see if existing shop?
@@ -211,17 +214,17 @@ class RefereeCommands:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
-                if cmd == 'short':
+                if cmd.upper() == 'SHORT':
                     cur.execute('UPDATE characters SET fatigued = FALSE WHERE adventure_id = %s AND alive = TRUE;',
                                 (adv_id,))
                     return True, 'The party rested shorty'
-                if cmd == 'long':
+                if cmd.upper() == 'LONG':
                     cur.execute('UPDATE characters SET fatigued = FALSE WHERE adventure_id = %s AND alive = TRUE;',
                                 (adv_id,))
                     cur.execute('UPDATE characters SET str_mod = 0, dex_mod = 0, end_mod = 0, '
                                 'int_mod = 0, edu_mod = 0, soc_mod = 0')
                     return True, 'The party rested for a long time'
-            return False, 'insert either "short" or "long"'
+            return False, 'Insert either "short" or "long"'
 
     def combat(self, combat: str, end: str, referee_id: int) -> (bool, str):
         with self.db:
@@ -232,17 +235,27 @@ class RefereeCommands:
                 cur.execute('UPDATE adventures SET scene_id = NULL WHERE id = %s;', (adv_id,))
                 return True, 'Scene set with success'
             else:
-                cur.execute('UPDATE adventures SET scene_id = %s WHERE id = %s;',
-                            (combat, adv_id))  # check if it doesn't exist?
+                try:
+                    cur.execute('UPDATE adventures SET scene_id = %s WHERE id = %s;',
+                                (combat, adv_id))
+                except IntegrityError:
+                    return False, 'No scene has this name'
                 return True, 'Scene set with success'
 
-    def travel(self, world: str, referee_id: int) -> (bool, str):
+    def travel(self, name: str, referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
-                cur.execute('UPDATE adventures SET planet = %s WHERE id = %s;', (world, adv_id))
-                return True, 'The adventurers traveled successfully'
+                with open('data/map.json') as d:
+                    data = json.load(d)
+                    for sector in data:
+                        for world in data[sector]:
+                            if world[0] == name:
+                                cur.execute('UPDATE adventures SET planet = %s WHERE id = %s;', (name, adv_id))
+                                return True, 'The adventurers traveled successfully'
+                    else:
+                        return False, 'No world with this name'
 
     def age(self, drug_users: List[str], drug_droppers: List[str], referee_id: int) -> (bool, str):
         try:

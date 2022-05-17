@@ -17,7 +17,7 @@ class CommandParser:
                 if len(cmd) == 2:
                     return self.callbacks[cmd[0]](cmd[1], referee_id)
                 else:
-                    return False, 'use /info {<name>|world|map|scene|adventure}'
+                    return False, 'use /info name {world|map|scene|adventure}'
             elif cmd[0] == "set":
                 if len(cmd) >= 4:
                     name = cmd[1]
@@ -29,12 +29,12 @@ class CommandParser:
                         return self.callbacks[cmd[0]](name, cmd[2:-1], value, referee_id)
                     return self.callbacks[cmd[0]](name, cmd[2:], '1', referee_id)
                 else:
-                    return False, 'use /set <name> <... fieldName> [{+|-}][<value>]'
+                    return False, 'use /set name ... fieldName [{+|-}][value]'
             elif cmd[0] == "shop":
                 if len(cmd) >= 2:
                     return self.callbacks[cmd[0]](cmd[1:], referee_id)
                 else:
-                    return False, 'use /shop {[... <type>]|close}'
+                    return False, 'use /shop {[... type]|close}'
             elif cmd[0] == "rest":
                 if len(cmd) == 2:
                     return self.callbacks[cmd[0]](cmd[1], referee_id)
@@ -46,12 +46,12 @@ class CommandParser:
                 elif len(cmd) == 3 and cmd[2] == 'end':
                     return self.callbacks[cmd[0]](cmd[1], cmd[2], referee_id)
                 else:
-                    return False, 'use /combat <sceneName> [end]'
+                    return False, 'use /combat sceneName [end]'
             elif cmd[0] == "travel":
                 if len(cmd) == 2:
                     return self.callbacks[cmd[0]](cmd[1], referee_id)
                 else:
-                    return False, 'use /travel <destination>'
+                    return False, 'use /travel destination'
             elif cmd[0] == "age":
                 try:
                     i = cmd.index('roll')
@@ -64,7 +64,7 @@ class CommandParser:
                 if len(cmd) == 3:
                     return self.callbacks[cmd[0]](cmd[1], cmd[2], referee_id)
                 else:
-                    return False, 'use /scene new <name>'
+                    return False, 'use /scene new name'
             elif cmd[0] == "exit":
                 if len(cmd) == 1:
                     return self.callbacks[cmd[0]](referee_id)

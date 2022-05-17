@@ -51,6 +51,7 @@ class RefereeCommandsConversation:
         if text[:4] == 'http':
             update.message.reply_photo(text)
         else:
+            print(text)
             update.message.reply_text(text, parse_mode=telegram.ParseMode.HTML)
         return State.COMMANDS
 
