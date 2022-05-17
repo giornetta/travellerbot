@@ -1,4 +1,4 @@
-from telegram import Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ConversationHandler, CommandHandler, MessageHandler, Filters, CallbackContext
 
 from adventure_setup.service import AdventureSetupService
@@ -7,6 +7,7 @@ from character_creation.bot import CharacterCreationConversation
 from character_creation.service import CharacterCreator
 from adventure_setup.bot import SetupConversation
 from bot.state import ConversationState
+from combat.bot import CombatConversation
 from keyboards import keyboards
 
 
@@ -18,6 +19,7 @@ def handler(setup_controller: AdventureSetupService, character_creator: Characte
             ConversationState.REFEREE_IDLE: [MessageHandler(Filters.text, _handle_ref)],
             ConversationState.CHARACTER_CREATION: CharacterCreationConversation(character_creator).handlers(),
             ConversationState.PLAYER_IDLE: [MessageHandler(Filters.text, _handle_player)],
+            ConversationState.COMBAT: CombatConversation().handlers()
         },
         fallbacks=[],
         name='conversation',
@@ -41,5 +43,7 @@ def _handle_ref(update: Update, context: CallbackContext) -> ConversationState:
 
 
 def _handle_player(update: Update, context: CallbackContext) -> ConversationState:
-    update.message.reply_text(text='Hello!')
-    return ConversationState.PLAYER_IDLE
+    update.message.reply_text(text='Hello!', reply_markup=InlineKeyboardMarkup([
+        [InlineKeyboardButton('Boh', callback_data='AS')]
+    ]))
+    return ConversationState.COMBAT
