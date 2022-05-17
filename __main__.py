@@ -18,7 +18,7 @@ if __name__ == '__main__':
     userdata.load_data(config['CACHE_PATH'])
 
     for k, v in userdata.user_data.items():
-        print(str(k) + ': ' + v)
+        print(str(k) + ': ', v)
 
     conn = psycopg2.connect(
         user=config['DB_USER'],

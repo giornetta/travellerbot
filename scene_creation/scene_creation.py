@@ -108,7 +108,7 @@ class SceneCreationConversation:
         if update.message.text != 'Accept':
             v = update.message.text.split(' ')
             for val in v:
-                if int(val) <= 1:
+                if int(val) < 1:
                     update.message.reply_text('Values not admissible.')
                     return State.CH_GEN
             npc.STR = int(v[0])
@@ -118,16 +118,18 @@ class SceneCreationConversation:
             npc.EDU = int(v[4])
             npc.SOC = int(v[5])
 
-        kb.career.reply_text(update, keys=[[c.name] for c in career.careers])
+        kb.career.reply_text(update, keys=[[c] for c in career.careers])
         return State.RANK
 
     def _ask_rank(self, update: Update, context: CallbackContext) -> State:
         npc = user_data[update.message.from_user.id].npc
-        for c in career.careers:
-            if c.name == update.message.text:
-                npc.career = c.name
-                break
-        kb.rank.reply_text(update, keys=[[1, 2, 3], [4, 5, 6], [0]])
+        c = update.message.text
+        if c not in career.careers:
+            return State.RANK
+
+        npc.career = c
+
+        kb.rank.reply_text(update)
         return State.ARMOR
 
     def _ask_armor(self, update: Update, context: CallbackContext) -> State:

@@ -34,7 +34,7 @@ class PlayerIdleConversation:
             },
             fallbacks=[],
             map_to_parent={},
-            name='create_character',
+            name='player_idle',
             persistent=True,
         )]
 
