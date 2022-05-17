@@ -16,15 +16,15 @@ def info_world(cur: cursor, adv_id: str) -> str:
             if planet[0] == world:
                 uwp = planet[1]
                 break
-    return 'Name: ' + world + \
-           '\nStarport: ' + uwp[0] + \
-           '\nWorld Size: ' + uwp[1] + \
-           '\nAtmosphere: ' + uwp[2] + \
-           '\nHydrographics: ' + uwp[3] + \
-           '\nPopulation: ' + uwp[4] + \
-           '\nGovernment: ' + uwp[5] + \
-           '\nLaw level: ' + uwp[6] + \
-           '\nTechnology level: ' + uwp[8]
+    return '📝 <b>Name</b>: ' + world + \
+           '\n🛸 <b>Starport</b>: ' + uwp[0] + \
+           '\n⛰️ <b>World Size</b>: ' + uwp[1] + \
+           '\n⛅ <b>Atmosphere</b>: ' + uwp[2] + \
+           '\n🌊 <b>Hydrographics</b>: ' + uwp[3] + \
+           '\n🫂 <b>Population</b>: ' + uwp[4] + \
+           '\n🗳️ <b>Government</b>: ' + uwp[5] + \
+           '\n⚖️ <b>Law level</b>: ' + uwp[6] + \
+           '\n🤖 <b>Technology level</b>: ' + uwp[8]
 
 
 def info_adventure(cur: cursor, adv_id: str) -> str:
@@ -32,19 +32,19 @@ def info_adventure(cur: cursor, adv_id: str) -> str:
                 'FROM adventures WHERE id = %s;'
                 , (adv_id,))
     id, title, sector, world, max_terms, survival_fail_kills = cur.fetchone()
-    text = 'Code: ' + id + \
-           '\nTitle: ' + title + \
-           '\nSector: ' + sector + \
-           '\nWorld: ' + world + \
-           '\nMax terms: ' + str(max_terms) + \
-           '\nFailing a survival roll ' + \
-           ('kills' if survival_fail_kills else 'doesn\'t kill') + \
-           '\nAdventurers:'
+    text = f'#️ <b>Code</b>: <code>{id}</code>' + \
+           '\n📝 <b>Title</b>: ' + title + \
+           '\n🌌 <b>Sector</b>: ' + sector + \
+           '\n🪐 <b>World</b>: ' + world + \
+           '\n🔨 <b>Max Terms</b>: ' + str(max_terms) + \
+           '\n💀 Failing a <b>Survival Roll</b> ' + \
+           ('kills' if survival_fail_kills else 'does not kill') + \
+           '\n🧑‍🚀 <b>Adventurers</b>:'
     cur.execute('SELECT char_name FROM characters WHERE adventure_id=%s AND alive = TRUE;',
                 (adv_id,))
     names = cur.fetchall()
     for name in names:
-        text = text + '\n' + name[0]
+        text = text + '\n- ' + name[0]
     return text
 
 
@@ -73,38 +73,48 @@ def info_character(cur: cursor, adv_id: str, name: str) -> str:
                 'str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits, '
                 'equipped_armor, drawn_weapon, stance, rads, wounded, fatigued, stims_taken '
                 'FROM characters WHERE char_name = %s AND adventure_id = %s;', (name, adv_id))
+
     player_info = cur.fetchone()
     if not player_info:
         return 'No one has this name'
+
     character_id, sex, age, strength, dexterity, endurance, intelligence, education, social_standing, \
     str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits_holded, \
     equipped_armor, drawn_weapon, stance, rads, wounded, fatigued, stims_taken = player_info
+
     stance_mod = ['Prone', 'Crouched', 'Standing']
     cur.execute('SELECT equipment_id, amount FROM inventories '
                 'WHERE character_id = %s;', (character_id,))
     inventory = cur.fetchall()
-    text = f'Name: {name}\nSex: {sex}\nAge:{age}' \
-           f'\nCharacteristics:{strength},{dexterity},{endurance},' \
-           f'{intelligence},{education},{social_standing}' \
-           f'\nModifiers: {str_mod},{dex_mod},{end_mod},{int_mod},{edu_mod},{soc_mod}' \
-           f'\nCredits: {credits_holded}' \
-           f'\nStance: {stance_mod[stance]}' \
-           f'\nRads: {rads}' \
-           f'\nWounded: {wounded}' \
-           f'\nFatigued: {fatigued}'
+
+    text = f'📝 <b>Name</b>: {name}\n🚻 <b>Sex</b>: {sex}\n👴 Age: {age}' \
+           f'\n💪 <b>STR</b>: {strength} {"+" if str_mod > 0 else "-" if str_mod != 0 else ""} {abs(str_mod) if str_mod != 0 else ""}' \
+           f'\n🏃 <b>END</b>: {endurance} {"+" if end_mod > 0 else "-" if end_mod != 0 else ""} {abs(end_mod) if end_mod != 0 else ""}' \
+           f'\n🗡️ <b>DEX</b>: {dexterity} {"+" if dex_mod > 0 else "-" if dex_mod != 0 else ""} {abs(dex_mod) if dex_mod != 0 else ""}' \
+           f'\n🧠 <b>INT</b>: {intelligence} {"+" if int_mod > 0 else "-" if int_mod != 0 else ""} {abs(int_mod) if int_mod != 0 else ""}' \
+           f'\n📚 <b>EDU</b>: {education} {"+" if edu_mod > 0 else "-" if edu_mod != 0 else ""} {abs(edu_mod) if edu_mod != 0 else ""}' \
+           f'\n👑 <b>SOC</b>: {social_standing} {"+" if soc_mod > 0 else "-" if soc_mod != 0 else ""} {abs(soc_mod) if soc_mod != 0 else ""}' \
+           f'\n💵 <b>Credits</b>: {credits_holded}' \
+           f'\n🧍 <b>Stance</b>: {stance_mod[stance]}' \
+           f'\n☢️ <b>Rads</b>: {rads}' \
+           f'\n🦴 <b>Wounded</b>: {wounded}' \
+           f'\n💤 <b>Fatigued</b>: {fatigued}'
+
     if equipped_armor:
-        text = text + f'\nEquipped armor: {eq.equipments[equipped_armor].name}'
+        text = text + f'\n🦺 <b>Equipped armor</b>: {eq.equipments[equipped_armor].name}'
+
     if drawn_weapon:
-        text = text + f'\nDrawn weapon: {eq.equipments[drawn_weapon].name}'
-    text = text + f'\nInventory:'
+        text = text + f'\n⚔️ <b>Drawn weapon</b>: {eq.equipments[drawn_weapon].name}'
+
+    text = text + f'\n🎒 <b>Inventory</b>:'
     for eq_id in inventory:
-        text = text + '\n'
-        text = text + eq.equipments[eq_id[0]].name
+        text = text + '\n- ' + eq.equipments[eq_id[0]].name
         if is_coherent('Computer', eq_id[0]) or is_coherent('Software', eq_id[0]):
             level = eq.equipments[eq_id[0]].technology_level
             text = text + f'LVL{level}'
-        text = text + ': '
-        text = text + str(eq_id[1])
+        if eq_id[1] > 1:
+            text = text + f': x{eq_id[1]}'
+
     return text
 
 

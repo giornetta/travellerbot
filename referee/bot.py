@@ -1,3 +1,4 @@
+import telegram
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ConversationHandler, CallbackContext, CommandHandler
 
@@ -50,7 +51,7 @@ class RefereeCommandsConversation:
         if text[:4] == 'http':
             update.message.reply_photo(text)
         else:
-            update.message.reply_text(text)
+            update.message.reply_text(text, parse_mode=telegram.ParseMode.HTML)
         return State.COMMANDS
 
     def _handle_scene(self, update: Update, context: CallbackContext) -> State:

@@ -1,6 +1,7 @@
 from enum import Enum, auto
 from typing import List
 
+import telegram
 from telegram import Update
 from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackContext
 
@@ -58,17 +59,14 @@ class PlayerIdleConversation:
     def _handle_info(self, update: Update, context: CallbackContext) -> State:
         text = update.message.text
         if text == 'World':
-            update.message.reply_text(self.service.info_world(update.message.from_user.id))
-            kb.idle.reply_text(update)
-            return State.IDLE
+            update.message.reply_text(self.service.info_world(update.message.from_user.id), parse_mode=telegram.ParseMode.HTML)
         elif text == 'Adventure':
-            update.message.reply_text(self.service.info_adventure(update.message.from_user.id))
-            kb.idle.reply_text(update)
-            return State.IDLE
+            update.message.reply_text(self.service.info_adventure(update.message.from_user.id), parse_mode=telegram.ParseMode.HTML)
         elif text == 'Myself':
-            update.message.reply_text(self.service.info_myself(update.message.from_user.id))
-            kb.idle.reply_text(update)
-            return State.IDLE
+            update.message.reply_text(self.service.info_myself(update.message.from_user.id), parse_mode=telegram.ParseMode.HTML)
+        kb.idle.reply_text(update)
+
+        return State.IDLE
 
     def _handle_inventory(self, update: Update, context: CallbackContext) -> State:
         if update.message.text == 'Nothing':
