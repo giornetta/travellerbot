@@ -175,16 +175,16 @@ def is_item(name: str) -> Tuple[bool, int]:
                     and eq.equipments[e].technology_level == level:
                 flag = True
                 break
-        if not flag:
-            return False, -1
     else:
         for e in eq.equipments:
             if is_coherent(c, e):
                 if eq_name.upper() == eq.equipments[e].name.replace(" ", "").upper():
                     flag = True
+                    print(eq_name.upper())
                     break
-        if not flag:
-            return False, -1
+
+    if not flag:
+        return False, -1
     return True, e
 
 

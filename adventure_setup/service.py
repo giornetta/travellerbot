@@ -23,7 +23,7 @@ class AdventureSetupService:
                     cur.execute('INSERT INTO users(id, active_adventure) VALUES(%s, %s)'
                                 'ON CONFLICT(id) DO UPDATE SET active_adventure = %s;', (user_id, code, code))
                     cur.execute('SELECT * FROM adventures WHERE id = %s;', (code, ))
-                    adv_id, title, sector, world, terms, survival_kills, scene_id, referee_id = cur.fetchone()
+                    adv_id, title, sector, world, terms, survival_kills, referee_id, scene = cur.fetchone()
                     adv = Adventure.from_db((adv_id, title, sector, world, terms, survival_kills, referee_id))
                 except (psycopg2.errors.ForeignKeyViolation, psycopg2.errors.InFailedSqlTransaction) as e:
                     self.db.rollback()

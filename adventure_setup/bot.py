@@ -94,8 +94,9 @@ class SetupConversation:
             user_data[user_id].adventure = adventure
 
             kb.join_adventure.reply_text(update, adventure.title)
-
+            print(adventure)
             if user_id == adventure.referee_id:
+                print('Ref!')
                 return State.END_REF
             else:
                 if self.character_creator.alive_character_exists(user_id, adventure.id):

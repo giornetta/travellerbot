@@ -17,6 +17,9 @@ if __name__ == '__main__':
     api.load_map(config['MAP_PATH'])
     userdata.load_data(config['CACHE_PATH'])
 
+    for k, v in userdata.user_data.items():
+        print(str(k) + ': ' + v)
+
     conn = psycopg2.connect(
         user=config['DB_USER'],
         password=config['DB_PASS'],
@@ -24,9 +27,6 @@ if __name__ == '__main__':
         host='localhost',
         port=5432
     )
-
-    with open('schema.sql') as s:
-        conn.cursor().execute(s.read())
 
     updater = Updater(
         token=config['TELEGRAM_TOKEN'],

@@ -4,11 +4,11 @@ import random
 import psycopg2
 from psycopg2.extensions import cursor
 from psycopg2.extensions import connection
-from typing import List, Dict, Tuple
+from typing import List, Dict, Optional, Tuple
 import traveller.equipment as eq
 
 from referee.command_parser import CommandParser
-from traveller.characteristic import Characteristic as Ch
+from traveller.characteristic import Characteristic as Ch, Characteristic
 from travellermap import api
 import traveller.queries as q
 
@@ -57,11 +57,11 @@ def calculate_age_damage(stats: Tuple, age) -> (Tuple, int):
     return tuple(new_stats), debt
 
 
-def modify(cur: connection, value: int, char_id: int, add: bool, stat: str):
+def modify(cur: cursor, value: int, char_id: int, add: bool, stat: str):
     if add:
-        cur.execute('UPDATE characters SET %s = %s + %s WHERE id = %s', (stat, value, char_id))
+        cur.execute(f'UPDATE characters SET {stat} = {stat} {"+" if value > 0 else ""}%s WHERE id = %s;', (value, char_id))
     else:
-        cur.execute('UPDATE characters SET %s = %s WHERE id = %s', (stat, value, char_id))
+        cur.execute(f'UPDATE characters SET {stat} = %s WHERE id = %s;', (value, char_id))
 
 
 class RefereeCommands:
@@ -111,7 +111,7 @@ class RefereeCommands:
                 else:
                     return True, q.info_character(cur, adv_id, info)
 
-    def set(self, name: str, cmd: List[str], value: str, referee_id: int) -> (bool, str):
+    def set(self, name: str, cmd: List[Optional[str]], value: str, referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
@@ -122,87 +122,38 @@ class RefereeCommands:
                 if not char_id_tuple:
                     return False, 'No one has this name'
                 char_id = char_id_tuple[0]
-                cmd[0] = cmd[0].upper() if cmd[0] else None
-                cmd[1] = cmd[1].upper() if cmd[1] else None
+
+                cmd = [s.upper() for s in cmd]
+                if len(cmd) < 2:
+                    cmd.extend([''] * (2 - len(cmd)))
+
                 add = False
                 if value[0] == '+' or value[0] == '-':
                     add = True
-                value = int(value)
                 if cmd[0] == 'STANCE':
                     stance = ['PRONE', 'CROUCHED', 'STANDING']
                     value = stance.index(value.upper()) if value.upper() in stance else value
                     cur.execute('UPDATE characters SET stance = %s WHERE id = %s', (value, char_id))
                     return True, 'Updated with success'
+
+                value = int(value) # TODO TRYCATCH
                 if cmd[0] == 'RADS' or cmd[0] == 'RADIATIONS':
                     modify(cur, value, char_id, add, 'rads')
                     return True, 'Updated with success'
-                if cmd[0] == 'STRENGTH' or cmd[0] == 'STR':
-                    modify(cur, value, char_id, add, 'strength')
+
+                if cmd[0] == 'STAT' or cmd[0] == 'MOD':
+                    try:
+                        char = Characteristic[cmd[1]]
+                    except KeyError:
+                        return False, 'No such characteristic'
+
+                    stat = char.value.lower() if cmd[0] == 'STAT' else char.name.lower() + '_mod'
+                    modify(cur, value, char_id, add, stat)
                     return True, 'Updated with success'
-                if cmd[0] == 'DEXTERITY' or cmd[0] == 'DEX':
-                    modify(cur, value, char_id, add, 'dexterity')
-                    return True, 'Updated with success'
-                if cmd[0] == 'ENDURANCE' or cmd[0] == 'END':
-                    modify(cur, value, char_id, add, 'endurance')
-                    return True, 'Updated with success'
-                if cmd[0] == 'INTELLIGENCE' or cmd[0] == 'INT':
-                    modify(cur, value, char_id, add, 'intelligence')
-                    return True, 'Updated with success'
-                if cmd[0] == 'EDUCATION' or cmd[0] == 'EDU':
-                    modify(cur, value, char_id, add, 'education')
-                    return True, 'Updated with success'
-                if cmd[0] == 'SOCIAL_STANDING' or cmd[0] == 'SOC':
-                    modify(cur, value, char_id, add, 'social_standing')
-                    return True, 'Updated with success'
-                if cmd[0] == 'MOD_STR' or cmd[0] == 'MODIFIER_STR' \
-                        or cmd[0] == 'MOD_STRENGTH' or cmd[0] == 'MODIFIER_STRENGTH':
-                    modify(cur, value, char_id, add, 'mod_str')
-                    return True, 'Updated with success'
-                if cmd[0] == 'MOD_DEX' or cmd[0] == 'MODIFIER_DEX' \
-                        or cmd[0] == 'MOD_DEXTERITY' or cmd[0] == 'MODIFIER_DEXTERITY':
-                    modify(cur, value, char_id, add, 'mod_dex')
-                    return True, 'Updated with success'
-                if cmd[0] == 'MOD_END' or cmd[0] == 'MODIFIER_END' \
-                        or cmd[0] == 'MOD_ENDURANCE' or cmd[0] == 'MODIFIER_ENDURANCE':
-                    modify(cur, value, char_id, add, 'mod_end')
-                    return True, 'Updated with success'
-                if cmd[0] == 'MOD_INT' or cmd[0] == 'MODIFIER_INT' \
-                        or cmd[0] == 'MOD_INTELLIGENCE' or cmd[0] == 'MODIFIER_INTELLIGENCE':
-                    modify(cur, value, char_id, add, 'mod_int')
-                    return True, 'Updated with success'
-                if cmd[0] == 'MOD_EDU' or cmd[0] == 'MODIFIER_EDU' \
-                        or cmd[0] == 'MOD_EDUCATION' or cmd[0] == 'MODIFIER_EDUCATION':
-                    modify(cur, value, char_id, add, 'mod_edu')
-                    return True, 'Updated with success'
-                if cmd[0] == 'MOD_SOC' or cmd[0] == 'MODIFIER_SOC' \
-                        or cmd[0] == 'MOD_SOCIAL_STANDING' or cmd[0] == 'MODIFIER_SOCIAL_STANDING':
-                    modify(cur, value, char_id, add, 'mod_soc')
-                    return True, 'Updated with success'
-                if cmd[0] == 'MOD' or cmd[0] == 'MODIFIER':
-                    if cmd[1] == 'STR' or cmd[1] == 'STRENGTH':
-                        modify(cur, value, char_id, add, 'mod_str')
-                        return True, 'Updated with success'
-                    if cmd[1] == 'DEX' or cmd[1] == 'DEXTERITY':
-                        modify(cur, value, char_id, add, 'mod_dex')
-                        return True, 'Updated with success'
-                    if cmd[1] == 'END' or cmd[1] == 'ENDURANCE':
-                        modify(cur, value, char_id, add, 'mod_end')
-                        return True, 'Updated with success'
-                    if cmd[1] == 'INT' or cmd[1] == 'INTELLIGENCE':
-                        modify(cur, value, char_id, add, 'mod_int')
-                        return True, 'Updated with success'
-                    if cmd[1] == 'EDU' or cmd[1] == 'EDUCATION':
-                        modify(cur, value, char_id, add, 'mod_edu')
-                        return True, 'Updated with success'
-                    if cmd[1] == 'SOC' or cmd[1] == 'SOCIAL_STANDING':
-                        modify(cur, value, char_id, add, 'mod_soc')
-                        return True, 'Updated with success'
+
                 if cmd[0] == 'STATUS':
-                    if cmd[1] == 'WOUNDED':
-                        cur.execute('UPDATE characters SET wounded = %s WHERE id = %s;',
-                                    (value == 1, char_id))
-                    if cmd[1] == 'FATIGUED':
-                        cur.execute('UPDATE characters SET fatigued = %s WHERE id = %s;',
+                    if cmd[1] in ['WOUNDED', 'FATIGUED']:
+                        cur.execute(f'UPDATE characters SET {cmd[1].lower()} = %s WHERE id = %s;',
                                     (value == 1, char_id))
                         return True, 'Updated with success'
                     return False, 'No such status exists'
@@ -222,23 +173,11 @@ class RefereeCommands:
                     if cmd[1] == 'ADD':
                         for i in range(2, len(cmd)):
                             command = cmd[i]
-                            splitted = command.split(':', 3)
-                            c = splitted[0]
-                            eq_name = splitted[1]
-                            if c.upper() == 'Computer'.upper() or c.upper() == 'Software'.upper():
-                                level = int(splitted[2])
-                                for e in eq.equipments:
-                                    print(eq.equipments[e].technology_level)
-                                    if eq.equipments[e].name.replace(" ", "").upper() == eq_name.upper() \
-                                            and eq.equipments[e].technology_level == level:
-                                        break
-                            else:
-                                for e in eq.equipments:
-                                    if q.is_coherent(c, e):
-                                        if eq_name.upper() == eq.equipments[e].name.replace(" ", "").upper():
-                                            break
-                            cur.execute('SELECT amount FROM inventories WHERE equipment_id = %s and character_id = %s;',
-                                        (e, char_id))
+                            found, e = q.is_item(command)
+                            if not found:
+                                return False, 'No such item'
+
+                            cur.execute('SELECT amount FROM inventories WHERE equipment_id = %s and character_id = %s;', (e, char_id))
                             amount = cur.fetchone()
                             if amount:
                                 cur.execute('UPDATE inventories '
