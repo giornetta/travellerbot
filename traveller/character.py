@@ -8,7 +8,7 @@ from traveller.career import Career, CareerType, ReEnlistmentOutcome, careers, d
 from traveller.characteristic import Characteristic
 from traveller.world import World
 
-from traveller.equipment import Equipment, Armor, Weapon, equipments
+from traveller.equipment import Equipment, Weapon, equipments
 
 from typing import Dict, List, Optional, Union, cast, Tuple
 from traveller.skill import Skill, skills
@@ -52,6 +52,7 @@ class Character:
     # equipped_armor: Armor = None
     # equipped_reflec: Armor = None
     # drawn_weapon: Weapon = None
+
     inventory: List[Tuple[Equipment, int]]
 
     # Statuses
@@ -155,8 +156,8 @@ class Character:
     @property
     def available_education_skills(self) -> List[str]:
         education_skills = [
-            'Admin-0', 'Advocate-0', 'Animals-0', 'Carousing-0', 'Comms-0', 'Computer-0', 'Electronics-0', 'Engineering-0',
-            'Life Sciences-0', 'Linguistics-0', 'Mechanics-0', 'Medicine-0', 'Physical Sciences-0', 'Social Sciences-0', 'Space Sciences-0'
+            'Admin-0', 'Advocate-0', 'Animals-0', 'Carousing-0', 'Comms-0', 'Computer-0', 'Electronics-0',
+            'Engineering-0', 'Linguistics-0', 'Mechanics-0', 'Medicine-0', 'Sciences-0'
         ]
 
         for s in self.skills:
@@ -241,9 +242,6 @@ class Character:
             self.lose_benefits = True
             message = '❌ You were dishonorably discharged from the service, you lost all benefits.'
         elif mishaps == 5:
-            char = Random().choice(Characteristic.physical())
-            d = dice.roll()
-            self.damage(char, 1)
             message = '⚖ You were dishonorably discharged from the service after serving 4 years in prison for a crime. You lost all benefits.'
             self.lose_benefits = True
             # TODO AGE PRISON

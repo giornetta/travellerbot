@@ -62,7 +62,8 @@ filter_max_10 = Filters.regex('^([0-9]|10)$')
 filter_min_15 = Filters.regex('^([0-9]|1[0-5]|Ignore)$')
 filter_max_15 = Filters.regex('^([0-9]|1[0-5])$')
 
-filter_skills_and_training = Filters.regex('^(Personal Development|Service Skills|Specialist Skills|Advanced Education)$')
+filter_skills_and_training = Filters.regex(
+    '^(Personal Development|Service Skills|Specialist Skills|Advanced Education)$')
 
 
 class CharacterCreationConversation:
@@ -75,7 +76,8 @@ class CharacterCreationConversation:
         return [ConversationHandler(
             entry_points=[MessageHandler(Filters.regex('^(X|E|D|C|B|A|Ignore)$'), self._handle_min_starport)],
             states={
-                State.MIN_STARPORT: [MessageHandler(Filters.regex('^(X|E|D|C|B|A|Ignore)$'), self._handle_min_starport)],
+                State.MIN_STARPORT: [
+                    MessageHandler(Filters.regex('^(X|E|D|C|B|A|Ignore)$'), self._handle_min_starport)],
                 State.MAX_STARPORT: [MessageHandler(Filters.regex('^(X|E|D|C|B|A)$'), self._handle_max_starport)],
                 State.MIN_SIZE: [MessageHandler(filter_min_10, self._handle_min(Attribute.SIZE))],
                 State.MAX_SIZE: [MessageHandler(filter_max_10, self._handle_max(Attribute.SIZE))],
@@ -95,17 +97,20 @@ class CharacterCreationConversation:
                 State.HOMEWORLD_SKILL: [MessageHandler(Filters.text, self._handle_homeworld_skill)],
                 State.EDUCATION_SKILL: [MessageHandler(Filters.text, self._handle_education_skill)],
                 State.CAREER: [MessageHandler(Filters.text, self._handle_career)],
-                State.DRAFT_OR_DRIFTER: [MessageHandler(Filters.regex('^(Drifter|Draft)$'), self._handle_draft_or_drifter)],
+                State.DRAFT_OR_DRIFTER: [
+                    MessageHandler(Filters.regex('^(Drifter|Draft)$'), self._handle_draft_or_drifter)],
                 State.CAREER_SKILL: [MessageHandler(Filters.text, self._handle_career_skill)],
                 State.COMMISSION: [MessageHandler(filter_skills_and_training, self._handle_commission_table)],
                 State.ADVANCEMENT: [MessageHandler(filter_skills_and_training, self._handle_advancement_table)],
-                State.SKILLS_AND_TRAINING: [MessageHandler(filter_skills_and_training,self._handle_skills_and_training)],
-                State.SECOND_SKILLS_AND_TRAINING: [MessageHandler(filter_skills_and_training, self._handle_second_skills_and_training)],
+                State.SKILLS_AND_TRAINING: [
+                    MessageHandler(filter_skills_and_training, self._handle_skills_and_training)],
+                State.SECOND_SKILLS_AND_TRAINING: [
+                    MessageHandler(filter_skills_and_training, self._handle_second_skills_and_training)],
                 State.DRUGS: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_drugs)],
                 State.RETIRE: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_retire)],
                 State.CONTINUE: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_continue)],
                 State.BENEFITS: [MessageHandler(Filters.regex('(Cash|Material)$'), self._handle_benefits)],
-                State.NAME: [MessageHandler(Filters.regex("^[A-Za-z ,.'-]+$"), self._handle_name)],
+                State.NAME: [MessageHandler(Filters.regex("^[A-Za-z]+$"), self._handle_name)],
                 State.SEX: [MessageHandler(Filters.regex("^(M|F)$"), self._handle_sex)],
                 State.UNDO_DAMAGE: [MessageHandler(Filters.text, self._handle_undo_damage)]
             },
@@ -122,7 +127,8 @@ class CharacterCreationConversation:
         user.init_filters()
 
         if update.message.text == 'Ignore':
-            kb.ask_min.reply_text(update, params=Attribute.SIZE.full_name, keys=num_keys(0, Attribute.SIZE.max, ignore=True))
+            kb.ask_min.reply_text(update, params=Attribute.SIZE.full_name,
+                                  keys=num_keys(0, Attribute.SIZE.max, ignore=True))
             return State.MIN_SIZE
 
         user.filters[Attribute.STARPORT].min = starport_values[update.message.text]
@@ -140,7 +146,8 @@ class CharacterCreationConversation:
         val = update.message.text
         user.filters[Attribute.STARPORT].max = max(user.filters[Attribute.STARPORT].min, starport_values[val])
 
-        kb.ask_min.reply_text(update, params=Attribute.SIZE.full_name, keys=num_keys(0, Attribute.SIZE.max, ignore=True))
+        kb.ask_min.reply_text(update, params=Attribute.SIZE.full_name,
+                              keys=num_keys(0, Attribute.SIZE.max, ignore=True))
         return State.MIN_SIZE
 
     def _handle_min(self, attr: Attribute) -> Callable[[Update, CallbackContext], State]:
@@ -202,7 +209,8 @@ class CharacterCreationConversation:
 
         if len(worlds) == 0:
             kb.no_world_found.reply_text(update)
-            kb.ask_min.reply_text(update, params=Attribute.STARPORT.full_name, keys=[['X', 'E', 'D'], ['C', 'B', 'A'], ['Ignore']])
+            kb.ask_min.reply_text(update, params=Attribute.STARPORT.full_name,
+                                  keys=[['X', 'E', 'D'], ['C', 'B', 'A'], ['Ignore']])
             return State.MIN_STARPORT
 
         kb.choose_world.reply_text(update, params=user.adventure.sector, keys=single_keys(worlds))
@@ -300,8 +308,6 @@ class CharacterCreationConversation:
         return self._basic_training(update, c, skills)
 
     def _basic_training(self, update: Update, c: CareerType, skills: Optional[List[Skill]]) -> State:
-        user = user_data[update.message.from_user.id]
-
         if skills is not None:
             for s in skills:
                 kb.skill_acquired.reply_text(update, params=s)
@@ -429,7 +435,6 @@ class CharacterCreationConversation:
         return State.SECOND_SKILLS_AND_TRAINING
 
     def _handle_second_skills_and_training(self, update: Update, context: CallbackContext) -> State:
-        user = user_data[update.message.from_user.id]
         self._skills_and_training(update)
         return self._ask_drugs(update)
 
@@ -612,7 +617,7 @@ class CharacterCreationConversation:
 
         self.service.create_character(update.message.from_user.id, user.adventure.id, user.character)
 
-        update.message.reply_text('Created!', reply_markup=ReplyKeyboardRemove())
+        kb.creation.reply_text(update)
         return State.END
 
     def _handle_name(self, update: Update, context: CallbackContext) -> State:
@@ -626,6 +631,7 @@ class CharacterCreationConversation:
 
         kb.character_sex.reply_text(update)
         return State.SEX
+
 
 def start_character_creation(update: Update):
     user = user_data[update.message.from_user.id]

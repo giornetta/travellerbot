@@ -34,8 +34,8 @@ class CareerType:
     name: str
     qualification: Tuple[Ch, int]
     survival: Tuple[Ch, int]
-    commission: Optional[Ch, int]
-    advancement: Optional[Ch, int]
+    commission: Optional[Tuple[Ch, int]]
+    advancement: Optional[Tuple[Ch, int]]
     re_enlistment: int
     ranks: Dict[int, Union[Ch, str]]
     skill_and_training: List[Dict[int, Union[Ch, str]]]
@@ -184,7 +184,6 @@ physician = CareerType(
     patron_rates=[0.5, 0.75, 1]
 )
 
-
 pirate = CareerType(
     name='Pirate',
     qualification=(Ch.DEX, 5),
@@ -236,7 +235,8 @@ scientist = CareerType(
     skill_and_training=[{1: Ch.STR, 2: Ch.DEX, 3: Ch.END, 4: Ch.INT, 5: Ch.EDU, 6: "Gun Combat"},
                         {1: 'Admin', 2: 'Computer', 3: 'Electronics', 4: 'Electronics', 5: 'Bribery', 6: 'Sciences'},
                         {1: 'Sciences', 2: 'Admin', 3: 'Sciences', 4: 'Sciences', 5: 'Animals', 6: 'Vehicle'},
-                        {1: 'Advocate', 2: 'Computer', 3: 'Jack-of-All-Trades', 4: 'Linguistics', 5: 'Medicine', 6: 'Sciences'}],
+                        {1: 'Advocate', 2: 'Computer', 3: 'Jack-of-All-Trades', 4: 'Linguistics', 5: 'Medicine',
+                         6: 'Sciences'}],
     material_benefits={1: 1, 2: Ch.EDU, 3: Ch.INT, 4: 2, 5: Ch.SOC, 6: 3, 7: 5},
     cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
     patron_rates=[0.5, 0.75, 1]
@@ -518,7 +518,6 @@ surface_defense = CareerType(
     cash={1: 1000, 2: 5000, 3: 10000, 4: 10000, 5: 20000, 6: 50000, 7: 50000},
     patron_rates=[0.75, 1, 1]
 )
-
 
 careers: Dict[str, CareerType] = {
     athlete.name: athlete,

@@ -58,7 +58,7 @@ class World:
 
     def __init__(self, name: str, uwp: str, hexc: str):
         self.name = name
-        self.hex = hexc
+        self.hexc = hexc
 
         self.attr = {Attribute.STARPORT: starport_values[uwp[0]]}
 

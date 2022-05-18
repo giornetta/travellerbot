@@ -1,11 +1,10 @@
-from psycopg2.extensions import  connection
+from psycopg2.extensions import connection
 
 from traveller.character import Character
 from traveller.characteristic import Characteristic
 
 
 class CharacterCreator:
-
     db: connection
 
     def __init__(self, db: connection):
@@ -22,15 +21,15 @@ class CharacterCreator:
     def sector(self, adventure_id: str) -> str:
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('SELECT sector FROM adventures WHERE id = %s', (adventure_id, ))
+                cur.execute('SELECT sector FROM adventures WHERE id = %s', (adventure_id,))
                 return cur.fetchone()[0]
-    
+
     def create_character(self, user_id: int, adventure_id: str, c: Character):
         with self.db:
             with self.db.cursor() as cur:
                 cur.execute('INSERT INTO characters(user_id, adventure_id, char_name, sex, age, '
                             'strength, dexterity, endurance, intelligence, education, social_standing, credits, society) '
-                            'VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) '
+                            'VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) '
                             'ON CONFLICT DO NOTHING RETURNING id;', (
                                 user_id, adventure_id,
                                 c.name, c.sex, c.age,

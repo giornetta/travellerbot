@@ -3,8 +3,6 @@ import psycopg2
 from telegram.ext import Updater, PicklePersistence
 
 from cache import userdata
-from adventure_setup.service import AdventureSetupService
-from character_creation.service import CharacterCreator
 from bot.conversation import handler
 
 from travellermap import api
@@ -19,6 +17,9 @@ if __name__ == '__main__':
     api.load_map(config['MAP_PATH'])
     userdata.load_data(config['CACHE_PATH'])
 
+    for k, v in userdata.user_data.items():
+        print(str(k) + ': ', v)
+
     conn = psycopg2.connect(
         user=config['DB_USER'],
         password=config['DB_PASS'],
@@ -32,10 +33,8 @@ if __name__ == '__main__':
         persistence=PicklePersistence(filename=config['CONV_PATH']),
         use_context=True,
     )
-    character_creator = CharacterCreator(conn)
-    setup_controller = AdventureSetupService(conn)
 
-    conversation = handler(setup_controller, character_creator)
+    conversation = handler(conn)
     updater.dispatcher.add_handler(conversation)
 
     updater.start_polling()

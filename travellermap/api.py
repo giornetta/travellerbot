@@ -15,7 +15,7 @@ data: Dict[str, List[World]] = {}
 def load_map(path: str):
     if os.path.isfile(path):
         with open(path) as f:
-            d: Dict[str, List[Tuple[str, str]]] = json.load(f)
+            d: Dict[str, List[Tuple[str, str, str]]] = json.load(f)
 
             for sec in d:
                 data[sec] = []

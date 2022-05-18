@@ -50,13 +50,13 @@ The combat is formed by these elements.
         - *Parrying*: when attacked melee you can parry, your attacker receives a negative `DM` equal to your *Melee* skill. You receive a `-1 DM` to all your skill checks until the end of your next turn.
 6. **After being hit**
     - When you are hit the damage is subtracted from your *Endurance*. If your *Endurance* is reduced to 0 the damage is subtracted from your *Strength* or *Dexterity* (your choice).
-    - When two out of three phisical charateristics are reduced to 0, you become unconscious.
+    - When two out of three physical characteristics are reduced to 0, you become unconscious.
     - If all physical characteristics are reduced to 0, you are killed.
 7. **End of Combat**
     - Every player will be asked if they want to perform first aid on an ally or on themselves.
         - Applying first aid restores a number of characteristic points equal to twice the Effect of the Medic check. Points restored by first aid are divided as desired among all damaged physical characteristics.
         - If you perform first aid on yourself to receive a `-2 DM`.
-    - If first aid succeded on a seriously wounded character the bot will ask if they want to do a surgery too on the same character.
+    - If first aid succeeded on a seriously wounded character the bot will ask if they want to do a surgery too on the same character.
         -  Surgery restores characteristic points just like first aid but if the check is failed the patient loses characteristic points equal to the Effect.
         - If you perform surgery on yourself to receive a `-4 DM`.
 

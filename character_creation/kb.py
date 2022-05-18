@@ -1,4 +1,3 @@
-import telegram
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 from keyboards.keyboards import Keyboard
@@ -177,3 +176,8 @@ buy_equip = Keyboard('💰 You have *%sCr*, do you want to buy something?',
                      reply_markup=ReplyKeyboardMarkup([
                          ['A', 'B', '...', 'No']
                      ], one_time_keyboard=True))
+
+creation = Keyboard('⚔ Are you ready to start your adventure?',
+                    reply_markup=ReplyKeyboardMarkup([
+                        ['Yes!', 'Of course!', 'Sure!']
+                    ], one_time_keyboard=True))

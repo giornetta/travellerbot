@@ -5,11 +5,18 @@ from typing import Dict
 from traveller.adventure import Adventure
 from traveller.character import Character
 from traveller.world import Attribute, AttrFilter
+from traveller.npc import Npc
 
 
 class UserData:
+    # Used for idle player
+    item: str
+    item_id: int
+
     # Used for adventure creation
     adventure: Adventure
+    npc: Npc
+    scene_name: str
 
     # Used for character creation
     character: Character

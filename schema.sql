@@ -14,8 +14,8 @@ CREATE TABLE adventures (
     max_terms INT NOT NULL,
     survival_fail_kills BOOLEAN NOT NULL,
 
-    scene_id INT,
-    referee_id BIGINT NOT NULL REFERENCES users(id)
+    referee_id BIGINT NOT NULL REFERENCES users(id),
+    scene_id INT DEFAULT 0 --active scene
 );
 
 ALTER TABLE users ADD CONSTRAINT fkActiveAdventure FOREIGN KEY(active_adventure) REFERENCES adventures(id);
@@ -73,6 +73,41 @@ CREATE TABLE skill_sets (
     level INT NOT NULL,
 
     PRIMARY KEY (character_id, skill_name)
+);
+
+CREATE TABLE scenes(
+    id SERIAL PRIMARY KEY,
+    scene_name VARCHAR(32),
+
+    adventure_id CHAR(6) REFERENCES adventures(id)
+);
+
+CREATE TABLE npcs(
+    id SERIAL PRIMARY KEY,
+    npc_name VARCHAR(32) NOT NULL,
+
+    strength INT NOT NULL,
+    dexterity INT NOT NULL,
+    endurance INT NOT NULL,
+    intelligence INT NOT NULL,
+    education INT NOT NULL,
+    social_standing INT NOT NULL,
+    career VARCHAR(32) NOT NULL,
+    rank INT NOT NULL,
+    armor INT NOT NULL,
+    weapon INT NOT NULL,
+    ally BOOLEAN NOT NULL DEFAULT FALSE,
+
+    scene INT REFERENCES scenes(id),
+    pos INT NOT NULL DEFAULT 0 --scene position
+);
+
+CREATE TABLE careers(
+    char_id SERIAL REFERENCES characters(id),
+    career VARCHAR(32),
+    rank INT NOT NULL,
+
+    PRIMARY KEY (char_id, career)
 );
 
 CREATE TABLE shop (
