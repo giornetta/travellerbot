@@ -119,44 +119,55 @@ class RefereeCommands:
                 char_id_tuple = cur.fetchone()
                 if not char_id_tuple:
                     return False, '❌ No one has this name.'
+
                 char_id = char_id_tuple[0]
                 cmd = [s.upper() for s in cmd]
                 if len(cmd) < 2:
                     cmd.extend([''] * (2 - len(cmd)))
+
                 add = False
                 if value[0] == '+' or value[0] == '-':
                     add = True
+
                 if cmd[0] == 'STANCE':
                     stance = ['PRONE', 'CROUCHED', 'STANDING']
-                    value = stance.index(value.upper()) if value.upper() in stance else value
-                    if value not in range(3):
-                        return False, '❌ Stance can only be one of the following: <b>Prone</b>, <b>Crouched</b>, <b>Standing</b>'
-                    cur.execute('UPDATE characters SET stance = %s WHERE id = %s', (value, char_id))
-                    return True, '✅ Successfully updated stance!'
+                    print(value)
+                    try:
+                        value = stance.index(value.upper())
+                        cur.execute('UPDATE characters SET stance = %s WHERE id = %s', (value, char_id))
+                        return True, '✅ Successfully updated stance!'
+                    except ValueError:
+                        return False, '❌ Stance can only be one of the following: *Prone*, *Crouched*, *Standing*'
+
                 try:
                     value = int(value)
                 except ValueError:
                     return False, '❌ Invalid format.'
+
                 if cmd[0] == 'RADS' or cmd[0] == 'RADIATIONS':
                     modify(cur, value, char_id, add, 'rads')
                     return True, '✅ Successfully updated radiations!'
+
                 if cmd[0] == 'STAT' or cmd[0] == 'MOD':
                     try:
                         char = Characteristic[cmd[1]]
                     except KeyError:
                         return False, '❌ There\'s no such characteristic!'
-                    stat = char.value.lower() if cmd[0] == 'STAT' else char.name.lower() + '_mod'
+                    stat = char.value.lower().replace(' ', '_') if cmd[0] == 'STAT' else char.name.lower() + '_mod'
                     modify(cur, value, char_id, add, stat)
                     return True, '✅ Successfully updated characteristic!'
+
                 if cmd[0] == 'STATUS':
                     if cmd[1] in ['WOUNDED', 'FATIGUED']:
                         cur.execute(f'UPDATE characters SET {cmd[1].lower()} = %s WHERE id = %s;',
                                     (value == 1, char_id))
                         return True, '✅ Successfully updated status!'
                     return False, '❌ No such status exists'
+
                 if cmd[0] == 'CR' or cmd[0] == 'CREDITS':
                     modify(cur, value, char_id, add, 'credits')
                     return True, '✅ Successfully updated credits!'
+
                 if cmd[0] == 'INV' or cmd[0] == 'INVENTORY' or cmd[0] == 'EQUIPMENT':
                     if cmd[1] == 'RM' or cmd[1] == 'REMOVE':
                         if value <= 0:

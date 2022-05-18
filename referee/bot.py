@@ -43,7 +43,7 @@ class RefereeCommandsConversation:
 
     def _handle_command(self, update: Update, context: CallbackContext) -> State:
         check, text = self.service.cp.execute(update.message.text, update.message.from_user.id)
-        update.message.reply_text(text)
+        update.message.reply_text(text, parse_mode=telegram.ParseMode.MARKDOWN)
         return State.COMMANDS
 
     def _handle_info(self, update: Update, context: CallbackContext) -> State:

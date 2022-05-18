@@ -110,7 +110,7 @@ class CharacterCreationConversation:
                 State.RETIRE: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_retire)],
                 State.CONTINUE: [MessageHandler(Filters.regex('^(Yes|No)$'), self._handle_continue)],
                 State.BENEFITS: [MessageHandler(Filters.regex('(Cash|Material)$'), self._handle_benefits)],
-                State.NAME: [MessageHandler(Filters.regex("^[A-Za-z ,.'-]+$"), self._handle_name)],
+                State.NAME: [MessageHandler(Filters.regex("^[A-Za-z]+$"), self._handle_name)],
                 State.SEX: [MessageHandler(Filters.regex("^(M|F)$"), self._handle_sex)],
                 State.UNDO_DAMAGE: [MessageHandler(Filters.text, self._handle_undo_damage)]
             },
