@@ -308,8 +308,6 @@ class CharacterCreationConversation:
         return self._basic_training(update, c, skills)
 
     def _basic_training(self, update: Update, c: CareerType, skills: Optional[List[Skill]]) -> State:
-        user = user_data[update.message.from_user.id]
-
         if skills is not None:
             for s in skills:
                 kb.skill_acquired.reply_text(update, params=s)
@@ -437,7 +435,6 @@ class CharacterCreationConversation:
         return State.SECOND_SKILLS_AND_TRAINING
 
     def _handle_second_skills_and_training(self, update: Update, context: CallbackContext) -> State:
-        user = user_data[update.message.from_user.id]
         self._skills_and_training(update)
         return self._ask_drugs(update)
 

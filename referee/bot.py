@@ -1,5 +1,5 @@
 import telegram
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update
 from telegram.ext import ConversationHandler, CallbackContext, CommandHandler
 
 from bot.state import ConversationState

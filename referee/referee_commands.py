@@ -10,7 +10,6 @@ import traveller.equipment as eq
 
 from referee.command_parser import CommandParser
 from traveller.characteristic import Characteristic as Ch, Characteristic
-from travellermap import api
 import traveller.queries as q
 
 
@@ -218,10 +217,9 @@ class RefereeCommands:
                                 (adv_id,))
                     return True, '✅ The party rested shortly!'
                 if cmd.upper() == 'LONG':
-                    cur.execute('UPDATE characters SET fatigued = FALSE WHERE adventure_id = %s AND alive = TRUE;',
+                    cur.execute('UPDATE characters SET fatigued = FALSE, str_mod = 0, dex_mod = 0, end_mod = 0, '
+                                'int_mod = 0, edu_mod = 0, soc_mod = 0 WHERE adventure_id = %s AND alive = TRUE;',
                                 (adv_id,))
-                    cur.execute('UPDATE characters SET str_mod = 0, dex_mod = 0, end_mod = 0, '
-                                'int_mod = 0, edu_mod = 0, soc_mod = 0')
                     return True, '✅ The party rested for a long time!'
             return False, '❌ Insert either <b>short</b> or <b>long</b>'
 

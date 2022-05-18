@@ -14,7 +14,6 @@ if __name__ == '__main__':
         for w in worlds:
             hexc: str = str(w['World']['HexX']).zfill(2) + str(w['World']['HexY']).zfill(2)
             uwp: str = w['World']['Uwp']
-            hexc: str = w['World']['HexX'] + w['World']['HexY']
             if len(w['World']['Name']) > 0 and '?' not in uwp:
                 for i in range(1, len(uwp)):
                     if uwp[i] > 'F':

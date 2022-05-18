@@ -1,6 +1,6 @@
 from psycopg2.extensions import connection
 from telegram import Update
-from telegram.ext import ConversationHandler, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram.ext import ConversationHandler, CommandHandler, CallbackContext
 
 from adventure_setup.service import AdventureSetupService
 from cache.userdata import user_data, UserData

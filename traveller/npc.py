@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from traveller.career import Career
-from traveller.equipment import Armor, Weapon
 
 @dataclass
 class Npc:

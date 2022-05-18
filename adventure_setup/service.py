@@ -1,6 +1,6 @@
 import string
 import random
-from typing import Optional, Tuple
+from typing import Optional
 
 import psycopg2
 import psycopg2.errors
@@ -25,7 +25,7 @@ class AdventureSetupService:
                     cur.execute('SELECT * FROM adventures WHERE id = %s;', (code, ))
                     adv_id, title, sector, world, terms, survival_kills, referee_id, scene = cur.fetchone()
                     adv = Adventure.from_db((adv_id, title, sector, world, terms, survival_kills, referee_id))
-                except (psycopg2.errors.ForeignKeyViolation, psycopg2.errors.InFailedSqlTransaction) as e:
+                except (psycopg2.errors.ForeignKeyViolation, psycopg2.errors.InFailedSqlTransaction):
                     self.db.rollback()
 
         return adv

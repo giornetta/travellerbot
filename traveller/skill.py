@@ -1,21 +1,11 @@
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict
 
 skills: Dict[str, bool] = {  # Name, is_passive
     "Battle Dress": True,
     "Jack-of-All-Trades": True,
     "Zero-G": True,
-    "Archery": True,
-    "Energy Pistol": True,
-    "Energy Rifle": True,
-    "Shotgun": True,
-    "Slug Pistol": True,
-    "Slug Rifle": True,
-    "Bludgeoning Weapons": True,
-    "Natural Weapons": True,
-    "Piercing Weapons": True,
-    "Slashing Weapons": True,
     "Gun Combat": True,
     "Melee Combat": True,
     "Vehicle": False,

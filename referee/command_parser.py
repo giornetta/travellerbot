@@ -6,7 +6,7 @@ class CommandParser:
     callbacks: Dict[str, Callable] = {}
 
     def execute(self, command: str, referee_id: int) -> (bool, str):
-        if re.match(r'^/[0-9a-zA-Z+\- :]+$', command):
+        if re.match(r'^/[\da-zA-Z+\- :]+$', command):
             cmd = list(filter(lambda s: s != '', command.split(' ')))
             cmd[0] = cmd[0][1:]  # remove the '/' character
 
@@ -102,7 +102,7 @@ class CommandParser:
     def set_exit_callback(self, callback: Callable[[], Tuple[bool, str]]):
         self.callbacks['exit'] = callback
 
-    def __setitem__(self, key: str, value: Callable):
+    def __setitem__(self, key: str, callback: Callable):
         options = {
             "info": self.set_info_callback,
             "set": self.set_set_callback,
@@ -114,8 +114,8 @@ class CommandParser:
             "scene": self.set_scene_callback,
             "exit": self.set_exit_callback
         }
-        func = options.get(key)
+        func: Callable = options.get(key)
         if func is not None:
-            func(value)
+            func(callback)
         else:
-            self.callbacks[key] = value
+            self.callbacks[key] = callback

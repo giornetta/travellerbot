@@ -2,9 +2,9 @@
 
 Here is a list of all the skills and whether they need a particular implementation or not.
 
-## Assumpions
+## Assumptions
 - Gunnery skill is replaced with Gun Combat.
-- All skills that are cascaded from Vehicle/Animals are replaced with Vehicle/Animals themselves.
+- All cascade Skills are replaced with their parent skills.
 - Bets are not implemented.
 - Luxury items are not implemented.
 - Bribery is simplified.

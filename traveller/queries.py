@@ -31,8 +31,8 @@ def info_adventure(cur: cursor, adv_id: str) -> str:
     cur.execute('SELECT id,title,sector,planet,max_terms,survival_fail_kills '
                 'FROM adventures WHERE id = %s;'
                 , (adv_id,))
-    id, title, sector, world, max_terms, survival_fail_kills = cur.fetchone()
-    text = f'#️ <b>Code</b>: <code>{id}</code>' + \
+    adv_id, title, sector, world, max_terms, survival_fail_kills = cur.fetchone()
+    text = f'#️ <b>Code</b>: <code>{adv_id}</code>' + \
            '\n📝 <b>Title</b>: ' + title + \
            '\n🌌 <b>Sector</b>: ' + sector + \
            '\n🪐 <b>World</b>: ' + world + \
@@ -79,7 +79,7 @@ def info_character(cur: cursor, adv_id: str, name: str) -> str:
         return 'No one has this name'
 
     character_id, sex, age, strength, dexterity, endurance, intelligence, education, social_standing, \
-    str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits_holded, \
+    str_mod, dex_mod, end_mod, int_mod, edu_mod, soc_mod, credits_held, \
     equipped_armor, drawn_weapon, stance, rads, wounded, fatigued, stims_taken = player_info
 
     stance_mod = ['Prone', 'Crouched', 'Standing']
@@ -94,7 +94,7 @@ def info_character(cur: cursor, adv_id: str, name: str) -> str:
            f'\n🧠 <b>INT</b>: {intelligence} {"+" if int_mod > 0 else "-" if int_mod != 0 else ""} {abs(int_mod) if int_mod != 0 else ""}' \
            f'\n📚 <b>EDU</b>: {education} {"+" if edu_mod > 0 else "-" if edu_mod != 0 else ""} {abs(edu_mod) if edu_mod != 0 else ""}' \
            f'\n👑 <b>SOC</b>: {social_standing} {"+" if soc_mod > 0 else "-" if soc_mod != 0 else ""} {abs(soc_mod) if soc_mod != 0 else ""}' \
-           f'\n💵 <b>Credits</b>: {credits_holded}' \
+           f'\n💵 <b>Credits</b>: {credits_held}' \
            f'\n🧍 <b>Stance</b>: {stance_mod[stance]}' \
            f'\n☢️ <b>Rads</b>: {rads}' \
            f'\n🦴 <b>Wounded</b>: {wounded}' \
@@ -118,7 +118,7 @@ def info_character(cur: cursor, adv_id: str, name: str) -> str:
     return text
 
 
-def get_items(cur: cursor, adv_id, user_id) -> List[str]:
+def get_items(cur: cursor, adv_id, user_id) -> List[List[str]]:  # TODO make this a List[str] and use single_keys
     cur.execute('SELECT id FROM characters WHERE alive=TRUE AND adventure_id = %s AND user_id = %s',
                 (adv_id, user_id))
     character_id = cur.fetchone()[0]
@@ -172,49 +172,47 @@ def get_items(cur: cursor, adv_id, user_id) -> List[str]:
 
 
 def is_item(name: str) -> Tuple[bool, int]:
-    flag = False
+    eq_id: int = -1
+
     splitted = name.split(':', 3)
     if len(splitted) == 1:
-        return False, -1
+        return False, eq_id
+
     c = splitted[0].upper()
     eq_name = splitted[1].upper()
-    if c == 'COMPUTER' or c == 'SOFTWARE':
-        level = int(splitted[2])
-        for e in eq.equipments:
-            if eq.equipments[e].name.replace(" ", "").upper() == eq_name \
-                    and eq.equipments[e].technology_level == level:
-                flag = True
-                break
-    else:
-        for e in eq.equipments:
-            if is_coherent(c, e):
-                if eq_name.upper() == eq.equipments[e].name.replace(" ", "").upper():
-                    flag = True
-                    print(eq_name.upper())
-                    break
 
-    if not flag:
-        return False, -1
-    return True, e
+    for k, v in eq.equipments.items():
+        if c in ['COMPUTER', 'SOFTWARE']:
+            if v.name.replace(" ", "").upper() == eq_name and v.technology_level == int(splitted[2]):
+                eq_id = k
+                break
+        else:
+            if is_coherent(c, k) and eq_name == v.name.replace(" ", "").upper():
+                eq_id = k
+                break
+
+    return eq_id != -1, eq_id
 
 
 def is_coherent(c: str, i: int) -> bool:
     e = eq.equipments[i]
-    return c.upper() == 'Armor'.upper() and isinstance(e, eq.Armor) or \
-           c.upper() == "Communicator".upper() and isinstance(e, eq.Communicator) or \
-           c.upper() == "Computer".upper() and isinstance(e, eq.Computer) or \
-           c.upper() == "Software".upper() and isinstance(e, eq.Software) or \
-           c.upper() == "Drug".upper() and isinstance(e, eq.Drug) or \
-           c.upper() == "Explosive".upper() and isinstance(e, eq.Explosive) or \
-           c.upper() == "PersonalDevice".upper() and isinstance(e, eq.PersonalDevice) or \
-           c.upper() == "SensoryAid".upper() and isinstance(e, eq.SensoryAid) or \
-           c.upper() == "Shelter".upper() and isinstance(e, eq.Shelter) or \
-           c.upper() == "SurvivalEquipment".upper() and isinstance(e, eq.SurvivalEquipment) or \
-           c.upper() == "Tool".upper() and isinstance(e, eq.Tool) or \
-           c.upper() == "MeleeWeapon".upper() and isinstance(e, eq.MeleeWeapon) or \
-           c.upper() == "RangedWeapon".upper() and isinstance(e, eq.RangedWeapon) or \
-           c.upper() == "RangedAmmunition".upper() and isinstance(e, eq.RangedAmmunition) or \
-           c.upper() == "WeaponAccessory".upper() and isinstance(e, eq.WeaponAccessory) or \
-           c.upper() == "Grenade".upper() and isinstance(e, eq.Grenade) or \
-           c.upper() == "HeavyWeapon".upper() and isinstance(e, eq.HeavyWeapon) or \
-           c.upper() == "HeavyWeaponAmmunition".upper() and isinstance(e, eq.HeavyWeaponAmmunition)
+    c = c.upper()
+
+    return c == 'Armor'.upper() and isinstance(e, eq.Armor) or \
+           c == "Communicator".upper() and isinstance(e, eq.Communicator) or \
+           c == "Computer".upper() and isinstance(e, eq.Computer) or \
+           c == "Software".upper() and isinstance(e, eq.Software) or \
+           c == "Drug".upper() and isinstance(e, eq.Drug) or \
+           c == "Explosive".upper() and isinstance(e, eq.Explosive) or \
+           c == "PersonalDevice".upper() and isinstance(e, eq.PersonalDevice) or \
+           c == "SensoryAid".upper() and isinstance(e, eq.SensoryAid) or \
+           c == "Shelter".upper() and isinstance(e, eq.Shelter) or \
+           c == "SurvivalEquipment".upper() and isinstance(e, eq.SurvivalEquipment) or \
+           c == "Tool".upper() and isinstance(e, eq.Tool) or \
+           c == "MeleeWeapon".upper() and isinstance(e, eq.MeleeWeapon) or \
+           c == "RangedWeapon".upper() and isinstance(e, eq.RangedWeapon) or \
+           c == "RangedAmmunition".upper() and isinstance(e, eq.RangedAmmunition) or \
+           c == "WeaponAccessory".upper() and isinstance(e, eq.WeaponAccessory) or \
+           c == "Grenade".upper() and isinstance(e, eq.Grenade) or \
+           c == "HeavyWeapon".upper() and isinstance(e, eq.HeavyWeapon) or \
+           c == "HeavyWeaponAmmunition".upper() and isinstance(e, eq.HeavyWeaponAmmunition)

@@ -1,7 +1,6 @@
 from random import randint
 from typing import List
 from enum import Enum, auto
-from dataclasses import dataclass
 import re
 
 from telegram import Update

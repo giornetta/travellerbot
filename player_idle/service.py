@@ -2,7 +2,6 @@ from typing import List, Tuple
 
 from psycopg2.extensions import cursor
 from psycopg2.extensions import connection
-import json
 
 import traveller.queries as q
 
@@ -38,7 +37,7 @@ class PlayerIdle:
                 name = self.get_name(cur, user_id, adv_id)
                 return q.info_character(cur, adv_id, name)
 
-    def get_items(self, user_id: int) -> List[str]:
+    def get_items(self, user_id: int) -> List[List[str]]:
         with self.db:
             with self.db.cursor() as cur:
                 adv_id = self.get_adv_id(cur, user_id)

@@ -1,4 +1,3 @@
-import telegram
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 from keyboards.keyboards import Keyboard
