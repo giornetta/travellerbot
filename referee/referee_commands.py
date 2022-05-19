@@ -239,16 +239,20 @@ class RefereeCommands:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
-            if end:
-                cur.execute('UPDATE adventures SET scene_id = NULL WHERE id = %s;', (adv_id,))
-                return True, '✅ Successfully set scene!'
-            else:
-                try:
-                    cur.execute('UPDATE adventures SET scene_id = %s WHERE id = %s;',
-                                (combat, adv_id))
-                except IntegrityError:
-                    return False, '❌ No scene has this name.'
-                return True, '✅ Successfully set scene!'
+                if end:
+                    cur.execute('UPDATE adventures SET scene_id = NULL WHERE id = %s;', (adv_id,))
+                    return True, '✅ Successfully closed combat!'
+                else:
+                    try:
+                        cur.execute('SELECT id FROM scenes WHERE scene_name = %s;', (combat, ))
+                        scene_id = cur.fetchone()
+                        if scene_id is None:
+                            return False, '❌ No scene has this name.'
+                        cur.execute('UPDATE adventures SET scene_id = %s WHERE id = %s;',
+                                    (scene_id, adv_id))
+                    except psycopg2.Error:
+                        return False, '❌ No scene has this name.'
+                    return True, '✅ Successfully started combat!'
 
     def travel(self, name: str, referee_id: int) -> (bool, str):
         with self.db:

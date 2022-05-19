@@ -112,6 +112,7 @@ CREATE TABLE careers(
 
 CREATE TABLE shop (
     adventure_id CHAR(6) REFERENCES adventures(id),
-    equipment_id INT,
-    PRIMARY KEY(adventure_id,equipment_id)
+    category TEXT,
+    tl INT,
+    PRIMARY KEY(adventure_id, category)
 );
