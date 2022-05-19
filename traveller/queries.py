@@ -131,6 +131,17 @@ def get_items(cur: cursor, adv_id, user_id) -> List[List[str]]:  # TODO make thi
     return items
 
 
+def items_from_shop(cur: cursor, adv_id, user_id) -> List[int]:
+    cur.execute('SELECT category,tl FROM shop WHERE adventure_id = %s', (adv_id,))
+    categories = cur.fetchall()
+    items = []
+    for c in categories:
+        for eq_id in range(len(eq.equipments)):
+            if is_coherent(c[0], eq_id) and eq.equipments[eq_id].technology_level <= c[1]:
+                items.append(eq_id)
+    return items
+
+
 def eq_name_from_id(ids: List[int]) -> List[List[str]]:
     items = []
     for eq_id in ids:

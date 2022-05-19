@@ -207,16 +207,17 @@ class RefereeCommands:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
+                cur.execute('DELETE FROM shop WHERE adventure_id = %s;', (adv_id,))
                 if cmd[-1].upper() == 'CLOSE':
-                    cur.execute('DELETE FROM shop WHERE adventure_id = %s;', (adv_id,))
                     return True, '✅ Successfully closed shop!'
-                for c in cmd:  # Check to see if existing shop?
-                    for e in eq.equipments:
-                        if q.is_coherent(c, e):
-                            cur.execute(
-                                'INSERT INTO shop(adventure_id, equipment_id) VALUES(%s,%s) ON CONFLICT DO NOTHING;',
-                                (adv_id, e))
-                    return True, '✅ Successfully opened shop!'
+                if not isinstance(cmd[-1], int):
+                    return False, '❌ Insert Technology Level'
+                for c in cmd:
+                    if c.upper() in eq.categories.keys():
+                        cur.execute(
+                            'INSERT INTO shop(adventure_id, category, tl) VALUES(%s,%s,%s) ON CONFLICT DO NOTHING;',
+                            (adv_id, c, cmd[-1]))
+                return True, '✅ Successfully opened shop!'
 
     def rest(self, cmd: str, referee_id: int) -> (bool, str):
         with self.db:

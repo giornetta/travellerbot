@@ -55,7 +55,9 @@ CREATE TABLE characters (
     society BOOLEAN DEFAULT FALSE,
 
     user_id BIGINT NOT NULL REFERENCES users(id),
-    adventure_id CHAR(6) NOT NULL REFERENCES adventures(id)
+    adventure_id CHAR(6) NOT NULL REFERENCES adventures(id),
+
+    just_created BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE inventories (
@@ -112,6 +114,7 @@ CREATE TABLE careers(
 
 CREATE TABLE shop (
     adventure_id CHAR(6) REFERENCES adventures(id),
-    equipment_id INT,
-    PRIMARY KEY(adventure_id,equipment_id)
+    category VARCHAR(32) NOT NULL,
+    tl INT NOT NULL,
+    PRIMARY KEY(adventure_id,category)
 );

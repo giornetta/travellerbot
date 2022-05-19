@@ -37,7 +37,7 @@ class CommandParser:
                 if len(cmd) >= 2:
                     return self.callbacks[cmd[0]](cmd[1:], referee_id)
                 else:
-                    return False, 'use /shop {[... type]|close}'
+                    return False, 'use /shop {[... type] technology level|close}'
             elif cmd[0] == "rest":
                 if len(cmd) == 2:
                     return self.callbacks[cmd[0]](cmd[1], referee_id)

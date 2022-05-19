@@ -8,3 +8,4 @@ class ConversationState(Enum):
     REFEREE_IDLE = auto()
     PLAYER_IDLE = auto()
     SCENE_CREATION = auto()
+    SHOP = auto()

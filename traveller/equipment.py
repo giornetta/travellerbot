@@ -34,44 +34,8 @@ def load_equipment(path: str):
             eq = json.load(f)
         for eq_type in eq:
             for equip in eq[eq_type]:
-                if eq_type == "Armor":
-                    equipments[equip['id']] = Armor(equip)
-                elif eq_type == "Communicator":
-                    equipments[equip['id']] = Communicator(equip)
-                elif eq_type == "Computers":
-                    equipments[equip['id']] = Computer(equip)
-                elif eq_type == "Computer Software":
-                    equipments[equip['id']] = Software(equip)
-                elif eq_type == "Drugs":
-                    equipments[equip['id']] = Drug(equip)
-                elif eq_type == "Explosives":
-                    equipments[equip['id']] = Explosive(equip)
-                elif eq_type == "Personal Devices":
-                    equipments[equip['id']] = PersonalDevice(equip)
-                elif eq_type == "Sensory Aids":
-                    equipments[equip['id']] = SensoryAid(equip)
-                elif eq_type == "Shelters":
-                    equipments[equip['id']] = Shelter(equip)
-                elif eq_type == "Survival Equipment":
-                    equipments[equip['id']] = SurvivalEquipment(equip)
-                elif eq_type == "Tools":
-                    equipments[equip['id']] = Tool(equip)
-                elif eq_type == "Melee Weapons":
-                    equipments[equip['id']] = MeleeWeapon(equip)
-                elif eq_type == "Ranged Weapons":
-                    equipments[equip['id']] = RangedWeapon(equip)
-                elif eq_type == "Ranged Ammunition":
-                    equipments[equip['id']] = RangedAmmunition(equip)
-                elif eq_type == "Weapon Accessories":
-                    equipments[equip['id']] = WeaponAccessory(equip)
-                elif eq_type == "Grenades":
-                    equipments[equip['id']] = Grenade(equip)
-                elif eq_type == "Heavy Weapons":
-                    equipments[equip['id']] = HeavyWeapon(equip)
-                elif eq_type == "Heavy Weapon Ammunition":
-                    equipments[equip['id']] = HeavyWeaponAmmunition(equip)
-                else:
-                    equipments[equip['id']] = Equipment(equip)
+                if categories.get(eq_type):
+                    equipments[equip['id']] = categories.get(eq_type)(equip)
 
 
 class Equipment:
@@ -298,3 +262,26 @@ class HeavyWeaponAmmunition(Equipment):
         super().__init__(data)
         self.weight = data['weight']
         self.rounds = data['rounds']
+
+
+# TODO modify json
+categories: Dict[str, type] = {
+    'ARMOR': Armor,
+    'COMMUNICATOR': Communicator,
+    'COMPUTER': Computer,
+    'SOFTWARE': Software,
+    'DRUG': Drug,
+    'EXPLOSIVE': Explosive,
+    'PERSONALDEVICE': PersonalDevice,
+    'SENSORYAID': SensoryAid,
+    'SHELTER': Shelter,
+    'SURVIVALEQUIPMENT': SurvivalEquipment,
+    'TOOL': Tool,
+    'MELEEWEAPON': MeleeWeapon,
+    'RANGEDWEAPON': RangedWeapon,
+    'RANGEDAMMUNITION': RangedAmmunition,
+    'WEAPONACCESSORY': WeaponAccessory,
+    'GRENADE': Grenade,
+    'HEAVYWEAPON': HeavyWeapon,
+    'HEAVYWEAPONAMMUNITION': HeavyWeaponAmmunition
+}
