@@ -2,7 +2,6 @@ import telegram
 from telegram import Update
 from telegram.ext import ConversationHandler, CallbackContext, CommandHandler
 
-from bot.state import ConversationState
 from referee.referee_commands import RefereeCommands
 from referee.scene_creation.bot import SceneCreationConversation
 from referee.scene_creation.service import SceneCreationService
@@ -28,7 +27,8 @@ class RefereeCommandsConversation:
             CommandHandler('travel', self._handle_command),
             CommandHandler('age', self._handle_command),
             CommandHandler('scene', self._handle_scene),
-            CommandHandler('exit', self._handle_command)
+            CommandHandler('exit', self._handle_command),
+            CommandHandler('starship', self._handle_command)
         ]
 
         return [ConversationHandler(
