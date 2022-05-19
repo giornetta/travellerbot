@@ -65,9 +65,9 @@ class ShopConversation:
                         if eq.equipments[e].technology_level <= int(split[1]) if len(split) > 1 else True:
                             if split[0] in ['SOFTWARE', 'COMPUTER']:
                                 keys.append(
-                                    f'{eq.equipments[e].name}:{eq.equipments[e].technology_level}')
+                                    f'{eq.equipments[e].name}:{eq.equipments[e].technology_level} - {eq.equipments[e].cost}Cr')
                             elif split[0] in ['RANGED_AMMUNITION', 'HEAVY_WEAPON_AMMUNITION']:
-                                keys.append(f'{eq.equipments[e].name}:Ammo')
+                                keys.append(f'{eq.equipments[e].name}:Ammo - {eq.equipments[e].cost}Cr')
                             else:
                                 keys.append(f'{eq.equipments[e].name} - {eq.equipments[e].cost}Cr')
                     except ValueError:
