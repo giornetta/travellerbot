@@ -481,7 +481,7 @@
       "cost": 1000
     }
   ],
-  "PERSONALDEVICE": [
+  "PERSONAL_DEVICE": [
     {
       "id": 61,
       "name": "Magnetic Compass",
@@ -564,7 +564,7 @@
       "weight": 10
     }
   ],
-  "SENSORYAID": [
+  "SENSORY_AID": [
     {
       "id": 73,
       "name": "Torch",
@@ -663,7 +663,7 @@
       "weight": 6000
     }
   ],
-  "SURVIVALEQUIPMENT": [
+  "SURVIVAL_EQUIPMENT": [
     {
       "id": 87,
       "name": "Cold Weather Clothing",
@@ -802,7 +802,7 @@
       "weight": 12
     }
   ],
-  "MELEEWEAPON": [
+  "MELEE_WEAPON": [
     {
       "id": 108,
       "name": "Cudgel",
@@ -972,7 +972,7 @@
       "LL": 8
     }
   ],
-  "RANGEDWEAPON": [
+  "RANGED_WEAPON": [
     {
       "id": 119,
       "name": "Bow",
@@ -1251,7 +1251,7 @@
       "LL": 2
     }
   ],
-  "RANGEDAMMUNITION": [
+  "RANGED_AMMUNITION": [
     {
       "id": 137,
       "name": "Bow",
@@ -1434,7 +1434,7 @@
       ]
     }
   ],
-  "WEAPONACCESSORY": [
+  "WEAPON_ACCESSORY": [
     {
       "id": 155,
       "name": "Shoulder Stocks",
@@ -1543,7 +1543,7 @@
       "LL": 1
     }
   ],
-  "HEAVYWEAPON": [
+  "HEAVY_WEAPON": [
     {
       "id": 169,
       "name": "Rocket Launcher",
@@ -1589,7 +1589,7 @@
       "LL": 2
     }
   ],
-  "HEAVYWEAPONAMMUNITION": [
+  "HEAVY_WEAPON_AMMUNITION": [
     {
       "id": 172,
       "name": "Grenade Launcher",

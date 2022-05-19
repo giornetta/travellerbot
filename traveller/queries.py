@@ -131,15 +131,38 @@ def get_items(cur: cursor, adv_id, user_id) -> List[List[str]]:  # TODO make thi
     return items
 
 
-def items_from_shop(cur: cursor, adv_id, user_id) -> List[int]:
+def add_item(cur: cursor, char_id: int, value: int, e: int):
+    cur.execute('SELECT amount FROM inventories WHERE equipment_id = %s and character_id = %s;', (e, char_id))
+    amount = cur.fetchone()
+    if amount:
+        cur.execute('UPDATE inventories '
+                    'SET amount = %s '
+                    'WHERE character_id = %s AND equipment_id = %s',
+                    (amount[0] + value, char_id, e))
+    else:
+        cur.execute('INSERT INTO inventories(character_id, equipment_id, amount, damage) '
+                    'VALUES(%s, %s, %s, %s);', (char_id, e, value, 0))
+
+
+def enough_money(cur: cursor, char_id: int, e: int) -> Tuple[bool, int]:
+    cur.execute('SELECT credits FROM characters WHERE id = %s', (char_id,))
+    credits = cur.fetchone()[0]
+    if credits < eq.equipments[e].cost:
+        return False, credits
+    else:
+        cur.execute('UPDATE characters SET credits = credits - %s WHERE id = %s', (eq.equipments[e].cost, char_id))
+        return True, credits - eq.equipments[e].cost
+
+
+def categories_from_shop(cur: cursor, adv_id, user_id) -> List[Tuple[str, int]]:
     cur.execute('SELECT category,tl FROM shop WHERE adventure_id = %s', (adv_id,))
-    categories = cur.fetchall()
+    '''categories = cur.fetchall()
     items = []
     for c in categories:
         for eq_id in range(len(eq.equipments)):
             if is_coherent(c[0], eq_id) and eq.equipments[eq_id].technology_level <= c[1]:
-                items.append(eq_id)
-    return items
+                items.append(eq_id)'''
+    return cur.fetchall()
 
 
 def eq_name_from_id(ids: List[int]) -> List[List[str]]:

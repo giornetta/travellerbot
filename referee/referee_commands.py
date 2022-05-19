@@ -189,16 +189,7 @@ class RefereeCommands:
                             found, e = q.is_item(command)
                             if not found:
                                 return False, '❌ No such item exists'
-                            cur.execute('SELECT amount FROM inventories WHERE equipment_id = %s and character_id = %s;', (e, char_id))
-                            amount = cur.fetchone()
-                            if amount:
-                                cur.execute('UPDATE inventories '
-                                            'SET amount = %s '
-                                            'WHERE character_id = %s AND equipment_id = %s',
-                                            (amount[0] + value, char_id, e))
-                            else:
-                                cur.execute('INSERT INTO inventories(character_id, equipment_id, amount, damage) '
-                                            'VALUES(%s, %s, %s, %s);', (char_id, e, value, 0))
+                            q.add_item(char_id, value, e)
                         return True, '✅ Successfully added item!'
                 return False, '❌ Invalid command format!'
 

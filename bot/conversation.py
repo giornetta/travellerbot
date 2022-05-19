@@ -14,6 +14,8 @@ from keyboards import keyboards
 from referee.bot import RefereeCommandsConversation
 from referee.referee_commands import RefereeCommands
 from scene_creation.scene_creation import SceneCreationConversation
+from shop.bot import ShopConversation
+from shop.service import Shop
 
 
 def handler(conn: connection):
@@ -22,6 +24,7 @@ def handler(conn: connection):
     setup_controller = AdventureSetupService(conn)
     referee_commands = RefereeCommands(conn)
     player_idle = PlayerIdle(conn)
+    shop = Shop(conn)
 
     return ConversationHandler(
         entry_points=[CommandHandler('start', _handle_start)],
@@ -31,6 +34,7 @@ def handler(conn: connection):
             ConversationState.CHARACTER_CREATION: CharacterCreationConversation(character_creator).handlers(),
             ConversationState.SCENE_CREATION: SceneCreationConversation(conn).handlers(),
             ConversationState.PLAYER_IDLE: PlayerIdleConversation(player_idle).handlers(),
+            ConversationState.SHOP: ShopConversation(shop).handlers()
         },
         fallbacks=[],
         name='conversation',

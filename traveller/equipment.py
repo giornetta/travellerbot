@@ -9,9 +9,24 @@ equipments: Dict[int, Equipment] = {}
 
 
 def get_equipment_by_name(name: str):
+    split = name.split(":", 2)
     for e in equipments:
-        if equipments[e].name == name:
-            return equipments[e]
+        if equipments[e].name == split[0]:
+            if len(split) > 1:
+                if split[1].upper() == 'AMMO':
+                    if isinstance(equipments[e], RangedAmmunition) or isinstance(equipments[e], HeavyWeaponAmmunition):
+                        return e
+                    else:
+                        continue
+                try:
+                    tl = int(split[1])
+                    if isinstance(equipments[e], Software) or isinstance(equipments[e], Computer):
+                        if equipments[e].technology_level == tl:
+                            return e
+                except ValueError:
+                    return None
+            else:
+                return e
     return None
 
 
@@ -272,16 +287,16 @@ categories: Dict[str, type] = {
     'SOFTWARE': Software,
     'DRUG': Drug,
     'EXPLOSIVE': Explosive,
-    'PERSONALDEVICE': PersonalDevice,
-    'SENSORYAID': SensoryAid,
+    'PERSONAL_DEVICE': PersonalDevice,
+    'SENSORY_AID': SensoryAid,
     'SHELTER': Shelter,
-    'SURVIVALEQUIPMENT': SurvivalEquipment,
+    'SURVIVAL_EQUIPMENT': SurvivalEquipment,
     'TOOL': Tool,
-    'MELEEWEAPON': MeleeWeapon,
-    'RANGEDWEAPON': RangedWeapon,
-    'RANGEDAMMUNITION': RangedAmmunition,
-    'WEAPONACCESSORY': WeaponAccessory,
+    'MELEE_WEAPON': MeleeWeapon,
+    'RANGED_WEAPON': RangedWeapon,
+    'RANGED_AMMUNITION': RangedAmmunition,
+    'WEAPON_ACCESSORY': WeaponAccessory,
     'GRENADE': Grenade,
-    'HEAVYWEAPON': HeavyWeapon,
-    'HEAVYWEAPONAMMUNITION': HeavyWeaponAmmunition
+    'HEAVY_WEAPON': HeavyWeapon,
+    'HEAVY_WEAPON_AMMUNITION': HeavyWeaponAmmunition
 }
