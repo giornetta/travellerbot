@@ -194,21 +194,4 @@ def is_coherent(c: str, i: int) -> bool:
     e = eq.equipments[i]
     c = c.upper()
 
-    return c == 'Armor'.upper() and isinstance(e, eq.Armor) or \
-           c == "Communicator".upper() and isinstance(e, eq.Communicator) or \
-           c == "Computer".upper() and isinstance(e, eq.Computer) or \
-           c == "Software".upper() and isinstance(e, eq.Software) or \
-           c == "Drug".upper() and isinstance(e, eq.Drug) or \
-           c == "Explosive".upper() and isinstance(e, eq.Explosive) or \
-           c == "PersonalDevice".upper() and isinstance(e, eq.PersonalDevice) or \
-           c == "SensoryAid".upper() and isinstance(e, eq.SensoryAid) or \
-           c == "Shelter".upper() and isinstance(e, eq.Shelter) or \
-           c == "SurvivalEquipment".upper() and isinstance(e, eq.SurvivalEquipment) or \
-           c == "Tool".upper() and isinstance(e, eq.Tool) or \
-           c == "MeleeWeapon".upper() and isinstance(e, eq.MeleeWeapon) or \
-           c == "RangedWeapon".upper() and isinstance(e, eq.RangedWeapon) or \
-           c == "RangedAmmunition".upper() and isinstance(e, eq.RangedAmmunition) or \
-           c == "WeaponAccessory".upper() and isinstance(e, eq.WeaponAccessory) or \
-           c == "Grenade".upper() and isinstance(e, eq.Grenade) or \
-           c == "HeavyWeapon".upper() and isinstance(e, eq.HeavyWeapon) or \
-           c == "HeavyWeaponAmmunition".upper() and isinstance(e, eq.HeavyWeaponAmmunition)
+    return isinstance(e, eq.categories.get(c))
