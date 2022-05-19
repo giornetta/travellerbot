@@ -173,7 +173,7 @@ class RefereeCommands:
                         if value <= 0:
                             return False, '❌ Removing only works with positive numbers.'
 
-                        # From now on it will be Eqtype:Eqname:EventualLevel and it will be case-insensitive
+                        # From now on it will be Eqname:EventualLevel or Eqname:ammo and it will be case-insensitive
                         for i in range(2, len(cmd)):
                             command = cmd[i]
                             is_item, e = q.is_item(command)

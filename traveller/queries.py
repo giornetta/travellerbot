@@ -125,73 +125,58 @@ def get_items(cur: cursor, adv_id, user_id) -> List[List[str]]:  # TODO make thi
     cur.execute('SELECT equipment_id FROM inventories '
                 'WHERE character_id = %s;', (character_id,))
     inventory = cur.fetchall()
-    items = []
-    for eq_id in inventory:
-        item_name = eq.equipments[eq_id[0]].name
-        if is_coherent('Armor', eq_id[0]):
-            item_name = f'Armor:{item_name}'
-        elif is_coherent('Communicator', eq_id[0]):
-            item_name = f'Communicator:{item_name}'
-        elif is_coherent('Drug', eq_id[0]):
-            item_name = f'Drug:{item_name}'
-        elif is_coherent('Explosive', eq_id[0]):
-            item_name = f'Explosive:{item_name}'
-        elif is_coherent('PersonalDevice', eq_id[0]):
-            item_name = f'PersonalDevice:{item_name}'
-        elif is_coherent('SensoryAid', eq_id[0]):
-            item_name = f'SensoryAid:{item_name}'
-        elif is_coherent('Shelter', eq_id[0]):
-            item_name = f'Shelter:{item_name}'
-        elif is_coherent('SurvivalEquipment', eq_id[0]):
-            item_name = f'SurvivalEquipment:{item_name}'
-        elif is_coherent('Tool', eq_id[0]):
-            item_name = f'Tool:{item_name}'
-        elif is_coherent('MeleeWeapon', eq_id[0]):
-            item_name = f'MeleeWeapon:{item_name}'
-        elif is_coherent('RangedWeapon', eq_id[0]):
-            item_name = f'RangedWeapon:{item_name}'
-        elif is_coherent('RangedAmmunition', eq_id[0]):
-            item_name = f'RangedAmmunition:{item_name}'
-        elif is_coherent('WeaponAccessory', eq_id[0]):
-            item_name = f'WeaponAccessory:{item_name}'
-        elif is_coherent('Grenade', eq_id[0]):
-            item_name = f'Grenade:{item_name}'
-        elif is_coherent('HeavyWeapon', eq_id[0]):
-            item_name = f'HeavyWeapon:{item_name}'
-        elif is_coherent('HeavyWeaponAmmunition', eq_id[0]):
-            item_name = f'HeavyWeaponAmmunition:{item_name}'
-        elif is_coherent('Computer', eq_id[0]):
-            level = eq.equipments[eq_id[0]].technology_level
-            item_name = f'Computer:{item_name}:{level}'
-        elif is_coherent('Software', eq_id[0]):
-            level = eq.equipments[eq_id[0]].technology_level
-            item_name = f'Software:{item_name}:{level}'
-        items.append([item_name])
+    inventory = [item for t in inventory for item in t]
+    items = eq_name_from_id(inventory)
     items.append(['Nothing'])
+    return items
+
+
+def eq_name_from_id(ids: List[int]) -> List[List[str]]:
+    items = []
+    for eq_id in ids:
+        item_name = eq.equipments[eq_id].name
+        if is_coherent('RangedAmmunition', eq_id):
+            item_name = f'{item_name}:Ammo'
+        elif is_coherent('HeavyWeaponAmmunition', eq_id):
+            item_name = f'{item_name}:Ammo'
+        elif is_coherent('Computer', eq_id):
+            level = eq.equipments[eq_id].technology_level
+            item_name = f'{item_name}:{level}'
+        elif is_coherent('Software', eq_id):
+            level = eq.equipments[eq_id].technology_level
+            item_name = f'{item_name}:{level}'
+        items.append([item_name])
     return items
 
 
 def is_item(name: str) -> Tuple[bool, int]:
     eq_id: int = -1
 
-    splitted = name.split(':', 3)
-    if len(splitted) == 1:
-        return False, eq_id
+    splitted = name.split(':', 2)
 
-    c = splitted[0].upper()
-    eq_name = splitted[1].upper()
+    eq_name = splitted[0].upper()
+    spec = splitted[1].upper() if len(splitted) > 1 else None
+    found = False
 
     for k, v in eq.equipments.items():
-        if c in ['COMPUTER', 'SOFTWARE']:
-            if v.name.replace(" ", "").upper() == eq_name and v.technology_level == int(splitted[2]):
+        if spec in range(16):
+            if v.name.replace(" ", "").upper() == eq_name and v.technology_level == spec:
                 eq_id = k
+                found = True
+                break
+        elif spec == 'AMMO':
+            if v.name.replace(" ", "").upper() == eq_name and \
+                    (isinstance(v, eq.RangedAmmunition) or isinstance(v, eq.HeavyWeaponAmmunition)):
+                eq_id = k
+                found = True
                 break
         else:
-            if is_coherent(c, k) and eq_name == v.name.replace(" ", "").upper():
+            if eq_name == v.name.replace(" ", "").upper():
                 eq_id = k
+                found = True
                 break
 
-    return eq_id != -1, eq_id
+    return found, eq_id
 
 
 def is_coherent(c: str, i: int) -> bool:
