@@ -8,6 +8,7 @@ from bot.state import ConversationState
 from cache.userdata import user_data
 from character_creation import kb
 from character_creation.service import CharacterCreator
+from keyboards.keyboards import single_keys
 from traveller import career
 from traveller.career import CareerType, ReEnlistmentOutcome, careers
 from traveller.character import Character
@@ -659,6 +660,3 @@ def num_keys(start: int, end: int, ignore: bool = False) -> List[List[str]]:
 
     return [kl[i: i + 3] for i in range(0, len(kl), 3)]
 
-
-def single_keys(l: List[str]) -> List[List[str]]:
-    return [l[i: i + 1] for i in range(0, len(l), 1)]

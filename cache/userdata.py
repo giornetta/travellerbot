@@ -23,6 +23,9 @@ class UserData:
     # Used for scene creation
     scene: Scene
 
+    # Used for skill checks
+    skill: str
+
     def init_filters(self):
         self.filters: Dict[Attribute, AttrFilter] = {}
         for attr in Attribute:
