@@ -624,7 +624,7 @@ class CharacterCreationConversation:
         user = user_data[update.message.from_user.id]
 
         if len(update.message.text) > 32:
-            update.message.reply_text("That name is too long, try again!")
+            kb.name_too_long.reply_text(update)
             return State.NAME
 
         user.character.name = update.message.text

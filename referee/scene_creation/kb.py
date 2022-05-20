@@ -2,6 +2,8 @@ from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup
 
 from keyboards.keyboards import Keyboard
 
+scene_already_exists = Keyboard('❌ You already created a scene with that name, choose another one.')
+
 end = Keyboard('✅ Scene created correctly')
 
 next_npc = Keyboard('🧑‍🚀 Do you want to add an NPC?',
@@ -14,8 +16,10 @@ ch_gen = Keyboard('✨ How do you want to generate characteristics?',
                       ['Manually', 'Random']
                   ], one_time_keyboard=True))
 
-ch_manual_gen = Keyboard('✨ Insert the stats separated by spaces: STR DEX END INT EDU SOC.',
+ch_manual_gen = Keyboard('✨ Insert the stats separated by spaces: STR DEX END INT EDU SOC. *(They must be >= 1)*',
                          reply_markup=ReplyKeyboardRemove())
+
+invalid_stats = Keyboard('❌ Invalid stats, please retry!')
 
 ch_random_gen = Keyboard('Are these okay?\n💪 *STR*: %s\n🏃 *END*: %s\n🗡️ *DEX*: %s\n🧠 *INT*: %s\n📚 *EDU*: %s\n👑 *SOC*: %s',
                          reply_markup=ReplyKeyboardMarkup([
@@ -44,6 +48,8 @@ weapon = Keyboard('⚔️ Pick a weapon:',
 
 name = Keyboard('📝 What\'s their name?',
                 reply_markup=ReplyKeyboardRemove())
+
+name_too_long = Keyboard('❌ That name is too long, sorry. Retry.')
 
 ally = Keyboard('🟢 Are they an ally or an enemy?',
                 reply_markup=ReplyKeyboardMarkup([

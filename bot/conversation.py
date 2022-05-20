@@ -13,21 +13,25 @@ from bot.state import ConversationState
 from keyboards import keyboards
 from referee.bot import RefereeCommandsConversation
 from referee.referee_commands import RefereeCommands
-from scene_creation.scene_creation import SceneCreationConversation
+from referee.scene_creation.bot import SceneCreationConversation
+from referee.scene_creation.service import SceneCreationService
 
 
 def handler(conn: connection):
 
     character_creator = CharacterCreator(conn)
     setup_controller = AdventureSetupService(conn)
+
     referee_commands = RefereeCommands(conn)
+    scene_creator = SceneCreationService(conn)
+
     player_idle = PlayerIdle(conn)
 
     return ConversationHandler(
         entry_points=[CommandHandler('start', _handle_start)],
         states={
             ConversationState.ADVENTURE_SETUP: SetupConversation(setup_controller, character_creator).handlers(),
-            ConversationState.REFEREE_IDLE: RefereeCommandsConversation(referee_commands).handlers(),
+            ConversationState.REFEREE_IDLE: RefereeCommandsConversation(referee_commands, scene_creator).handlers(),
             ConversationState.CHARACTER_CREATION: CharacterCreationConversation(character_creator).handlers(),
             ConversationState.SCENE_CREATION: SceneCreationConversation(conn).handlers(),
             ConversationState.PLAYER_IDLE: PlayerIdleConversation(player_idle).handlers(),

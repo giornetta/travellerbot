@@ -365,7 +365,7 @@ class Character:
 
         return True, 0
 
-    def aging_roll(self) -> Tuple[bool, int]:  # TODO Return something
+    def aging_roll(self) -> Tuple[bool, int]:
         v = dice.roll(2) - self.terms + self.drugs_terms
 
         if v >= 1:

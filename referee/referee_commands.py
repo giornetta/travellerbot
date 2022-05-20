@@ -2,13 +2,13 @@ import json
 import random
 
 import psycopg2
-from psycopg2 import IntegrityError
 from psycopg2.extensions import cursor
 from psycopg2.extensions import connection
 from typing import List, Dict, Optional, Tuple
 import traveller.equipment as eq
 
 from referee.command_parser import CommandParser
+from traveller import vessel
 from traveller.characteristic import Characteristic as Ch, Characteristic
 import traveller.queries as q
 
@@ -71,17 +71,17 @@ class RefereeCommands:
     def __init__(self, db: connection):
         self.db = db
         self.cp = CommandParser()
-        self.cp['info'] = self.info
-        self.cp['set'] = self.set
-        self.cp['shop'] = self.shop
-        self.cp['rest'] = self.rest
-        self.cp['combat'] = self.combat
-        self.cp['travel'] = self.travel
-        self.cp['age'] = self.age
-        self.cp['scene'] = self.scene
-        self.cp['exit'] = self.exit
+        self.cp.callbacks['info'] = self.info
+        self.cp.callbacks['set'] = self.set
+        self.cp.callbacks['shop'] = self.shop
+        self.cp.callbacks['rest'] = self.rest
+        self.cp.callbacks['combat'] = self.combat
+        self.cp.callbacks['travel'] = self.travel
+        self.cp.callbacks['age'] = self.age
+        self.cp.callbacks['scene'] = self.scene
+        self.cp.callbacks['exit'] = self.exit
+        self.cp.callbacks['starship'] = self.ship_shares
 
-    # TODO this needs to be integrated with telegram
 
     def info(self, info: str, referee_id: int) -> (bool, str):
         with self.db:
@@ -168,6 +168,10 @@ class RefereeCommands:
                     modify(cur, value, char_id, add, 'credits')
                     return True, '✅ Successfully updated credits!'
 
+                if cmd[0] == 'SHARES':
+                    modify(cur, value, char_id, add, 'ship_shares')
+                    return True, '✅ Successfully updated ship shares!'
+
                 if cmd[0] == 'INV' or cmd[0] == 'INVENTORY' or cmd[0] == 'EQUIPMENT':
                     if cmd[1] == 'RM' or cmd[1] == 'REMOVE':
                         if value <= 0:
@@ -239,16 +243,20 @@ class RefereeCommands:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
-            if end:
-                cur.execute('UPDATE adventures SET scene_id = NULL WHERE id = %s;', (adv_id,))
-                return True, '✅ Successfully set scene!'
-            else:
-                try:
-                    cur.execute('UPDATE adventures SET scene_id = %s WHERE id = %s;',
-                                (combat, adv_id))
-                except IntegrityError:
-                    return False, '❌ No scene has this name.'
-                return True, '✅ Successfully set scene!'
+                if end:
+                    cur.execute('UPDATE adventures SET scene_id = NULL WHERE id = %s;', (adv_id,))
+                    return True, '✅ Successfully closed combat!'
+                else:
+                    try:
+                        cur.execute('SELECT id FROM scenes WHERE scene_name = %s;', (combat, ))
+                        scene_id = cur.fetchone()
+                        if scene_id is None:
+                            return False, '❌ No scene has this name.'
+                        cur.execute('UPDATE adventures SET scene_id = %s WHERE id = %s;',
+                                    (scene_id, adv_id))
+                    except psycopg2.Error:
+                        return False, '❌ No scene has this name.'
+                    return True, '✅ Successfully started combat!'
 
     def travel(self, name: str, referee_id: int) -> (bool, str):
         with self.db:
@@ -356,3 +364,21 @@ class RefereeCommands:
         credits_remaining = cur.fetchone()[0]
         if credits_remaining < 0:
             pass  # TODO death
+
+    def ship_shares(self, referee_id: int):
+        with self.db:
+            with self.db.cursor() as cur:
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s', (referee_id, ))
+                adventure_id = cur.fetchone()[0]
+
+                cur.execute('SELECT SUM(ship_shares) FROM characters WHERE adventure_id = %s AND alive = TRUE;', (adventure_id, ))
+                shares = cur.fetchone()[0]
+                ship = vessel.get_best(shares)
+
+                if ship:
+                    cur.execute('UPDATE adventures SET vessel = %s WHERE id = %s', (ship, adventure_id))
+                    cur.execute('UPDATE characters SET ship_shares = 0 WHERE adventure_id = %s', (adventure_id, ))
+
+                    return True, f'✅ The adventurers bought a {ship}!'
+                else:
+                    return False, f'❌ The adventurers don\'t have enough ship shares to buy any vessel!'

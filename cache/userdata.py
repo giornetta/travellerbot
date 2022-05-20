@@ -5,7 +5,7 @@ from typing import Dict
 from traveller.adventure import Adventure
 from traveller.character import Character
 from traveller.world import Attribute, AttrFilter
-from traveller.npc import Npc
+from traveller.scene import NPC, Scene
 
 
 class UserData:
@@ -15,14 +15,13 @@ class UserData:
 
     # Used for adventure creation
     adventure: Adventure
-    npc: Npc
-    scene_name: str
 
     # Used for character creation
     character: Character
     filters: Dict[Attribute, AttrFilter]
-    homeworld_skills_left: int
-    education_skills_left: int
+
+    # Used for scene creation
+    scene: Scene
 
     def init_filters(self):
         self.filters: Dict[Attribute, AttrFilter] = {}
