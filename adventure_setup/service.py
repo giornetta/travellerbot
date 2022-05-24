@@ -1,6 +1,6 @@
 import string
 import random
-from typing import Optional
+from typing import List, Optional
 
 import psycopg2
 import psycopg2.errors
@@ -14,6 +14,20 @@ class AdventureSetupService:
 
     def __init__(self, db: connection):
         self.db = db
+
+    def adventures(self, user_id) -> List[str]:
+        adventures: List[str] = []
+        with self.db:
+            with self.db.cursor() as cur:
+                cur.execute('SELECT title, id FROM adventures WHERE referee_id = %s', (user_id, ))
+                for adv in cur.fetchall():
+                    adventures.append(f'{adv[1]}: {adv[0]}')
+
+                cur.execute('SELECT a.title, a.id FROM adventures a JOIN characters c on a.id = c.adventure_id WHERE c.user_id = %s', (user_id, ))
+                for adv in cur.fetchall():
+                    adventures.append(f'{adv[1]}: {adv[0]}')
+
+                return adventures
 
     def join_adventure(self, user_id: int, code: str) -> Optional[Adventure]:
         adv: Optional[Adventure] = None

@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from psycopg2.extensions import cursor
 from psycopg2.extensions import connection
@@ -31,13 +31,18 @@ class Shop:
 
                 return keys
 
-    def tl(self, user_id: int) -> int:
+    def tl(self, user_id: int) -> Optional[int]:
         with self.db:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s', (user_id,))
                 adv_id = cur.fetchone()[0]
                 cur.execute('SELECT tl FROM shop WHERE adventure_id = %s', (adv_id,))
-                return cur.fetchone()[0]
+
+                res = cur.fetchone()
+                if res:
+                    return res[0]
+
+                return None
 
     def character_credits(self, user_id: int) -> int:
         with self.db:
