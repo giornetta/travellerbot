@@ -15,6 +15,8 @@ from referee.bot import RefereeCommandsConversation
 from referee.referee_commands import RefereeCommands
 from referee.scene_creation.bot import SceneCreationConversation
 from referee.scene_creation.service import SceneCreationService
+from shop.bot import ShopConversation
+from shop.service import Shop
 
 
 def handler(conn: connection):
@@ -26,6 +28,7 @@ def handler(conn: connection):
     scene_creator = SceneCreationService(conn)
 
     player_idle = PlayerIdle(conn)
+    shop = Shop(conn)
 
     return ConversationHandler(
         entry_points=[CommandHandler('start', _handle_start)],
@@ -35,6 +38,7 @@ def handler(conn: connection):
             ConversationState.CHARACTER_CREATION: CharacterCreationConversation(character_creator).handlers(),
             ConversationState.SCENE_CREATION: SceneCreationConversation(conn).handlers(),
             ConversationState.PLAYER_IDLE: PlayerIdleConversation(player_idle).handlers(),
+            ConversationState.SHOP: ShopConversation(shop).handlers()
         },
         fallbacks=[],
         name='conversation',

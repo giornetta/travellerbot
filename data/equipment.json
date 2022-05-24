@@ -1,5 +1,5 @@
 {
-  "Armor": [
+  "ARMOR": [
     {
       "id": 2,
       "name": "Ablat",
@@ -81,7 +81,7 @@
       "skill_required": "Zero-G"
     }
   ],
-  "Communications": [
+  "COMMUNICATOR": [
     {
       "id": 11,
       "name": "Long Range Communicator",
@@ -116,7 +116,7 @@
       "is_personal_communicator": true
     }
   ],
-  "Computers": [
+  "COMPUTER": [
     {
       "id": 15,
       "name": "Computer",
@@ -191,7 +191,7 @@
       "is_terminal": true
     }
   ],
-  "Computer Software": [
+  "SOFTWARE": [
     {
       "id": 24,
       "name": "Database",
@@ -398,7 +398,7 @@
       "is_intellect": true
     }
   ],
-  "Drugs": [
+  "DRUG": [
     {
       "id": 49,
       "name": "Medicinal Drugs",
@@ -454,7 +454,7 @@
       "cost": 2000
     }
   ],
-  "Explosives": [
+  "EXPLOSIVE": [
     {
       "id": 58,
       "name": "Plastic",
@@ -481,7 +481,7 @@
       "cost": 1000
     }
   ],
-  "Personal Devices": [
+  "PERSONAL_DEVICE": [
     {
       "id": 61,
       "name": "Magnetic Compass",
@@ -564,7 +564,7 @@
       "weight": 10
     }
   ],
-  "Sensory Aids": [
+  "SENSORY_AID": [
     {
       "id": 73,
       "name": "Torch",
@@ -619,7 +619,7 @@
       "cost": 500
     }
   ],
-  "Shelters": [
+  "SHELTER": [
     {
       "id": 81,
       "name": "Tarpaulin",
@@ -663,7 +663,7 @@
       "weight": 6000
     }
   ],
-  "Survival Equipment": [
+  "SURVIVAL_EQUIPMENT": [
     {
       "id": 87,
       "name": "Cold Weather Clothing",
@@ -745,7 +745,7 @@
       "weight": 15
     }
   ],
-  "Tools": [
+  "TOOL": [
     {
       "id": 99,
       "name": "Mechanical Toolkit",
@@ -802,7 +802,7 @@
       "weight": 12
     }
   ],
-  "Melee Weapons": [
+  "MELEE_WEAPON": [
     {
       "id": 108,
       "name": "Cudgel",
@@ -972,7 +972,7 @@
       "LL": 8
     }
   ],
-  "Ranged Weapons": [
+  "RANGED_WEAPON": [
     {
       "id": 119,
       "name": "Bow",
@@ -1251,7 +1251,7 @@
       "LL": 2
     }
   ],
-  "Ranged Ammunition": [
+  "RANGED_AMMUNITION": [
     {
       "id": 137,
       "name": "Bow",
@@ -1434,7 +1434,7 @@
       ]
     }
   ],
-  "Weapon Accessories": [
+  "WEAPON_ACCESSORY": [
     {
       "id": 155,
       "name": "Shoulder Stocks",
@@ -1501,7 +1501,7 @@
       "cost": 1000
     }
   ],
-  "Grenades": [
+  "GRENADE": [
     {
       "id": 165,
       "name": "Frag",
@@ -1543,7 +1543,7 @@
       "LL": 1
     }
   ],
-  "Heavy Weapons": [
+  "HEAVY_WEAPON": [
     {
       "id": 169,
       "name": "Rocket Launcher",
@@ -1589,7 +1589,7 @@
       "LL": 2
     }
   ],
-  "Heavy Weapon Ammunition": [
+  "HEAVY_WEAPON_AMMUNITION": [
     {
       "id": 172,
       "name": "Grenade Launcher",

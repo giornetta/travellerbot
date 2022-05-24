@@ -1,3 +1,4 @@
+import re
 from enum import Enum, auto
 from typing import List
 
@@ -5,6 +6,8 @@ import telegram
 from telegram import Update
 from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackContext
 
+import keyboards.keyboards
+from bot.state import ConversationState
 from keyboards.keyboards import single_keys
 from player_idle import kb
 from player_idle.service import PlayerIdle
@@ -19,6 +22,8 @@ class State(Enum):
     ITEM = auto()
     SKILL_CHECK = auto()
     DIFFICULTY = auto()
+    SHOP = auto()
+    EXIT = auto()
 
 
 class PlayerIdleConversation:
@@ -31,7 +36,7 @@ class PlayerIdleConversation:
         return [ConversationHandler(
             entry_points=[MessageHandler(Filters.text, self._handle_created)],
             states={
-                State.IDLE: [MessageHandler(Filters.regex('^(Info|Inventory|Map|Skill Check)$'), self._handle_idle)],
+                State.IDLE: [MessageHandler(Filters.regex('^(Info|Inventory|Map|Skill Check|Shop|Exit)$'), self._handle_idle)],
                 State.INFO: [MessageHandler(Filters.regex('^(World|Adventure|Myself)$'), self._handle_info)],
                 State.ITEM: [MessageHandler(Filters.regex('^(Use|Throw|Nothing)'), self._handle_item)],
                 State.INVENTORY: [MessageHandler(Filters.text, self._handle_inventory)],
@@ -39,12 +44,18 @@ class PlayerIdleConversation:
                 State.DIFFICULTY: [MessageHandler(Filters.regex('^(Easy|Simple|Routine|Average|Difficult|Very Difficult|Formidable)$'), self._handle_difficulty)]
             },
             fallbacks=[],
-            map_to_parent={},
+            map_to_parent={
+                State.SHOP: ConversationState.SHOP,
+                State.EXIT: ConversationState.ADVENTURE_SETUP
+            },
             name='player_idle',
             persistent=True,
         )]
 
     def _handle_created(self, update: Update, context: CallbackContext) -> State:
+        if re.match('^(Info|Inventory|Map|Skill Check|Shop|Exit)$', update.message.text):
+            return self._handle_idle(update, context)
+
         kb.idle.reply_text(update)
         return State.IDLE
 
@@ -67,6 +78,12 @@ class PlayerIdleConversation:
             skillset = self.service.skill_levels(user_id)
             kb.skill_check.reply_text(update, keys=single_keys(skillset))
             return State.SKILL_CHECK
+        elif text == 'Shop':
+            kb.ask_shop.reply_text(update)
+            return State.SHOP
+        elif text == 'Exit':
+            keyboards.keyboards.welcome(update)
+            return State.EXIT
 
 
     def _handle_info(self, update: Update, context: CallbackContext) -> State:

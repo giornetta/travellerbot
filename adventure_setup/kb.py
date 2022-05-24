@@ -5,7 +5,7 @@ from keyboards.keyboards import Keyboard
 
 # Join adventure
 
-adv_code = Keyboard('✨️ Perfect! What\'s the *code* of the Adventure you\'d like to join?', reply_markup=ReplyKeyboardRemove())
+adv_code = Keyboard('✨ Perfect! What\'s the *code* of the Adventure you\'d like to join?', reply_markup=ReplyKeyboardRemove())
 
 join_adventure = Keyboard('✅ Successfully joined Adventure _"%s"_!')
 

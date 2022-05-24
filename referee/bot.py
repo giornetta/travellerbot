@@ -2,6 +2,8 @@ import telegram
 from telegram import Update
 from telegram.ext import ConversationHandler, CallbackContext, CommandHandler
 
+from bot.state import ConversationState
+from keyboards import keyboards
 from referee.referee_commands import RefereeCommands
 from referee.scene_creation.bot import SceneCreationConversation
 from referee.scene_creation.service import SceneCreationService
@@ -27,7 +29,7 @@ class RefereeCommandsConversation:
             CommandHandler('travel', self._handle_command),
             CommandHandler('age', self._handle_command),
             CommandHandler('scene', self._handle_scene),
-            CommandHandler('exit', self._handle_command),
+            CommandHandler('exit', self._handle_exit),
             CommandHandler('starship', self._handle_command)
         ]
 
@@ -35,7 +37,10 @@ class RefereeCommandsConversation:
             entry_points=commands,
             states={
                 RefereeState.COMMANDS: commands,
-                RefereeState.SCENE: SceneCreationConversation(self.scene_creator).handlers()
+                RefereeState.SCENE: SceneCreationConversation(self.scene_creator).handlers(),
+            },
+            map_to_parent={
+                RefereeState.EXIT: ConversationState.ADVENTURE_SETUP
             },
             fallbacks=[]
         )]
@@ -62,3 +67,8 @@ class RefereeCommandsConversation:
         check, text = self.service.cp.execute(update.message.text, update.message.from_user.id)
         update.message.reply_text(text)
         return RefereeState.COMMANDS
+
+    def _handle_exit(self, update: Update, context: CallbackContext) -> RefereeState:
+        self.service.cp.execute(update.message.text, update.message.from_user.id)
+        keyboards.welcome.reply_text(update)
+        return RefereeState.EXIT

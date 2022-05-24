@@ -4,7 +4,7 @@ from keyboards.keyboards import Keyboard
 
 idle = Keyboard('📝 Do you want to do something?',
                 reply_markup=ReplyKeyboardMarkup([
-                    ['Info'], ['Inventory'], ['Map'], ['Skill Check']
+                    ['Info'], ['Inventory'], ['Map'], ['Skill Check'], ['Shop'], ['Exit']
                 ], one_time_keyboard=False))
 
 info = Keyboard('📝 About what?',
@@ -37,3 +37,8 @@ difficulty = Keyboard('How difficult will the roll be?', reply_markup=ReplyKeybo
 skill_check_success = Keyboard('✅ *%s*! %s!')
 
 skill_check_fail = Keyboard('❌ *%s*! %s!')
+
+ask_shop = Keyboard('💰 Do you want to buy something?',
+                    reply_markup=ReplyKeyboardMarkup([
+                        ['Yes'], ['No']
+                    ]))

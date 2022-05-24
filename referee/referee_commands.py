@@ -177,7 +177,7 @@ class RefereeCommands:
                         if value <= 0:
                             return False, '❌ Removing only works with positive numbers.'
 
-                        # From now on it will be Eqtype:Eqname:EventualLevel and it will be case-insensitive
+                        # From now on it will be Eqname:EventualLevel or Eqname:ammo and it will be case-insensitive
                         for i in range(2, len(cmd)):
                             command = cmd[i]
                             is_item, e = q.is_item(command)
@@ -193,16 +193,7 @@ class RefereeCommands:
                             found, e = q.is_item(command)
                             if not found:
                                 return False, '❌ No such item exists'
-                            cur.execute('SELECT amount FROM inventories WHERE equipment_id = %s and character_id = %s;', (e, char_id))
-                            amount = cur.fetchone()
-                            if amount:
-                                cur.execute('UPDATE inventories '
-                                            'SET amount = %s '
-                                            'WHERE character_id = %s AND equipment_id = %s',
-                                            (amount[0] + value, char_id, e))
-                            else:
-                                cur.execute('INSERT INTO inventories(character_id, equipment_id, amount, damage) '
-                                            'VALUES(%s, %s, %s, %s);', (char_id, e, value, 0))
+                            q.add_item(char_id, value, e)
                         return True, '✅ Successfully added item!'
                 return False, '❌ Invalid command format!'
 
@@ -211,16 +202,19 @@ class RefereeCommands:
             with self.db.cursor() as cur:
                 cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
                 adv_id = cur.fetchone()[0]
+                cur.execute('DELETE FROM shop WHERE adventure_id = %s;', (adv_id,))
                 if cmd[-1].upper() == 'CLOSE':
-                    cur.execute('DELETE FROM shop WHERE adventure_id = %s;', (adv_id,))
                     return True, '✅ Successfully closed shop!'
-                for c in cmd:  # Check to see if existing shop?
-                    for e in eq.equipments:
-                        if q.is_coherent(c, e):
-                            cur.execute(
-                                'INSERT INTO shop(adventure_id, equipment_id) VALUES(%s,%s) ON CONFLICT DO NOTHING;',
-                                (adv_id, e))
-                    return True, '✅ Successfully opened shop!'
+                try:
+                    int(cmd[-1])
+                except ValueError:
+                    return False, '❌ Insert Technology Level'
+                for c in cmd:
+                    if c.upper() in eq.categories.keys():
+                        cur.execute(
+                            'INSERT INTO shop(adventure_id, category, tl) VALUES(%s,%s,%s) ON CONFLICT DO NOTHING;',
+                            (adv_id, c, cmd[-1]))
+                return True, '✅ Successfully opened shop!'
 
     def rest(self, cmd: str, referee_id: int) -> (bool, str):
         with self.db:

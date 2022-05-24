@@ -117,7 +117,7 @@ class CharacterCreationConversation:
             },
             fallbacks=[],
             map_to_parent={
-                State.END: ConversationState.PLAYER_IDLE,
+                State.END: ConversationState.SHOP,
             },
             name='create_character',
             persistent=True,

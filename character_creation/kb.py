@@ -179,7 +179,7 @@ buy_equip = Keyboard('💰 You have *%sCr*, do you want to buy something?',
                          ['A', 'B', '...', 'No']
                      ], one_time_keyboard=True))
 
-creation = Keyboard('⚔ Are you ready to start your adventure?',
+creation = Keyboard('💰 Do you want to buy something?',
                     reply_markup=ReplyKeyboardMarkup([
-                        ['Yes!', 'Of course!', 'Sure!']
+                        ['Yes', 'No']
                     ], one_time_keyboard=True))
