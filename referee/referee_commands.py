@@ -205,7 +205,9 @@ class RefereeCommands:
                 cur.execute('DELETE FROM shop WHERE adventure_id = %s;', (adv_id,))
                 if cmd[-1].upper() == 'CLOSE':
                     return True, '✅ Successfully closed shop!'
-                if not isinstance(cmd[-1], int):
+                try:
+                    int(cmd[-1])
+                except ValueError:
                     return False, '❌ Insert Technology Level'
                 for c in cmd:
                     if c.upper() in eq.categories.keys():

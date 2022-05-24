@@ -28,8 +28,8 @@ if __name__ == '__main__':
         port=5432
     )
 
-    with open('schema.sql') as f:
-        conn.cursor().execute(f.read())
+#    with open('schema.sql') as f:
+#        conn.cursor().execute(f.read())
 
     updater = Updater(
         token=config['TELEGRAM_TOKEN'],

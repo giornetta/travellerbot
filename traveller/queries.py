@@ -158,15 +158,14 @@ def enough_money(cur: cursor, char_id: int, e: int) -> Tuple[bool, int]:
         return True, credits - eq.equipments[e].cost
 
 
-def categories_from_shop(cur: cursor, adv_id, user_id) -> List[Tuple[str, int]]:
-    cur.execute('SELECT category,tl FROM shop WHERE adventure_id = %s', (adv_id,))
-    '''categories = cur.fetchall()
-    items = []
-    for c in categories:
-        for eq_id in range(len(eq.equipments)):
-            if is_coherent(c[0], eq_id) and eq.equipments[eq_id].technology_level <= c[1]:
-                items.append(eq_id)'''
-    return cur.fetchall()
+def categories_from_shop(cur: cursor, adv_id, user_id) -> List[str]:
+    cur.execute('SELECT category FROM shop WHERE adventure_id = %s', (adv_id,))
+
+    categories: List[str] = []
+    for t in cur.fetchall():
+        categories.append(t[0].title().replace('_', ' '))
+
+    return categories
 
 
 def eq_name_from_id(ids: List[int]) -> List[List[str]]:

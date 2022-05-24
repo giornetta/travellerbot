@@ -9,7 +9,7 @@ class CommandParser:
         self.callbacks = {}
 
     def execute(self, command: str, referee_id: int) -> (bool, str):
-        if re.match(r'^/[\da-zA-Z+\- :]+$', command):
+        if re.match(r'^/[\da-zA-Z+\-_ :]+$', command):
             cmd = list(filter(lambda s: s != '', command.split(' ')))
             cmd[0] = cmd[0][1:]  # remove the '/' character
 

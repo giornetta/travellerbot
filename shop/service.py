@@ -15,20 +15,37 @@ class Shop:
     def categories_from_shop(self, user_id: int) -> List[str]:
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('SELECT just_created FROM characters WHERE user_id = %s AND alive = TRUE;', (user_id,))
-                just_created = cur.fetchone()
-                if just_created:
-                    keys = list(eq.categories.keys())
-                    for i in range(len(keys)):
-                        keys[i] = keys[i].title()
-                    return keys
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (user_id,))
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s', (user_id,))
                 adv_id = cur.fetchone()[0]
-                categories = q.categories_from_shop(cur, adv_id, user_id)
-                keys = []
-                for c in categories:
-                    keys.append(f'{c[0]}:{c[1]}')
+                cur.execute('SELECT just_created FROM characters WHERE user_id = %s AND adventure_id = %s AND alive = TRUE;', (user_id, adv_id))
+                just_created = cur.fetchone()[0]
+                print(just_created)
+
+                keys: List[str] = []
+                if just_created:
+                    for k in eq.categories.keys():
+                        keys.append(k.title().replace('_', ' '))
+                    return keys
+
+                keys = q.categories_from_shop(cur, adv_id, user_id)
+
                 return keys
+
+    def tl(self, user_id: int) -> int:
+        with self.db:
+            with self.db.cursor() as cur:
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s', (user_id,))
+                adv_id = cur.fetchone()[0]
+                cur.execute('SELECT tl FROM shop WHERE adventure_id = %s', (adv_id,))
+                return cur.fetchone()[0]
+
+    def character_credits(self, user_id: int) -> int:
+        with self.db:
+            with self.db.cursor() as cur:
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s', (user_id,))
+                adv_id = cur.fetchone()[0]
+                cur.execute('SELECT credits FROM characters WHERE adventure_id = %s AND alive = TRUE AND user_id = %s', (adv_id, user_id))
+                return cur.fetchone()[0]
 
     def add(self, user_id: int, e: int) -> Tuple[bool, int]:
         with self.db:
