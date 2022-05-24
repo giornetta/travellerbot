@@ -5,7 +5,7 @@ from keyboards.keyboards import Keyboard
 
 # Join adventure
 
-adv_code = Keyboard('✨ Perfect! What\'s the *code* of the Adventure you\'d like to join?', reply_markup=ReplyKeyboardRemove())
+adv_code = Keyboard('✨ Perfect! What\'s the *code* of the Adventure you\'d like to join? (*Cancel* to go back)', reply_markup=ReplyKeyboardRemove())
 
 join_adventure = Keyboard('✅ Successfully joined Adventure _"%s"_!')
 
@@ -68,3 +68,5 @@ survival_roll = Keyboard('💀 When a *Survival Check* is failed, will the adven
 adventure_created = Keyboard('✅ Successfully created Adventure <b><code>%s</code></b>! '
                              'Share this code with your friends to let them join! ',
                              reply_markup=ReplyKeyboardRemove(), parse_mode=telegram.ParseMode.HTML)
+
+joined_adventures = Keyboard('Which adventure do you want to join?')

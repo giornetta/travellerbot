@@ -82,7 +82,7 @@ class PlayerIdleConversation:
             kb.ask_shop.reply_text(update)
             return State.SHOP
         elif text == 'Exit':
-            keyboards.keyboards.welcome(update)
+            keyboards.keyboards.welcome.reply_text(update)
             return State.EXIT
 
 
