@@ -22,8 +22,8 @@ class AdventureSetupService:
                 try:
                     cur.execute('INSERT INTO users(id, active_adventure) VALUES(%s, %s)'
                                 'ON CONFLICT(id) DO UPDATE SET active_adventure = %s;', (user_id, code, code))
-                    cur.execute('SELECT * FROM adventures WHERE id = %s;', (code, ))
-                    adv_id, title, sector, world, terms, survival_kills, referee_id, scene = cur.fetchone()
+                    cur.execute('SELECT id, title, sector, planet, max_terms, survival_fail_kills, referee_id FROM adventures WHERE id = %s;', (code, ))
+                    adv_id, title, sector, world, terms, survival_kills, referee_id = cur.fetchone()
                     adv = Adventure.from_db((adv_id, title, sector, world, terms, survival_kills, referee_id))
                 except (psycopg2.errors.ForeignKeyViolation, psycopg2.errors.InFailedSqlTransaction):
                     self.db.rollback()
@@ -31,7 +31,7 @@ class AdventureSetupService:
         return adv
 
     def create_adventure(self, referee_id: int, adv: Adventure) -> Optional[str]:
-        adventure_id = ''.join(random.choices(string.ascii_letters + string.digits, k=6)).upper()
+        adventure_id = ''.join(random.choices(string.ascii_letters, k=6)).upper()
         created = False
 
         if adv.terms < 0:
@@ -42,12 +42,12 @@ class AdventureSetupService:
                 with self.db.cursor() as cur:
                     try:
                         cur.execute('INSERT INTO users(id) VALUES(%s) ON CONFLICT DO NOTHING;', (referee_id, ))
-                        cur.execute('INSERT INTO adventures VALUES(%s, %s, %s, %s, %s, %s, %s);',
+                        cur.execute('INSERT INTO adventures(id, title, sector, planet, max_terms, survival_fail_kills, referee_id) VALUES(%s, %s, %s, %s, %s, %s, %s);',
                                     (adventure_id, adv.title, adv.sector, adv.world,
                                      adv.terms, adv.survival_kills, referee_id))
                         cur.execute('UPDATE users SET active_adventure = %s WHERE id = %s;', (adventure_id, referee_id))
                         created = True
                     except psycopg2.errors.UniqueViolation:
-                        adventure_id = ''.join(random.choices(string.ascii_letters + string.digits, k=6)).upper()
+                        adventure_id = ''.join(random.choices(string.ascii_letters, k=6)).upper()
 
         return adventure_id

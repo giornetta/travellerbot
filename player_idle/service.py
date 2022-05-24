@@ -4,6 +4,7 @@ from psycopg2.extensions import cursor
 from psycopg2.extensions import connection
 
 import traveller.queries as q
+from traveller.skill import skills
 
 
 class PlayerIdle:
@@ -63,3 +64,28 @@ class PlayerIdle:
                             (user_id, adv_id))
                 char_id = cur.fetchone()[0]
                 q.remove_item(cur, 1, char_id, item_id)
+
+    def skill_levels(self, user_id: int) -> List[str]:
+        with self.db:
+            with self.db.cursor() as cur:
+                adv_id = self.get_adv_id(cur, user_id)
+
+                cur.execute('SELECT s.skill_name, s.level '
+                            'FROM skill_sets AS s, characters AS c '
+                            'WHERE s.character_id = c.id AND c.adventure_id = %s AND c.user_id = %s AND c.alive = TRUE;',
+                            (adv_id, user_id))
+
+                skillset: List[str] = []
+                tuples = cur.fetchall()
+                for name, lvl in tuples:
+                    skillset.append(name)
+
+                for name, passive in skills.items():
+                    if not passive and name not in skillset:
+                        skillset.append(name)
+
+                for i in range(len(tuples)):
+                    skillset[i] = f'{tuples[i][0]}-{tuples[i][1]}'
+
+                return skillset
+

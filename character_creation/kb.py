@@ -170,6 +170,8 @@ undo_damage = Keyboard('✨ You have *%sCr*, do you want to restore a point of d
 
 character_name = Keyboard('📝 What\'s your name?', reply_markup=ReplyKeyboardRemove())
 
+name_too_long = Keyboard('❌ That name is too long, sorry. Retry.')
+
 character_sex = Keyboard('📝 What\'s your sex?', reply_markup=ReplyKeyboardMarkup([['M', 'F']]))
 
 buy_equip = Keyboard('💰 You have *%sCr*, do you want to buy something?',

@@ -7,6 +7,7 @@ from telegram import ReplyKeyboardMarkup, ReplyMarkup, Update
 def single_keys(l: List[str]) -> List[List[str]]:
     return [l[i: i + 1] for i in range(0, len(l), 1)]
 
+
 class Keyboard:
     text: str
     reply_markup: Optional[ReplyMarkup]

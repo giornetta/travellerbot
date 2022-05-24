@@ -86,7 +86,7 @@ class SetupConversation:
 
     def _handle_adventure_code(self, update: Update, context: CallbackContext) -> State:
         user_id = update.message.from_user.id
-        adventure_id = update.message.text
+        adventure_id = update.message.text.upper()
 
         adventure = self.service.join_adventure(user_id, adventure_id)
         if adventure:

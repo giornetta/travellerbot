@@ -3,7 +3,10 @@ import re
 
 
 class CommandParser:
-    callbacks: Dict[str, Callable] = {}
+    callbacks: Dict[str, Callable]
+
+    def __init__(self):
+        self.callbacks = {}
 
     def execute(self, command: str, referee_id: int) -> (bool, str):
         if re.match(r'^/[\da-zA-Z+\- :]+$', command):
@@ -73,52 +76,9 @@ class CommandParser:
                     return self.callbacks[cmd[0]](referee_id)
                 else:
                     return False, 'use /exit'
+            elif cmd[0] == 'starship':
+                return self.callbacks[cmd[0]](referee_id)
             else:
                 return self.callbacks[cmd[0]](cmd[1:], referee_id)
         else:
             return False, 'Invalid command format.'
-
-    def set_info_callback(self, callback: Callable[[str], Tuple[bool, str]]):
-        self.callbacks['info'] = callback
-
-    def set_set_callback(self, callback: Callable[[str, List[str], int], Tuple[bool, str]]):
-        self.callbacks['set'] = callback
-
-    def set_shop_callback(self, callback: Callable[[List[str]], Tuple[bool, str]]):
-        self.callbacks['shop'] = callback
-
-    def set_rest_callback(self, callback: Callable[[str], Tuple[bool, str]]):
-        self.callbacks['rest'] = callback
-
-    def set_combat_callback(self, callback: Callable[[str, Optional[str]], Tuple[bool, str]]):
-        self.callbacks['combat'] = callback
-
-    def set_travel_callback(self, callback: Callable[[str], Tuple[bool, str]]):
-        self.callbacks['travel'] = callback
-
-    def set_age_callback(self, callback: Callable[[List[str], List[str]], Tuple[bool, str]]):
-        self.callbacks['age'] = callback
-
-    def set_scene_callback(self, callback: Callable[[str, str], Tuple[bool, str]]):
-        self.callbacks['scene'] = callback
-
-    def set_exit_callback(self, callback: Callable[[], Tuple[bool, str]]):
-        self.callbacks['exit'] = callback
-
-    def __setitem__(self, key: str, callback: Callable):
-        options = {
-            "info": self.set_info_callback,
-            "set": self.set_set_callback,
-            "shop": self.set_shop_callback,
-            "rest": self.set_rest_callback,
-            "combat": self.set_combat_callback,
-            "travel": self.set_travel_callback,
-            "age": self.set_age_callback,
-            "scene": self.set_scene_callback,
-            "exit": self.set_exit_callback
-        }
-        func: Callable = options.get(key)
-        if func is not None:
-            func(callback)
-        else:
-            self.callbacks[key] = callback

@@ -2,23 +2,22 @@ import telegram
 from telegram import Update
 from telegram.ext import ConversationHandler, CallbackContext, CommandHandler
 
-from keyboards import keyboards
 from bot.state import ConversationState
+from keyboards import keyboards
 from referee.referee_commands import RefereeCommands
+from referee.scene_creation.bot import SceneCreationConversation
+from referee.scene_creation.service import SceneCreationService
+from referee.state import RefereeState
 from traveller.world import *
-
-
-class State(Enum):
-    COMMANDS = 0
-    SCENE = 1
-    EXIT = 2
 
 
 class RefereeCommandsConversation:
     service: RefereeCommands
+    scene_creator: SceneCreationService
 
-    def __init__(self, service: RefereeCommands):
-        self.service = service
+    def __init__(self, commands: RefereeCommands, scene_creator: SceneCreationService):
+        self.service = commands
+        self.scene_creator = scene_creator
 
     def handlers(self) -> List[ConversationHandler]:
         commands = [
@@ -30,44 +29,46 @@ class RefereeCommandsConversation:
             CommandHandler('travel', self._handle_command),
             CommandHandler('age', self._handle_command),
             CommandHandler('scene', self._handle_scene),
-            CommandHandler('exit', self._handle_exit)
+            CommandHandler('exit', self._handle_exit),
+            CommandHandler('starship', self._handle_command)
         ]
+
         return [ConversationHandler(
             entry_points=commands,
             states={
-                State.COMMANDS: commands
+                RefereeState.COMMANDS: commands,
+                RefereeState.SCENE: SceneCreationConversation(self.scene_creator).handlers(),
             },
             map_to_parent={
-                State.SCENE: ConversationState.SCENE_CREATION,
-                State.EXIT: ConversationState.ADVENTURE_SETUP
+                RefereeState.EXIT: ConversationState.ADVENTURE_SETUP
             },
             fallbacks=[]
         )]
 
-    def _handle_command(self, update: Update, context: CallbackContext) -> State:
+    def _handle_command(self, update: Update, context: CallbackContext) -> RefereeState:
         check, text = self.service.cp.execute(update.message.text, update.message.from_user.id)
         update.message.reply_text(text, parse_mode=telegram.ParseMode.MARKDOWN)
-        return State.COMMANDS
+        return RefereeState.COMMANDS
 
-    def _handle_info(self, update: Update, context: CallbackContext) -> State:
+    def _handle_info(self, update: Update, context: CallbackContext) -> RefereeState:
         check, text = self.service.cp.execute(update.message.text, update.message.from_user.id)
         if text[:4] == 'http':
             update.message.reply_photo(text)
         else:
             update.message.reply_text(text, parse_mode=telegram.ParseMode.HTML)
-        return State.COMMANDS
+        return RefereeState.COMMANDS
 
-    def _handle_scene(self, update: Update, context: CallbackContext) -> State:
+    def _handle_scene(self, update: Update, context: CallbackContext) -> RefereeState:
         is_new = update.message.text.split(' ', 2)[1]
         if is_new == 'new':
             check, text = self.service.cp.execute(update.message.text, update.message.from_user.id)
             update.message.reply_text(text)
-            return State.SCENE
+            return RefereeState.SCENE
         check, text = self.service.cp.execute(update.message.text, update.message.from_user.id)
         update.message.reply_text(text)
-        return State.COMMANDS
+        return RefereeState.COMMANDS
 
-    def _handle_exit(self, update: Update, context: CallbackContext) -> State:
+    def _handle_exit(self, update: Update, context: CallbackContext) -> RefereeState:
         self.service.cp.execute(update.message.text, update.message.from_user.id)
         keyboards.welcome.reply_text(update)
-        return State.EXIT
+        return RefereeState.EXIT
