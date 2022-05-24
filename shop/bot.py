@@ -61,6 +61,7 @@ class ShopConversation:
     def _handle_cat(self, update: Update, context: CallbackContext) -> State:
         message = update.message.text.title()
         if message == 'Skip':
+            self.service.set_created(update.message.from_user.id)
             player_idle.kb.idle.reply_text(update)
             return State.END
 
@@ -99,6 +100,7 @@ class ShopConversation:
     def _handle_item(self, update: Update, context: CallbackContext) -> State:
         item = update.message.text
         if item.title() == 'Skip':
+            self.service.set_created(update.message.from_user.id)
             player_idle.kb.idle.reply_text(update)
             return State.END
         try:

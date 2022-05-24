@@ -172,9 +172,9 @@ def eq_name_from_id(ids: List[int]) -> List[List[str]]:
     items = []
     for eq_id in ids:
         item_name = eq.equipments[eq_id].name
-        if is_coherent('RangedAmmunition', eq_id):
+        if is_coherent('Ranged_Ammunition', eq_id):
             item_name = f'{item_name}:Ammo'
-        elif is_coherent('HeavyWeaponAmmunition', eq_id):
+        elif is_coherent('Heavy_Weapon_Ammunition', eq_id):
             item_name = f'{item_name}:Ammo'
         elif is_coherent('Computer', eq_id):
             level = eq.equipments[eq_id].technology_level
