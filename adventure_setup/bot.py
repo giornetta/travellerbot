@@ -4,12 +4,15 @@ from typing import List
 from telegram import Update
 from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackContext
 
+import keyboards.keyboards
+import player_idle.kb
 from adventure_setup.service import AdventureSetupService
 from cache.userdata import user_data
 from character_creation.bot import start_character_creation
 from character_creation.service import CharacterCreator
 from bot.state import ConversationState
 from adventure_setup import kb
+from keyboards.keyboards import single_keys
 from traveller.adventure import Adventure
 from travellermap import api
 
@@ -24,6 +27,8 @@ class State(Enum):
     END = 6
     END_REF = 7
     END_IDLE = 8
+    ADVENTURE = 9
+    CANCEL = 10
 
 
 class SetupConversation:
@@ -67,13 +72,15 @@ class SetupConversation:
             ConversationHandler(
                 entry_points=[MessageHandler(Filters.regex('^(Join)$'), self._ask_adventure_code)],
                 states={
-                    State.CODE: [MessageHandler(Filters.text, self._handle_adventure_code)]
+                    State.CODE: [MessageHandler(Filters.text, self._handle_adventure_code)],
+                    State.ADVENTURE: [MessageHandler(Filters.text, self._handle_adventure)]
                 },
                 fallbacks=[],
                 map_to_parent={
                     State.END: ConversationState.CHARACTER_CREATION,
                     State.END_REF: ConversationState.REFEREE_IDLE,
                     State.END_IDLE: ConversationState.PLAYER_IDLE,
+                    State.CANCEL: ConversationState.ADVENTURE_SETUP
                 },
                 name='join_adventure',
                 persistent=True,
@@ -81,12 +88,30 @@ class SetupConversation:
         ]
 
     def _ask_adventure_code(self, update: Update, context: CallbackContext) -> State:
-        kb.adv_code.reply_text(update)
-        return State.CODE
+        adventures = self.service.adventures(update.message.from_user.id)
+        if len(adventures) == 0:
+            kb.adv_code.reply_text(update)
+            return State.CODE
+
+        kb.joined_adventures.reply_text(update, keys=single_keys(adventures + ['Join a New Adventure']))
+        return State.ADVENTURE
+
+    def _handle_adventure(self, update: Update, context: CallbackContext) -> State:
+        if update.message.text == 'Join a New Adventure':
+            kb.adv_code.reply_text(update)
+            return State.CODE
+
+        if update.message.text in self.service.adventures(update.message.from_user.id):
+            update.message.text = update.message.text.split(':')[0]
+            return self._handle_adventure_code(update, context)
 
     def _handle_adventure_code(self, update: Update, context: CallbackContext) -> State:
         user_id = update.message.from_user.id
         adventure_id = update.message.text.upper()
+
+        if adventure_id == 'CANCEL':
+            keyboards.keyboards.welcome.reply_text(update)
+            return State.CANCEL
 
         adventure = self.service.join_adventure(user_id, adventure_id)
         if adventure:
@@ -99,6 +124,7 @@ class SetupConversation:
                 return State.END_REF
             else:
                 if self.character_creator.alive_character_exists(user_id, adventure.id):
+                    player_idle.kb.idle.reply_text(update)
                     return State.END_IDLE
                 else:
                     kb.create_char.reply_text(update)
