@@ -59,13 +59,15 @@ class RefereeCommandsConversation:
         return RefereeState.COMMANDS
 
     def _handle_scene(self, update: Update, context: CallbackContext) -> RefereeState:
-        is_new = update.message.text.split(' ', 2)[1]
+        is_new = update.message.text.split(' ', 2)
+        if len(is_new) > 1:
+            is_new = is_new[1]
         if is_new == 'new':
             check, text = self.service.cp.execute(update.message.text, update.message.from_user.id)
             update.message.reply_text(text)
             return RefereeState.SCENE
         check, text = self.service.cp.execute(update.message.text, update.message.from_user.id)
-        update.message.reply_text(text)
+        update.message.reply_text(text, parse_mode=telegram.ParseMode.HTML)
         return RefereeState.COMMANDS
 
     def _handle_exit(self, update: Update, context: CallbackContext) -> RefereeState:

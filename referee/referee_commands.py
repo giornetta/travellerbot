@@ -59,7 +59,8 @@ def calculate_age_damage(stats: Tuple, age) -> (Tuple, int):
 
 def modify(cur: cursor, value: int, char_id: int, add: bool, stat: str):
     if add:
-        cur.execute(f'UPDATE characters SET {stat} = {stat} {"+" if value > 0 else ""}%s WHERE id = %s;', (value, char_id))
+        cur.execute(f'UPDATE characters SET {stat} = {stat} {"+" if value > 0 else ""}%s WHERE id = %s;',
+                    (value, char_id))
     else:
         cur.execute(f'UPDATE characters SET {stat} = %s WHERE id = %s;', (value, char_id))
 
@@ -82,7 +83,6 @@ class RefereeCommands:
         self.cp.callbacks['exit'] = self.exit
         self.cp.callbacks['starship'] = self.ship_shares
 
-
     def info(self, info: str, referee_id: int) -> (bool, str):
         with self.db:
             with self.db.cursor() as cur:
@@ -91,15 +91,20 @@ class RefereeCommands:
 
                 if info == 'scene':
                     cur.execute('SELECT scene_id FROM adventures WHERE id=%s;', (adv_id,))
-                    scene_id = cur.fetchone()
-                    if scene_id:
-                        scene_id = scene_id[0]
-                        cur.execute('SELECT scene_name FROM scenes WHERE id=%s;', (scene_id,))
-                        scene_name = cur.fetchone()
-                        if scene_name:
-                            scene_name = scene_name[0]
-                            return True, f'⚔️ The <b>active scene</b> is <i>"{scene_name}"</i>'
-                    return False, 'No active scene'
+                    active_scene_id = cur.fetchone()[0]
+                    cur.execute('SELECT scene_name FROM scenes WHERE id=%s', (active_scene_id,))
+                    active_scene_name = cur.fetchone()
+                    if not active_scene_name:
+                        text = '❌ No active scene'
+                    else:
+                        text = f'⚔The <b>active scene</b> is <i>{active_scene_name[0]}</i>'
+                    cur.execute('SELECT scene_name FROM scenes WHERE scenes.adventure_id=%s;', (adv_id,))
+                    scene_names = cur.fetchall()
+                    if len(scene_names) > 0:
+                        text = text + '\nYour scenes are:'
+                    for scene_name in scene_names:
+                        text = text + f'\n<i>{scene_name[0]}</i>'
+                    return True, text
                 elif info == 'world':
                     return True, q.info_world(cur, adv_id)
                 elif info == 'map':
@@ -193,7 +198,7 @@ class RefereeCommands:
                             found, e = q.is_item(command)
                             if not found:
                                 return False, '❌ No such item exists'
-                            q.add_item(char_id, value, e)
+                            q.add_item(cur, char_id, value, e)
                         return True, '✅ Successfully added item!'
                 return False, '❌ Invalid command format!'
 
@@ -242,7 +247,7 @@ class RefereeCommands:
                     return True, '✅ Successfully closed combat!'
                 else:
                     try:
-                        cur.execute('SELECT id FROM scenes WHERE scene_name = %s;', (combat, ))
+                        cur.execute('SELECT id FROM scenes WHERE scene_name = %s;', (combat,))
                         scene_id = cur.fetchone()
                         if scene_id is None:
                             return False, '❌ No scene has this name.'
@@ -316,6 +321,20 @@ class RefereeCommands:
                     adv_id = cur.fetchone()[0]
                     cur.execute('UPDATE adventures SET scene_id = NULL WHERE id=%s;', (adv_id,))
                     return True, '⚔ Combat terminated!'
+        elif cmd == 'info':
+            if name:
+                with self.db:
+                    with self.db.cursor() as cur:
+                        cur.execute('SELECT active_adventure FROM users WHERE id = %s;', (referee_id,))
+                        adv_id = cur.fetchone()[0]
+                        cur.execute('SELECT id FROM scenes WHERE scene_name=%s AND adventure_id=%s;', (name, adv_id))
+                        scene_id = cur.fetchone()
+                        if scene_id:
+                            scene_id = scene_id[0]
+                            return True, q.info_npcs(cur, scene_id)
+                        return False, '❌ No scene has this name.'
+            else:
+                return False, '❌ Insert scene name'
         elif cmd == 'remove' or cmd == 'rmv':
             if name:
                 with self.db:
@@ -326,14 +345,16 @@ class RefereeCommands:
                         scene_id = cur.fetchone()
                         if scene_id:
                             scene_id = scene_id[0]
-                            cur.execute('DELETE FROM scenes WHERE scene_name=%s AND adventure_id=%s;',
+                            cur.execute('DELETE FROM npcs WHERE scene = %s', (scene_id,))
+                            cur.execute('UPDATE adventures SET scene_id = NULL WHERE id = %s', (adv_id,))
+                            cur.execute('DELETE FROM scenes WHERE id = %s AND adventure_id=%s;',
                                         (scene_id, adv_id))
                             return True, '✅ Scene successfully removed!'
                         return False, '❌ No scene has this name.'
             else:
                 return False, '❌ Remove scene with /scene remove scene_name'
         else:
-            return False, '❌ Use /scene {new|start|end|remove} [name]'
+            return False, '❌ Use /scene {new|start|end|remove|info} [name]'
 
     def exit(self, referee_id: int) -> (bool, str):
         with self.db:
@@ -362,16 +383,17 @@ class RefereeCommands:
     def ship_shares(self, referee_id: int):
         with self.db:
             with self.db.cursor() as cur:
-                cur.execute('SELECT active_adventure FROM users WHERE id = %s', (referee_id, ))
+                cur.execute('SELECT active_adventure FROM users WHERE id = %s', (referee_id,))
                 adventure_id = cur.fetchone()[0]
 
-                cur.execute('SELECT SUM(ship_shares) FROM characters WHERE adventure_id = %s AND alive = TRUE;', (adventure_id, ))
+                cur.execute('SELECT SUM(ship_shares) FROM characters WHERE adventure_id = %s AND alive = TRUE;',
+                            (adventure_id,))
                 shares = cur.fetchone()[0]
                 ship = vessel.get_best(shares)
 
                 if ship:
                     cur.execute('UPDATE adventures SET vessel = %s WHERE id = %s', (ship, adventure_id))
-                    cur.execute('UPDATE characters SET ship_shares = 0 WHERE adventure_id = %s', (adventure_id, ))
+                    cur.execute('UPDATE characters SET ship_shares = 0 WHERE adventure_id = %s', (adventure_id,))
 
                     return True, f'✅ The adventurers bought a {ship}!'
                 else:

@@ -36,12 +36,15 @@ class PlayerIdleConversation:
         return [ConversationHandler(
             entry_points=[MessageHandler(Filters.text, self._handle_created)],
             states={
-                State.IDLE: [MessageHandler(Filters.regex('^(Info|Inventory|Map|Skill Check|Shop|Exit)$'), self._handle_idle)],
-                State.INFO: [MessageHandler(Filters.regex('^(World|Adventure|Myself)$'), self._handle_info)],
+                State.IDLE: [
+                    MessageHandler(Filters.regex('^(Info|Inventory|Map|Skill Check|Shop|Exit)$'), self._handle_idle)],
+                State.INFO: [MessageHandler(Filters.regex('^(World|Adventure|Myself|Scenes)$'), self._handle_info)],
                 State.ITEM: [MessageHandler(Filters.regex('^(Use|Throw|Nothing)'), self._handle_item)],
                 State.INVENTORY: [MessageHandler(Filters.text, self._handle_inventory)],
                 State.SKILL_CHECK: [MessageHandler(Filters.text, self._handle_skill)],
-                State.DIFFICULTY: [MessageHandler(Filters.regex('^(Easy|Simple|Routine|Average|Difficult|Very Difficult|Formidable)$'), self._handle_difficulty)]
+                State.DIFFICULTY: [
+                    MessageHandler(Filters.regex('^(Easy|Simple|Routine|Average|Difficult|Very Difficult|Formidable)$'),
+                                   self._handle_difficulty)]
             },
             fallbacks=[],
             map_to_parent={
@@ -85,15 +88,20 @@ class PlayerIdleConversation:
             keyboards.keyboards.welcome.reply_text(update)
             return State.EXIT
 
-
     def _handle_info(self, update: Update, context: CallbackContext) -> State:
         text = update.message.text
         if text == 'World':
-            update.message.reply_text(self.service.info_world(update.message.from_user.id), parse_mode=telegram.ParseMode.HTML)
+            update.message.reply_text(self.service.info_world(update.message.from_user.id),
+                                      parse_mode=telegram.ParseMode.HTML)
         elif text == 'Adventure':
-            update.message.reply_text(self.service.info_adventure(update.message.from_user.id), parse_mode=telegram.ParseMode.HTML)
+            update.message.reply_text(self.service.info_adventure(update.message.from_user.id),
+                                      parse_mode=telegram.ParseMode.HTML)
         elif text == 'Myself':
-            update.message.reply_text(self.service.info_myself(update.message.from_user.id), parse_mode=telegram.ParseMode.HTML)
+            update.message.reply_text(self.service.info_myself(update.message.from_user.id),
+                                      parse_mode=telegram.ParseMode.HTML)
+        elif text == 'Scenes':
+            update.message.reply_text(self.service.info_scene(update.message.from_user.id),
+                                      parse_mode=telegram.ParseMode.HTML)
         kb.idle.reply_text(update)
 
         return State.IDLE
@@ -102,9 +110,8 @@ class PlayerIdleConversation:
         if update.message.text == 'Nothing':
             kb.idle.reply_text(update)
             return State.IDLE
-        item, e = self.service.is_item(update.message.text)
+        item, e = self.service.is_item(update.message.text.replace(" ", "_").upper())
         if item:
-            user_data[update.message.from_user.id] = UserData()
             user_data[update.message.from_user.id].item = update.message.text
             user_data[update.message.from_user.id].item_id = e
             kb.item.reply_text(update)

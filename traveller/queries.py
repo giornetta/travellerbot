@@ -116,9 +116,38 @@ def info_character(cur: cursor, adv_id: str, name: str) -> str:
         if is_coherent('Computer', eq_id[0]) or is_coherent('Software', eq_id[0]):
             level = eq.equipments[eq_id[0]].technology_level
             text = text + f'LVL{level}'
+        if is_coherent('Ranged_Ammunition', eq_id[0]):
+            text = text + ' Ammo'
         if eq_id[1] > 1:
             text = text + f': x{eq_id[1]}'
 
+    return text
+
+
+def info_npcs(cur: cursor, scene_id: int) -> str:
+    cur.execute('SELECT npc_name, strength, dexterity, endurance, intelligence,'
+                ' education, social_standing, career, rank, armor, weapon,'
+                ' ally FROM npcs WHERE scene=%s;',
+                (scene_id,))
+    npcs = cur.fetchall()
+    text = 'There are no NPCs in this scene'
+    if len(npcs) > 0:
+        text = '<b>NPCs</b>:\n'
+        for npc in npcs:
+            name, strength, dexterity, endurance, intelligence, education, social_standing, carr, rank, armo, weap, ally = npc
+            text = text + f'📝 <b>Name</b>: {name}' \
+                          f'\n💪 <b>STR</b>: {strength} ' \
+                          f'\n🏃 <b>END</b>: {endurance} ' \
+                          f'\n🗡️ <b>DEX</b>: {dexterity} ' \
+                          f'\n🧠 <b>INT</b>: {intelligence} ' \
+                          f'\n📚 <b>EDU</b>: {education} ' \
+                          f'\n👑 <b>SOC</b>: {social_standing} ' \
+                          f'\n✨ <b>Carrier</b>: {carr}' \
+                          f'\n⬆ <b>Rank</b>: {rank}' \
+                          f'\n🦺 <b>Equipped armor</b>: {eq.equipments[armo].name}' \
+                          f'\n⚔️ <b>Drawn weapon</b>: {eq.equipments[weap].name}'
+            text = text + ("\n🟢 <b>Ally</b>" if ally else "\n🔴 <b>Enemy</b>")
+            text = text + '\n\n\n'
     return text
 
 
@@ -191,28 +220,27 @@ def is_item(name: str) -> Tuple[bool, int]:
 
     splitted = name.split(':', 2)
 
-    eq_name = splitted[0].upper()
-    spec = splitted[1].upper() if len(splitted) > 1 else None
+    eq_name = splitted[0]
+    spec = splitted[1] if len(splitted) > 1 else None
     found = False
 
     for k, v in eq.equipments.items():
-        if spec in range(16):
-            if v.name.replace(" ", "").upper() == eq_name and v.technology_level == spec:
+        if spec and spec.isdigit():
+            if v.name.replace(" ", "_").upper() == eq_name and v.technology_level == int(spec):
                 eq_id = k
                 found = True
                 break
         elif spec == 'AMMO':
-            if v.name.replace(" ", "").upper() == eq_name and \
+            if v.name.replace(" ", "_").upper() == eq_name and \
                     (isinstance(v, eq.RangedAmmunition) or isinstance(v, eq.HeavyWeaponAmmunition)):
                 eq_id = k
                 found = True
                 break
         else:
-            if eq_name == v.name.replace(" ", "").upper():
+            if eq_name == v.name.replace(" ", "_").upper():
                 eq_id = k
                 found = True
                 break
-
     return found, eq_id
 
 

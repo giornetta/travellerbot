@@ -19,7 +19,6 @@ class Shop:
                 adv_id = cur.fetchone()[0]
                 cur.execute('SELECT just_created FROM characters WHERE user_id = %s AND adventure_id = %s AND alive = TRUE;', (user_id, adv_id))
                 just_created = cur.fetchone()[0]
-                print(just_created)
 
                 keys: List[str] = []
                 if just_created:

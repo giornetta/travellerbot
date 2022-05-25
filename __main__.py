@@ -17,8 +17,10 @@ if __name__ == '__main__':
     api.load_map(config['MAP_PATH'])
     userdata.load_data(config['CACHE_PATH'])
 
-    for k, v in userdata.user_data.items():
-        print(str(k) + ': ', v)
+    print(f'{len(equipment.equipments)} items loaded!')
+    print(f'{len(api.data)} sectors loaded!')
+
+    print(f'Loaded cached user data for {len(userdata.user_data)} players!')
 
     conn = psycopg2.connect(
         user=config['DB_USER'],
@@ -27,6 +29,8 @@ if __name__ == '__main__':
         host='localhost',
         port=5432
     )
+
+    print('Successfully connected to Database!')
 
 #    with open('schema.sql') as f:
 #        conn.cursor().execute(f.read())
@@ -41,6 +45,9 @@ if __name__ == '__main__':
     updater.dispatcher.add_handler(conversation)
 
     updater.start_polling()
+
+    print('Bot started!')
+
     updater.idle()
 
     userdata.write_data(config['CACHE_PATH'])
