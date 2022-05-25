@@ -93,7 +93,7 @@ class RefereeCommands:
                     cur.execute('SELECT scene_id FROM adventures WHERE id=%s;', (adv_id,))
                     active_scene_id = cur.fetchone()[0]
                     cur.execute('SELECT scene_name FROM scenes WHERE id=%s', (active_scene_id,))
-                    active_scene_name = cur.fetchone()
+                    active_scene_name = cur.fetchone()[0]
                     if not active_scene_name:
                         text = '❌ No active scene'
                     else:
