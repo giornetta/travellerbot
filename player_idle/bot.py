@@ -112,7 +112,6 @@ class PlayerIdleConversation:
             return State.IDLE
         item, e = self.service.is_item(update.message.text.replace(" ", ""))
         if item:
-            user_data[update.message.from_user.id] = UserData()
             user_data[update.message.from_user.id].item = update.message.text
             user_data[update.message.from_user.id].item_id = e
             kb.item.reply_text(update)

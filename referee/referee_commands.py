@@ -345,7 +345,8 @@ class RefereeCommands:
                         scene_id = cur.fetchone()
                         if scene_id:
                             scene_id = scene_id[0]
-                            cur.execute('DELETE FROM scenes WHERE scene_name=%s AND adventure_id=%s;',
+                            cur.execute('DELETE FROM npcs WHERE scene = %s', (scene_id,))
+                            cur.execute('DELETE FROM scenes WHERE id = %s AND adventure_id=%s;',
                                         (scene_id, adv_id))
                             return True, '✅ Scene successfully removed!'
                         return False, '❌ No scene has this name.'

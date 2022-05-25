@@ -127,23 +127,24 @@ def info_npcs(cur: cursor, scene_id: int) -> str:
                 ' education, social_standing, career, rank, armor, weapon,'
                 ' ally FROM npcs WHERE scene=%s;',
                 (scene_id,))
-    text = '<b>Npcs</b>\n:'
     npcs = cur.fetchall()
-    for npc in npcs:
-        name, strength, dexterity, endurance, intelligence, education, social_standing, carr, rank, armo, weap, ally = npc
-        text = text +  f'📝 <b>Name</b>: {name}' \
-               f'\n💪 <b>STR</b>: {strength} ' \
-               f'\n🏃 <b>END</b>: {endurance} ' \
-               f'\n🗡️ <b>DEX</b>: {dexterity} ' \
-               f'\n🧠 <b>INT</b>: {intelligence} ' \
-               f'\n📚 <b>EDU</b>: {education} ' \
-               f'\n👑 <b>SOC</b>: {social_standing} ' \
-               f'\n✨ <b>Carrier</b>: {carr}' \
-               f'\n⬆ <b>Rank</b>: {rank}' \
-               f'\n🦺 <b>Equipped armor</b>: {eq.equipments[armo].name}' \
-               f'\n⚔️ <b>Drawn weapon</b>: {eq.equipments[weap].name}'
-        text = text + ("\n🟢 <b>Ally</b>" if ally else "\n🔴 <b>Enemy</b>")
-        text = text + '\n\n\n'
+    if len(npcs) > 0:
+        text = '<b>NPCs</b>\n:'
+        for npc in npcs:
+            name, strength, dexterity, endurance, intelligence, education, social_standing, carr, rank, armo, weap, ally = npc
+            text = text + f'📝 <b>Name</b>: {name}' \
+                          f'\n💪 <b>STR</b>: {strength} ' \
+                          f'\n🏃 <b>END</b>: {endurance} ' \
+                          f'\n🗡️ <b>DEX</b>: {dexterity} ' \
+                          f'\n🧠 <b>INT</b>: {intelligence} ' \
+                          f'\n📚 <b>EDU</b>: {education} ' \
+                          f'\n👑 <b>SOC</b>: {social_standing} ' \
+                          f'\n✨ <b>Carrier</b>: {carr}' \
+                          f'\n⬆ <b>Rank</b>: {rank}' \
+                          f'\n🦺 <b>Equipped armor</b>: {eq.equipments[armo].name}' \
+                          f'\n⚔️ <b>Drawn weapon</b>: {eq.equipments[weap].name}'
+            text = text + ("\n🟢 <b>Ally</b>" if ally else "\n🔴 <b>Enemy</b>")
+            text = text + '\n\n\n'
     return text
 
 
