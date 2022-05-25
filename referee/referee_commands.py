@@ -93,11 +93,11 @@ class RefereeCommands:
                     cur.execute('SELECT scene_id FROM adventures WHERE id=%s;', (adv_id,))
                     active_scene_id = cur.fetchone()[0]
                     cur.execute('SELECT scene_name FROM scenes WHERE id=%s', (active_scene_id,))
-                    active_scene_name = cur.fetchone()[0]
+                    active_scene_name = cur.fetchone()
                     if not active_scene_name:
                         text = '❌ No active scene'
                     else:
-                        text = f'⚔The <b>active scene</b> is <i>{active_scene_name}</i>'
+                        text = f'⚔The <b>active scene</b> is <i>{active_scene_name[0]}</i>'
                     cur.execute('SELECT scene_name FROM scenes WHERE scenes.adventure_id=%s;', (adv_id,))
                     scene_names = cur.fetchall()
                     if len(scene_names) > 0:
@@ -346,6 +346,7 @@ class RefereeCommands:
                         if scene_id:
                             scene_id = scene_id[0]
                             cur.execute('DELETE FROM npcs WHERE scene = %s', (scene_id,))
+                            cur.execute('UPDATE adventures SET scene_id = NULL WHERE id = %s', (adv_id,))
                             cur.execute('DELETE FROM scenes WHERE id = %s AND adventure_id=%s;',
                                         (scene_id, adv_id))
                             return True, '✅ Scene successfully removed!'
