@@ -12,19 +12,20 @@ info = Keyboard('📝 About what?',
                     ['World', 'Adventure', 'Scenes', 'Myself']
                 ], one_time_keyboard=True))
 
-inventory = Keyboard('🔨 Do you want to use/throw an item?',
+inventory = Keyboard('🎒 Which item do you want to inspect?',
                      reply_markup=ReplyKeyboardMarkup([
                          ['Item1', 'Item2', '...', 'Nothing']
                      ], one_time_keyboard=True))
 
-item = Keyboard('🔨 What do you want to do?',
+item = Keyboard('🎒 What do you want to do with it?',
                 reply_markup=ReplyKeyboardMarkup([
                     ['Use', 'Throw', 'Nothing']
                 ], one_time_keyboard=True))
 
-item_error = Keyboard('❌ No such item in your inventory')
-throw = Keyboard('❌ Item thrown')
-use = Keyboard('🔨 Item used')
+item_error = Keyboard('❌ There\'s no such item in your inventory')
+
+throw = Keyboard('🗑️ Item thrown!')
+use = Keyboard('⚙️ Item used!')
 
 skill_check = Keyboard('✨ Which *Skill* do you want to roll on?')
 

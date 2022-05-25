@@ -110,7 +110,7 @@ class PlayerIdleConversation:
         if update.message.text == 'Nothing':
             kb.idle.reply_text(update)
             return State.IDLE
-        item, e = self.service.is_item(update.message.text.replace(" ", ""))
+        item, e = self.service.is_item(update.message.text.replace(" ", "_").upper())
         if item:
             user_data[update.message.from_user.id].item = update.message.text
             user_data[update.message.from_user.id].item_id = e

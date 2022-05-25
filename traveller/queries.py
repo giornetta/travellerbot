@@ -225,7 +225,7 @@ def is_item(name: str) -> Tuple[bool, int]:
     found = False
 
     for k, v in eq.equipments.items():
-        if spec.isdigit():
+        if spec and spec.isdigit():
             if v.name.replace(" ", "_").upper() == eq_name and v.technology_level == int(spec):
                 eq_id = k
                 found = True
