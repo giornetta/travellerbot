@@ -25,6 +25,7 @@ item = Keyboard('🎒 What do you want to do with it?',
 item_error = Keyboard('❌ There\'s no such item in your inventory')
 
 throw = Keyboard('🗑️ Item thrown!')
+
 use = Keyboard('⚙️ Item used!')
 
 skill_check = Keyboard('✨ Which *Skill* do you want to roll on?')
