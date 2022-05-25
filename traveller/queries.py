@@ -122,6 +122,31 @@ def info_character(cur: cursor, adv_id: str, name: str) -> str:
     return text
 
 
+def info_npcs(cur: cursor, scene_id: int) -> str:
+    cur.execute('SELECT npc_name, strength, dexterity, endurance, intelligence,'
+                ' education, social_standing, career, rank, armor, weapon,'
+                ' ally FROM npcs WHERE scene=%s;',
+                (scene_id,))
+    text = '<b>Npcs</b>\n:'
+    npcs = cur.fetchall()
+    for npc in npcs:
+        name, strength, dexterity, endurance, intelligence, education, social_standing, carr, rank, armo, weap, ally = npc
+        text = text +  f'📝 <b>Name</b>: {name}' \
+               f'\n💪 <b>STR</b>: {strength} ' \
+               f'\n🏃 <b>END</b>: {endurance} ' \
+               f'\n🗡️ <b>DEX</b>: {dexterity} ' \
+               f'\n🧠 <b>INT</b>: {intelligence} ' \
+               f'\n📚 <b>EDU</b>: {education} ' \
+               f'\n👑 <b>SOC</b>: {social_standing} ' \
+               f'\n✨ <b>Carrier</b>: {carr}' \
+               f'\n⬆ <b>Rank</b>: {rank}' \
+               f'\n🦺 <b>Equipped armor</b>: {eq.equipments[armo].name}' \
+               f'\n⚔️ <b>Drawn weapon</b>: {eq.equipments[weap].name}'
+        text = text + ("\n🟢 <b>Ally</b>" if ally else "\n🔴 <b>Enemy</b>")
+        text = text + '\n\n\n'
+    return text
+
+
 def get_items(cur: cursor, adv_id, user_id) -> List[List[str]]:  # TODO make this a List[str] and use single_keys
     cur.execute('SELECT id FROM characters WHERE alive=TRUE AND adventure_id = %s AND user_id = %s',
                 (adv_id, user_id))

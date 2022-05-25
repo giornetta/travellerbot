@@ -38,6 +38,20 @@ class PlayerIdle:
                 name = self.get_name(cur, user_id, adv_id)
                 return q.info_character(cur, adv_id, name)
 
+    def info_scene(self, user_id: int) -> str:
+        with self.db:
+            with self.db.cursor() as cur:
+                adv_id = self.get_adv_id(cur, user_id)
+                cur.execute('SELECT scene_id FROM adventures WHERE id = %s', (adv_id,))
+                scene_id = cur.fetchone()[0]
+                if not scene_id:
+                    return '❌ No active scene'
+                cur.execute('SELECT scene_name FROM scenes WHERE id=%s', (scene_id,))
+                scene_name = cur.fetchone()[0]
+                text = f'<b>Scene name</b>:{scene_name}\n\n'
+                text = text + q.info_npcs(cur, scene_id)
+                return text
+
     def get_items(self, user_id: int) -> List[List[str]]:
         with self.db:
             with self.db.cursor() as cur:
@@ -88,4 +102,6 @@ class PlayerIdle:
                     skillset[i] = f'{tuples[i][0]}-{tuples[i][1]}'
 
                 return skillset
+
+
 

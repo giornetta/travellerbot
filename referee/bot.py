@@ -65,7 +65,7 @@ class RefereeCommandsConversation:
             update.message.reply_text(text)
             return RefereeState.SCENE
         check, text = self.service.cp.execute(update.message.text, update.message.from_user.id)
-        update.message.reply_text(text)
+        update.message.reply_text(text, parse_mode=telegram.ParseMode.HTML)
         return RefereeState.COMMANDS
 
     def _handle_exit(self, update: Update, context: CallbackContext) -> RefereeState:

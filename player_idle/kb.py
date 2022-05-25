@@ -9,7 +9,7 @@ idle = Keyboard('📝 Do you want to do something?',
 
 info = Keyboard('📝 About what?',
                 reply_markup=ReplyKeyboardMarkup([
-                    ['World', 'Adventure', 'Myself']
+                    ['World', 'Adventure', 'Scenes', 'Myself']
                 ], one_time_keyboard=True))
 
 inventory = Keyboard('🔨 Do you want to use/throw an item?',

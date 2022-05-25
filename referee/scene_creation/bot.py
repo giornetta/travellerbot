@@ -159,7 +159,7 @@ class SceneCreationConversation:
     def _handle_armor(self, update: Update, context: CallbackContext) -> State:
         user = user_data[update.message.from_user.id]
 
-        armor_id = eq.get_equipment_by_name(update.message.text).id
+        armor_id = eq.get_equipment_by_name(update.message.text)
         if not armor_id:
             return State.ARMOR
 
@@ -176,7 +176,7 @@ class SceneCreationConversation:
     def _handle_weapon(self, update: Update, context: CallbackContext) -> State:
         user = user_data[update.message.from_user.id]
 
-        weapon_id = eq.get_equipment_by_name(update.message.text).id
+        weapon_id = eq.get_equipment_by_name(update.message.text)
         if not weapon_id:
             return State.WEAPON
 
