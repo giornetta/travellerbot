@@ -130,8 +130,9 @@ def info_npcs(cur: cursor, scene_id: int) -> str:
                 ' ally FROM npcs WHERE scene=%s;',
                 (scene_id,))
     npcs = cur.fetchall()
+    text = 'There are no NPCs in this scene'
     if len(npcs) > 0:
-        text = '<b>NPCs</b>\n:'
+        text = '<b>NPCs</b>:\n'
         for npc in npcs:
             name, strength, dexterity, endurance, intelligence, education, social_standing, carr, rank, armo, weap, ally = npc
             text = text + f'📝 <b>Name</b>: {name}' \
