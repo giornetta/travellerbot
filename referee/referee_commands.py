@@ -198,7 +198,7 @@ class RefereeCommands:
                             found, e = q.is_item(command)
                             if not found:
                                 return False, '❌ No such item exists'
-                            q.add_item(char_id, value, e)
+                            q.add_item(cur, char_id, value, e)
                         return True, '✅ Successfully added item!'
                 return False, '❌ Invalid command format!'
 
