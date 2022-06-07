@@ -200,5 +200,8 @@ Il giocatore potrà svolgere le seguenti azioni:
 ## 4. Conclusioni
 
 Gli obiettivi prefissati sono stati raggiunti: gli utenti del bot possono quindi gestire e partecipare a avventure multiple, cambiando tra esse con comodità.
-
+Il progetto è stato pensato ed implementato per rendere un'eventuale espansione il più agevole possibile. Alcune funzionalità presenti in Trvaeller che potrebbero essere aggiunte nei prossimi anni sono:
+- Un sistema di assistenza alla gestione del combattimento
+- L'aggiunta dei personaggi non umani nella selezione del personaggio
+- L'aggiunta della caratteristica *PSIONICS*
 ...
