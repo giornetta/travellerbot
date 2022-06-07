@@ -28,7 +28,49 @@ Questo strumento consiste in un ChatBot accessibile tramite la piattaforma di me
 
 ## 2. Architettura software
 
+Il software realizzato, sviluppato in Python, si interfaccia con diverse sorgenti dati:
 
+1. Un Database *PostgreSQL* per gestire tutte le informazioni relative agli utenti, ai loro personaggi e alle loro avventure.
+
+2. Diversi file *JSON* per gestire i 176 diversi equipaggiamenti presenti nel gioco e le decine di migliaia di pianeti esplorabili.
+
+3. Dei file *Pickle* utilizzati per salvare i dati temporanei relativi alle conversazioni degli utenti con il bot, per permettergli di funzionare senza problemi anche in caso di crash o di spegnimento del server.
+
+In particolare, tutti i dati relativi ai settori e pianeti esplorabili sono stati ricavati dall'API fornita da [TravellerMap](https://www.travellermap.com), e salvati poi in locale (dopo operazioni di manipolazione e pulizia dei dati) per fornire performance migliori agli utenti.
+
+L'intero progetto è stato sviluppato facendo largo uso delle funzionalità di *OOP* e dei *type hints* forniti da Python, per rendere il codice più leggibile a chi volesse, eventualmente, ampliarne le funzionalità.
+
+...
+
+Oltre a ciò, la conversazione di ogni utente con il bot è stata trattata con una *Macchina a Stati Finiti*, anche grazie alle possibilità offerte dalla libreria [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot).
+
+```mermaid
+stateDiagram-v2
+
+[*] --> Start
+
+Start --> AdventureSetup
+
+AdventureSetup --> RefereeIdle : se è Referee
+AdventureSetup --> CharacterCreation : se non ha PG vivi
+AdventureSetup --> PlayerIdle : se ha PG vivi
+
+CharacterCreation --> Shop : per acquistare oggetti
+CharacterCreation --> PlayerIdle
+
+PlayerIdle --> Shop : per acquistare oggetti
+Shop --> PlayerIdle 
+
+RefereeIdle --> SceneCreation : per creare PNG
+SceneCreation --> RefereeIdle
+
+RefereeIdle --> AdventureSetup : per cambiare avventura
+PlayerIdle --> AdventureSetup : per cambiare avventura
+```
+
+Ognuno di questi stati rappresenta una particolare conversazione che l'utente può avere con il bot, e anch'esse sono modellate con FSM che possono avere fino a decine di stati a loro volta (come nel caso della creazione dei personaggi).
+
+...
 
 ## 3. Manuale Utente
 
@@ -121,4 +163,6 @@ Il giocatore potrà svolgere le seguenti azioni:
 
 ## 4. Conclusioni
 
+Gli obiettivi prefissati sono stati raggiunti: gli utenti del bot possono quindi gestire e partecipare a avventure multiple, cambiando tra esse con comodità.
 
+...
