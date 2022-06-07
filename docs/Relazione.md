@@ -6,14 +6,10 @@ Traveller è un gioco di ruolo da tavolo di fantascienza ideato da Marc Miller, 
 
 Il gioco, ambientato in un futuro remoto, offre un vasto universo a cui i giocatori possono prendere parte mediante esplorazioni spaziali, battaglie aeree e terrestri e commercio interstellare.
 
--- IMG
-
--- Altre descrizioni su come funziona
-
 Traveller usa un sistema di risoluzione delle azioni basato su due dadi a sei facce (d6) per determinare il successo o il fallimento delle azioni svolte dai giocatori. In particolare si seguono i seguenti passi per ogni azione:
-1) si lanciano due d6 e si sommano i risultati
-2) si aggiungono eventuali modificatori
-3) se il risultato è uguale o maggiore a 8 l'azione è considerata un successo.
+1) Si lanciano due d6 e si sommano i risultati
+2) Si aggiungono eventuali modificatori
+3) Se il risultato è uguale o maggiore a 8 l'azione è considerata un successo.
 
 Fin dalla sua prima edizione, Traveller fu particolarmente apprezzato dalla critica per la grande attenzione ai dettagli posta nella stesura delle regole, nell'ambientazione ufficiale e nel rendere le avventure dei personaggi e la loro progressione credibile e innovativa.
 
@@ -23,7 +19,7 @@ Questo processo, a causa della moltitudine di scelte che è possibile intraprend
 
 L'obiettivo del Progetto di Ingegneria Informatica proposto dal Prof. Agosta è quello di sviluppare uno strumento che possa aiutare i giocatori di Traveller a gestire le proprie avventure in modo più comodo e veloce rispetto ad un approccio analogico e manuale.
 
-Questo strumento consiste in un ChatBot accessibile tramite la piattaforma di messaggistica istantanea Telegram, che implementi le seguenti funzionalità:
+Questo strumento consiste in un ChatBot accessibile tramite la piattaforma di messaggistica istantanea Telegram, che possa gestire più utenti connessi contemporaneamente a più avventure, e che implementi le seguenti funzionalità:
 
 - Creazione di avventure
 - Creazione di personaggi
@@ -37,10 +33,6 @@ Questo strumento consiste in un ChatBot accessibile tramite la piattaforma di me
 ## 4. Manuale Utente
 
 All'avvio della conversazione con il bot, l'utente dovrà subito scegliere se creare una nuova avventura come *Referee* o se partecipare ad un'avventura creata da un altro giocatore.
-
-<div align="center">
-    <img src="./assets/start.jpg" height="300px">
-</div>
 
 ### 4.1. Creare un'avventura
 
@@ -111,6 +103,21 @@ Da ora in poi, il giocatore potrà utilizzare il personaggio appena creato nell'
 ### 4.3. Funzionalità del Referee
 
 ### 4.4. Funzionalità del Player
+
+Il giocatore potrà svolgere le seguenti azioni:
+
+1. Visualizzare informazioni sull'avventura corrente, sul suo personaggio, sui PNG presenti e sul pianeta in cui si trova, oltre ad una mappa dei pianeti circostanti.
+
+2. Eseguire lanci di dadi e *Skill Check*, specificando abilità da utilizzare e difficoltà dell'azione.
+
+3. Visualizzare il suo inventario e utilizzare/buttare i propri oggetti.
+
+4. Acquistare oggetti da un negozio, se precedentemente attivato dal *Referee*.
+
+<div align="center">
+    <img src="./assets/info.jpg" height="300px">
+    <img src="./assets/map.jpg" height="300px">
+</div>
 
 ## 5. Conclusioni
 
