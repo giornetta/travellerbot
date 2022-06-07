@@ -1,4 +1,9 @@
-# Traveller Telegram Bot
+<div align="center">
+    <h1 style="margin-bottom: 2px;">Traveller Telegram Bot</h1>
+    <h3 style="margin: 0px; padding-top: 0px;">Simone Foderà, Michele Giornetta, Damiano Guida</h3>
+    <h3 style="margin-top: 0px; padding-top: 0px;">Prof. Giovanni Agosta</h3>
+</div>
+
 
 ## 1. Introduzione e obiettivi
 
@@ -143,6 +148,37 @@ Infine, il giocatore potrà scegliere nome e sesso del proprio personaggio, e av
 Da ora in poi, il giocatore potrà utilizzare il personaggio appena creato nell'avventura corrente.
 
 ### 3.3. Funzionalità del Referee
+
+Il Referee potrà, tramite l'utilizzo di appositi comandi, avere controllo totale su ogni caratteristica dei personaggi che parteciperanno alla sua avventura.
+
+Nello specifico, le funzionalità implementate sono:
+
+1. Visualizzare informazioni sull'avventura corrente, sui personaggi, sui PNG presenti e sul pianeta in cui si trovano gli avventurieri, oltre ad una mappa dei pianeti circostanti.
+
+    - `/info {<name>|world|map|scene|adventure}`
+
+2. Modificare ogni caratteristica dei personaggi in modo permanentemente e non, alterarne gli status (radiazioni, fatica, ferite, etc.), i possedimenti monetari e aggiungere o rimuovere oggetti dai loro inventario.
+    - `/set <name> {stat|mod|status|creds} <... fieldName> [{+|-}][<value>]`
+
+3. Permettere ai personaggi di accedere a negozi personalizzati, specificando le tipologie di equipaggiamenti in vendita e il loro *Tech Level*.
+    - `/shop open <... categories> [<tech_level>]`
+    - `shop close`
+
+4. Permettere ai personaggi di acquistare un'astronave condivisa per viaggiare tra pianeti, e eseguire per loro i viaggi.
+    - `/starship`
+    - `/travel <destination>`
+
+5. Permettere agli avventurieri di riposare per brevi o lunghi periodi, così da modificarne le caratteristiche di conseguenza.
+    - `/rest {short|long}`
+
+6. Creare PNG (Personaggi Non Giocanti) alleati o nemici degli avventurieri, seguendo un procedimento simile a quello della Creazione dei Personaggi, ma più semplificato.
+    - `/scene new`
+
+<div align="center">
+    <img src="./assets/inforef.jpg" height="300px">
+    <img src="./assets/scene.jpg" height="300px">
+</div>
+
 
 ### 3.4. Funzionalità del Player
 
