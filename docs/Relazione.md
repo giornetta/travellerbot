@@ -10,16 +10,16 @@ Il gioco, ambientato in un futuro remoto, offre un vasto universo a cui i giocat
 
 -- Altre descrizioni su come funziona
 
-Fin dalla sua prima edizione, Traveller fu particolarmente apprezzato dalla critica per la grande attenzione ai dettagli posta nella stesura delle regole, nell'ambientazione ufficiale e nel rendere le avventure dei personaggi e la loro progressione credibile e innovativa.
-
 Traveller usa un sistema di risoluzione delle azioni basato su due dadi a sei facce (d6) per determinare il successo o il fallimento delle azioni svolte dai giocatori. In particolare si seguono i seguenti passi per ogni azione:
 1) si lanciano due d6 e si sommano i risultati
 2) si aggiungono eventuali modificatori
 3) se il risultato è uguale o maggiore a 8 l'azione è considerata un successo.
 
+Fin dalla sua prima edizione, Traveller fu particolarmente apprezzato dalla critica per la grande attenzione ai dettagli posta nella stesura delle regole, nell'ambientazione ufficiale e nel rendere le avventure dei personaggi e la loro progressione credibile e innovativa.
+
 Infatti, a differenza di altri giochi di ruolo come *Dungeons & Dragons*, in cui il processo di creazione dei personaggi è semplice, immediato e poco profondo, in Traveller viene introdotto per la prima volta un sistema per la generazione dei personaggi in cui ogni giocatore deve decidere le esperienze di vita del proprio personaggio fino al momento dell'inizio dell'avventura a cui esso prenderà parte, facendogli così ottenere abilità, soldi e equipaggiamenti da poter utilizzare durante quest'ultima.
 
-Questo processo, a causa della moltitudine di scelte che è possibile intraprendere, può risultare molto lungo e dispendioso di tempo.
+Questo processo, a causa della moltitudine di scelte che è possibile intraprendere, può risultare lungo e dispendioso di tempo, e come questo anche molte altre funzionalità del gioco richiedono ai giocatori di eseguire diverse azioni a volte confusionarie e poco intuitive.
 
 L'obiettivo del Progetto di Ingegneria Informatica proposto dal Prof. Agosta è quello di sviluppare uno strumento che possa aiutare i giocatori di Traveller a gestire le proprie avventure in modo più comodo e veloce rispetto ad un approccio analogico e manuale.
 
