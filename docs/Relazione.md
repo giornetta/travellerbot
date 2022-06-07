@@ -2,7 +2,7 @@
 
 ## 1. Introduzione e obiettivi
 
-Traveller è un gioco di ruolo da tavolo di fantascienza ideato da Marc Miller, Frank Chadwick, John Harshman and Loren Wiseman nel 1977. Da allora, ha goduto di diverse riedizioni, l'ultima delle quali nel 2017.
+Traveller è un gioco di ruolo da tavolo di fantascienza ideato da Marc Miller, Frank Chadwick, John Harshman and Loren Wiseman nel 1977. Da allora, ha goduto di diverse riedizioni, l'ultima delle quali nel 2022.
 
 Il gioco, ambientato in un futuro remoto, offre un vasto universo a cui i giocatori possono prendere parte mediante esplorazioni spaziali, battaglie aeree e terrestri e commercio interstellare.
 
