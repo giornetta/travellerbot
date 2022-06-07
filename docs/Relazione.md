@@ -12,6 +12,11 @@ Il gioco, ambientato in un futuro remoto, offre un vasto universo a cui i giocat
 
 Fin dalla sua prima edizione, Traveller fu particolarmente apprezzato dalla critica per la grande attenzione ai dettagli posta nella stesura delle regole, nell'ambientazione ufficiale e nel rendere le avventure dei personaggi e la loro progressione credibile e innovativa.
 
+Traveller usa un sistema di risoluzione delle azioni basato su due dadi a sei facce (d6) per determinare il successo o il fallimento delle azioni svolte dai giocatori. In particolare si seguono i seguenti passi per ogni azione:
+1) si lanciano due d6 e si sommano i risultati
+2) si aggiungono eventuali modificatori
+3) se il risultato è uguale o maggiore a 8 l'azione è considerata un successo.
+
 Infatti, a differenza di altri giochi di ruolo come *Dungeons & Dragons*, in cui il processo di creazione dei personaggi è semplice, immediato e poco profondo, in Traveller viene introdotto per la prima volta un sistema per la generazione dei personaggi in cui ogni giocatore deve decidere le esperienze di vita del proprio personaggio fino al momento dell'inizio dell'avventura a cui esso prenderà parte, facendogli così ottenere abilità, soldi e equipaggiamenti da poter utilizzare durante quest'ultima.
 
 Questo processo, a causa della moltitudine di scelte che è possibile intraprendere, può risultare molto lungo e dispendioso di tempo.
