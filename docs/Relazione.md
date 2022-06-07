@@ -26,15 +26,15 @@ Questo strumento consiste in un ChatBot accessibile tramite la piattaforma di me
 - Gestione 
 - ...
 
-## 3. Architettura software
+## 2. Architettura software
 
 
 
-## 4. Manuale Utente
+## 3. Manuale Utente
 
 All'avvio della conversazione con il bot, l'utente dovrà subito scegliere se creare una nuova avventura come *Referee* o se partecipare ad un'avventura creata da un altro giocatore.
 
-### 4.1. Creare un'avventura
+### 3.1. Creare un'avventura
 
 Durante la creazione di un'avventura, il giocatore dovrà specificare, mediante una procedura guidata, le seguenti caratteristiche :
 
@@ -52,7 +52,7 @@ Dopo aver specificato tutte le caratteristiche richieste, l'avventura verrà cre
 
 Da questo momento, può utilizzare i comandi specificati nella sezione `4.3.` per gestire l'avventura appena creata.
 
-### 4.2. Creare un personaggio
+### 3.2. Creare un personaggio
 
 Scegliendo invece l'opzione *Join* dopo aver avviato il bot, l'utente potrà scegliere se rientrare in avventure a cui aveva già partecipato in precedenza (sia come *Referee* che come *Player*) o se entrare a far parte di una nuova avventura, fornendo il relativo codice alfanumerico.
 
@@ -100,9 +100,9 @@ Infine, il giocatore potrà scegliere nome e sesso del proprio personaggio, e av
 
 Da ora in poi, il giocatore potrà utilizzare il personaggio appena creato nell'avventura corrente.
 
-### 4.3. Funzionalità del Referee
+### 3.3. Funzionalità del Referee
 
-### 4.4. Funzionalità del Player
+### 3.4. Funzionalità del Player
 
 Il giocatore potrà svolgere le seguenti azioni:
 
@@ -119,6 +119,6 @@ Il giocatore potrà svolgere le seguenti azioni:
     <img src="./assets/map.jpg" height="300px">
 </div>
 
-## 5. Conclusioni
+## 4. Conclusioni
 
 
