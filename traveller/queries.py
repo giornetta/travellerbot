@@ -142,7 +142,7 @@ def info_npcs(cur: cursor, scene_id: int) -> str:
                           f'\n🧠 <b>INT</b>: {intelligence} ' \
                           f'\n📚 <b>EDU</b>: {education} ' \
                           f'\n👑 <b>SOC</b>: {social_standing} ' \
-                          f'\n✨ <b>Carrier</b>: {carr}' \
+                          f'\n✨ <b>Career</b>: {carr}' \
                           f'\n⬆ <b>Rank</b>: {rank}' \
                           f'\n🦺 <b>Equipped armor</b>: {eq.equipments[armo].name}' \
                           f'\n⚔️ <b>Drawn weapon</b>: {eq.equipments[weap].name}'

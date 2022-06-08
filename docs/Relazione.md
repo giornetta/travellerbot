@@ -75,7 +75,25 @@ PlayerIdle --> AdventureSetup : per cambiare avventura
 
 Ognuno di questi stati rappresenta una particolare conversazione che l'utente può avere con il bot, e anch'esse sono modellate con FSM che possono avere fino a decine di stati a loro volta (come nel caso della creazione dei personaggi).
 
-...
+Un esempio di una conversazione è la creazione delle scene contenenti degli PNG(Personaggi Non Giocanti)
+
+```mermaid
+stateDiagram-v2
+
+RefereeIdle --> NomeScena: inizio creazione scena
+NomeScena --> PNG: inserimento nome scena
+PNG --> RefereeIdle: termine creazione scena
+PNG --> StatisticheManuali: per inserire manualmente le statistiche
+PNG --> StatisticheCasuali: per generazione casuale statistiche
+StatisticheManuali --> Carriera: inserimento statistiche
+StatisticheCasuali --> Carriera: statistiche accettate
+Carriera --> Rango: inserimento carriera
+Rango --> Arma: inserimento rango
+Arma --> Armatura: inserimento arma
+Armatura --> Nome: inserimento armatura
+Nome --> Alleato: inserimento nome png
+Alleato --> PNG: termine creazione png
+```
 
 ## 3. Manuale Utente
 
@@ -158,11 +176,11 @@ Nello specifico, le funzionalità implementate sono:
     - `/info {<name>|world|map|scene|adventure}`
 
 2. Modificare ogni caratteristica dei personaggi in modo permanentemente e non, alterarne gli status (radiazioni, fatica, ferite, etc.), i possedimenti monetari e aggiungere o rimuovere oggetti dai loro inventario.
-    - `/set <name> {stat|mod|status|creds} <... fieldName> [{+|-}][<value>]`
+    - `/set <name> {stat|mod|status|credits|shares|inventory} [{add|remove}] <... fieldName> [{+|-}][<value>]`
 
 3. Permettere ai personaggi di accedere a negozi personalizzati, specificando le tipologie di equipaggiamenti in vendita e il loro *Tech Level*.
-    - `/shop open <... categories> [<tech_level>]`
-    - `shop close`
+    - `/shop <... categories> [<tech_level>]`
+    - `/shop close`
 
 4. Permettere ai personaggi di acquistare un'astronave condivisa per viaggiare tra pianeti, e eseguire per loro i viaggi.
     - `/starship`
@@ -171,7 +189,7 @@ Nello specifico, le funzionalità implementate sono:
 5. Permettere agli avventurieri di riposare per brevi o lunghi periodi, così da modificarne le caratteristiche di conseguenza.
     - `/rest {short|long}`
 
-6. Creare PNG (Personaggi Non Giocanti) alleati o nemici degli avventurieri, seguendo un procedimento simile a quello della Creazione dei Personaggi, ma più semplificato.
+6. Creare PNG alleati o nemici degli avventurieri, seguendo un procedimento simile a quello della Creazione dei Personaggi, ma più semplificato.
     - `/scene new`
 
 <div align="center">
