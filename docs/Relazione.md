@@ -11,10 +11,7 @@ Traveller è un gioco di ruolo da tavolo di fantascienza ideato da Marc Miller, 
 
 Il gioco, ambientato in un futuro remoto, offre un vasto universo a cui i giocatori possono prendere parte mediante esplorazioni spaziali, battaglie aeree e terrestri e commercio interstellare.
 
-Traveller usa un sistema di risoluzione delle azioni basato su due dadi a sei facce (d6) per determinare il successo o il fallimento delle azioni svolte dai giocatori. In particolare si seguono i seguenti passi per ogni azione:
-1) Si lanciano due d6 e si sommano i risultati
-2) Si aggiungono eventuali modificatori
-3) Se il risultato è uguale o maggiore a 8 l'azione è considerata un successo.
+Come molti altri giochi di ruolo, Traveller usa un sistema di risoluzione delle azioni basato su dadi, in particolare a sei facce, per determinare il successo o il fallimento delle azioni svolte dai giocatori.
 
 Fin dalla sua prima edizione, Traveller fu particolarmente apprezzato dalla critica per la grande attenzione ai dettagli posta nella stesura delle regole, nell'ambientazione ufficiale e nel rendere le avventure dei personaggi e la loro progressione credibile e innovativa.
 
@@ -22,14 +19,14 @@ Infatti, a differenza di altri giochi di ruolo come *Dungeons & Dragons*, in cui
 
 Questo processo, a causa della moltitudine di scelte che è possibile intraprendere, può risultare lungo e dispendioso di tempo, e come questo anche molte altre funzionalità del gioco richiedono ai giocatori di eseguire diverse azioni a volte confusionarie e poco intuitive.
 
-L'obiettivo del Progetto di Ingegneria Informatica proposto dal Prof. Agosta è quello di sviluppare uno strumento che possa aiutare i giocatori di Traveller a gestire le proprie avventure in modo più comodo e veloce rispetto ad un approccio analogico e manuale.
+L'obiettivo del Progetto di Ingegneria Informatica proposto dal Prof. Agosta è quello di sviluppare uno strumento che possa aiutare i giocatori di Traveller a gestire le proprie avventure in modo più comodo e veloce rispetto ad un approccio manuale.
 
 Questo strumento consiste in un ChatBot accessibile tramite la piattaforma di messaggistica istantanea Telegram, che possa gestire più utenti connessi contemporaneamente a più avventure, e che implementi le seguenti funzionalità:
 
 - Creazione di avventure
 - Creazione di personaggi
-- Gestione 
-- ...
+- Gestione delle avventure e dei personaggi in gioco da parte dei *Referee*, in modo che abbiano il maggior grado possibile di controllo sull'universo di gioco.
+- Possibilità di svolgere azioni da parte dei giocatori come specificato nei manuali di gioco, come, ad esempio, gestire il proprio inventario, acquistare equipaggiamenti, eseguire *Skill Checks*, etc.
 
 ## 2. Architettura software
 
@@ -44,8 +41,6 @@ Il software realizzato, sviluppato in Python, si interfaccia con diverse sorgent
 In particolare, tutti i dati relativi ai settori e pianeti esplorabili sono stati ricavati dall'API fornita da [TravellerMap](https://www.travellermap.com), e salvati poi in locale (dopo operazioni di manipolazione e pulizia dei dati) per fornire performance migliori agli utenti.
 
 L'intero progetto è stato sviluppato facendo largo uso delle funzionalità di *OOP* e dei *type hints* forniti da Python, per rendere il codice più leggibile a chi volesse, eventualmente, ampliarne le funzionalità.
-
-...
 
 Oltre a ciò, la conversazione di ogni utente con il bot è stata trattata con una *Macchina a Stati Finiti*, anche grazie alle possibilità offerte dalla libreria [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot).
 
@@ -75,7 +70,11 @@ PlayerIdle --> AdventureSetup : per cambiare avventura
 
 Ognuno di questi stati rappresenta una particolare conversazione che l'utente può avere con il bot, e anch'esse sono modellate con FSM che possono avere fino a decine di stati a loro volta (come nel caso della creazione dei personaggi).
 
-Un esempio di una conversazione è la creazione delle scene contenenti degli PNG(Personaggi Non Giocanti)
+La struttura del codice realizzato riflette quella di questa *FSM*, infatti, ognuna di queste conversazioni è stata implementata come un *package* indipendente dagli altri, che contenesse al suo interno tutto il necessario per realizzare le funzionalità richieste.
+
+È stato quindi utilizzato un approccio simile al *Domain Driven Design*, che ci ha permesso di lavorare in gruppo in modo indipendente, senza rallentare l'implementazione di nuove funzionalità.
+
+Un esempio di una conversazione è la creazione delle scene contenenti dei Personaggi Non Giocanti.
 
 ```mermaid
 stateDiagram-v2
@@ -87,6 +86,7 @@ PNG --> StatisticheManuali: per inserire manualmente le statistiche
 PNG --> StatisticheCasuali: per generazione casuale statistiche
 StatisticheManuali --> Carriera: inserimento statistiche
 StatisticheCasuali --> Carriera: statistiche accettate
+StatisticheCasuali --> StatisticheCasuali : per rigenerare statistiche
 Carriera --> Rango: inserimento carriera
 Rango --> Arma: inserimento rango
 Arma --> Armatura: inserimento arma
@@ -198,7 +198,7 @@ Nello specifico, le funzionalità implementate sono:
 </div>
 
 
-### 3.4. Funzionalità del Player
+### 3.4. Funzionalità del Giocatore
 
 Il giocatore potrà svolgere le seguenti azioni:
 
@@ -218,8 +218,9 @@ Il giocatore potrà svolgere le seguenti azioni:
 ## 4. Conclusioni
 
 Gli obiettivi prefissati sono stati raggiunti: gli utenti del bot possono quindi gestire e partecipare a avventure multiple, cambiando tra esse con comodità.
-Il progetto è stato pensato ed implementato per rendere un'eventuale espansione il più agevole possibile. Alcune funzionalità presenti in Trvaeller che potrebbero essere aggiunte nei prossimi anni sono:
-- Un sistema di assistenza alla gestione del combattimento
-- L'aggiunta dei personaggi non umani nella selezione del personaggio
-- L'aggiunta della caratteristica *PSIONICS*
-...
+
+Il progetto è stato pensato ed implementato per rendere un'eventuale espansione il più agevole possibile. Infatti, essendo Traveller un gioco molto vasto, sarebbe possibile aggiungere altre funzionalità al bot, come:
+
+- Un sistema di combattimento a turni
+- L'aggiunta dei personaggi non umani nella creazione del personaggio
+- L'aggiunta della caratteristica *Psionics*
