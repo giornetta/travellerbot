@@ -95,11 +95,19 @@ Nome --> Alleato: inserimento nome png
 Alleato --> PNG: termine creazione png
 ```
 
-## 3. Manuale Utente
+## 3. Testing
+
+Le procedure di testing eseguite si sono concentrate sul garantire la robustezza del server e la fluidità dell'esperienza utente, anche in condizioni di sforzo.
+
+Inoltre abbiamo utilizzato librerie open source, ampiamente testate dalla community, per gestire la connessione al database, ai server Telegram e per garantire la persistenza dei dati relativi alle converssazioni degli utenti.
+
+Purtroppo, data la natura del gioco implementato, che fa largo uso di *RNG* (Random Number Generator), risulta impossibile definire dei test completamente deterministici; ciò ci ha precluso l'implementazione di Unit Testing, richiedendo lo svolgimento di test manuali per garantire la corretta esecuzione delle regole di gioco.
+
+## 4. Manuale Utente
 
 All'avvio della conversazione con il bot, l'utente dovrà subito scegliere se creare una nuova avventura come *Referee* o se partecipare ad un'avventura creata da un altro giocatore.
 
-### 3.1. Creare un'avventura
+### 4.1. Creare un'avventura
 
 Durante la creazione di un'avventura, il giocatore dovrà specificare, mediante una procedura guidata, le seguenti caratteristiche :
 
@@ -117,7 +125,7 @@ Dopo aver specificato tutte le caratteristiche richieste, l'avventura verrà cre
 
 Da questo momento, può utilizzare i comandi specificati nella sezione `4.3.` per gestire l'avventura appena creata.
 
-### 3.2. Creare un personaggio
+### 4.2. Creare un personaggio
 
 Scegliendo invece l'opzione *Join* dopo aver avviato il bot, l'utente potrà scegliere se rientrare in avventure a cui aveva già partecipato in precedenza (sia come *Referee* che come *Player*) o se entrare a far parte di una nuova avventura, fornendo il relativo codice alfanumerico.
 
@@ -165,7 +173,7 @@ Infine, il giocatore potrà scegliere nome e sesso del proprio personaggio, e av
 
 Da ora in poi, il giocatore potrà utilizzare il personaggio appena creato nell'avventura corrente.
 
-### 3.3. Funzionalità del Referee
+### 4.3. Funzionalità del Referee
 
 Il Referee potrà, tramite l'utilizzo di appositi comandi, avere controllo totale su ogni caratteristica dei personaggi che parteciperanno alla sua avventura.
 
@@ -198,7 +206,7 @@ Nello specifico, le funzionalità implementate sono:
 </div>
 
 
-### 3.4. Funzionalità del Giocatore
+### 4.4. Funzionalità del Giocatore
 
 Il giocatore potrà svolgere le seguenti azioni:
 
@@ -215,7 +223,7 @@ Il giocatore potrà svolgere le seguenti azioni:
     <img src="./assets/map.jpg" height="300px">
 </div>
 
-## 4. Conclusioni
+## 5. Conclusioni
 
 Gli obiettivi prefissati sono stati raggiunti: gli utenti del bot possono quindi gestire e partecipare a avventure multiple, cambiando tra esse con comodità.
 
