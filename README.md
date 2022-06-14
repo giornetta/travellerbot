@@ -1,7 +1,5 @@
 # Traveller RPG Telegram Bot
 
-A demo version of this bot can be found on Telegram at `@cepheus_engine_bot`, hosted on Heroku's free tier. If you experience any lag or difficulties in starting up the bot note that it could be caused by that.
-
 If you want to host your own bot, please refer to the following steps:
 
 ### Requirements
