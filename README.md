@@ -29,4 +29,10 @@ After filling out this configuration file, make sure to create the required Post
 psql -d <db_name> -a -f schema.sql
 ```
 
-You're now ready to run your own instance of this bot by running `python3 __main__.py`!
+You can install every required dependency with
+
+```
+pip3 install requirements.txt
+```
+
+You're now ready to run your own instance of Traveller Bot by running `python3 __main__.py`!

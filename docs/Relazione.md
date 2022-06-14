@@ -233,6 +233,4 @@ Il progetto è stato pensato ed implementato per rendere un'eventuale espansione
 - L'aggiunta dei personaggi non umani nella creazione del personaggio
 - L'aggiunta della caratteristica *Psionics*
 
-Una versione demo del bot può essere utilizzata contattando `@cepheus_engine_bot` su Telegram.
-
-Qualora si volesse eseguire una propria versione del bot in locale, è possibile farlo seguendo le istruzioni presenti a [github.com/giornetta/travellerbot](https://www.github.com/giornetta/travellerbot), dove, oltre al codice sorgente relativo a questo progetto, è possibile trovare una documentazione più completa ed esaustiva.
+Il codice sorgente relativo a questo progetto, una documentazione più completa ed esaustiva e istruzioni per eseguire una propria versione del bot in locale si trovano a [github.com/giornetta/travellerbot](https://www.github.com/giornetta/travellerbot).
