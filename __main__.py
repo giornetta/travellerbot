@@ -23,12 +23,12 @@ if __name__ == '__main__':
 
     print(f'Loaded cached user data for {len(userdata.user_data)} players!')
 
-    psycopg2.connect(config['DATABASE_URL'])
+    conn = psycopg2.connect(config['DATABASE_URL'])
 
     print('Successfully connected to Database!')
 
-#    with open('schema.sql') as f:
-#        conn.cursor().execute(f.read())
+    with open('schema.sql') as f:
+        conn.cursor().execute(f.read())
 
     updater = Updater(
         token=config['TELEGRAM_TOKEN'],
