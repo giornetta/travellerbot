@@ -27,9 +27,6 @@ if __name__ == '__main__':
 
     print('Successfully connected to Database!')
 
-    with open('schema.sql') as f:
-        conn.cursor().execute(f.read())
-
     updater = Updater(
         token=os.environ['TELEGRAM_TOKEN'],
         persistence=PicklePersistence(filename=os.environ['CONV_PATH']),
