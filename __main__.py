@@ -23,13 +23,7 @@ if __name__ == '__main__':
 
     print(f'Loaded cached user data for {len(userdata.user_data)} players!')
 
-    conn = psycopg2.connect(
-        user=config['DB_USER'],
-        password=config['DB_PASS'],
-        database=config['DB_NAME'],
-        host='localhost',
-        port=5432
-    )
+    psycopg2.connect(config['DATABASE_URL'])
 
     print('Successfully connected to Database!')
 
