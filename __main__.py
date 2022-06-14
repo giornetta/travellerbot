@@ -36,8 +36,12 @@ if __name__ == '__main__':
     conversation = handler(conn)
     updater.dispatcher.add_handler(conversation)
 
-    updater.start_webhook(listen="0.0.0.0", port=int(os.environ['PORT']), url_path=os.environ['TELEGRAM_TOKEN'])
-    updater.bot.setWebhook('https://travellerbot.herokuapp.com/' + os.environ['TELEGRAM_TOKEN'])
+    updater.start_webhook(
+        listen="0.0.0.0",
+        port=int(os.environ.get('PORT', '8443')),
+        url_path=os.environ['TELEGRAM_TOKEN'],
+        webhook_url='https://travellerbot.herokuapp.com/' + os.environ['TELEGRAM_TOKEN']
+    )
 
     print('Bot started!')
 
