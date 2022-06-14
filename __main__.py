@@ -1,3 +1,4 @@
+import os
 import dotenv
 import psycopg2
 from telegram.ext import Updater, PicklePersistence
@@ -44,7 +45,8 @@ if __name__ == '__main__':
     conversation = handler(conn)
     updater.dispatcher.add_handler(conversation)
 
-    updater.start_polling()
+    updater.start_webhook(listen="0.0.0.0", port=int(config['PORT']), url_path=config['TELEGRAM_TOKEN'])
+    updater.bot.setWebhook('https://travellerbot.herokuapp.com/' + config['TELEGRAM_TOKEN'])
 
     print('Bot started!')
 
